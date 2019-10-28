@@ -559,7 +559,7 @@ public class AgentZero {
 		boolean permutationMaker = a.updateMessageRecordAllMap(m);
 		if (permutationMaker) {
 			SortedSet<Permutation> permutations = a.messageEnterMap(m);
-			stoped here sdssssdf
+			stoped here sdssssdffd
 			SortedSet<Permutation> permutationsB = a.useMapToCreateMsgLaterThenM(m);
 			
 			permutations.addAll(permutationsB);
