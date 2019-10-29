@@ -326,8 +326,9 @@ public class AgentZero {
 			MessageValue msgValue = (MessageValue) msg;
 			int senderValue = msgValue.getMessageInformation();
 			reciever.reciveMsg(senderId, senderValue, msg.getDate());
-			reciever.updateMessageRecordAllMap(msgValue);
-			i changed stuff here
+			createPermutationOrJustSaveMessageForLaterUse(reciever, msgValue);
+			//reciever.updateMessageRecordAllMap(msgValue);
+			//i changed stuff here
 			//Permutation p = reciever.createCurrentPermutationByValue();
 			//updateRecieverUponPermutationOneByOne(p, reciever);
 		} // normal message
@@ -522,13 +523,14 @@ public class AgentZero {
 		}
 
 	}
-
+/*
 	private void anytimeMechanismAfterRecieveMsgByValue(Set<AgentField> agentsRecieved) {
 		for (AgentField reciever : agentsRecieved) {
 			Permutation currPermutation = reciever.createCurrentPermutationByValue();
 			updateRecieverUponPermutationOneByOne(currPermutation, reciever);
 		} // for msgs
 	}
+	*/
 	
 	
 	
@@ -556,19 +558,16 @@ public class AgentZero {
 	
 	
 	private void createPermutationOrJustSaveMessageForLaterUse(AgentField a, MessageValue m) {
+		
+		a.addMessageForLaterUse(m);
 		boolean permutationMaker = a.updateMessageRecordAllMap(m);
 		if (permutationMaker) {
-			SortedSet<Permutation> permutations = a.messageEnterMap(m);
-			stoped here sdssssdffd
-			SortedSet<Permutation> permutationsB = a.useMapToCreateMsgLaterThenM(m);
-			
-			permutations.addAll(permutationsB);
+			SortedSet<Permutation> permutations = a.messageCreateNoGap(m);
 			for (Permutation p : permutations) {
 				addPermutatioToAnytimeMechanism(a, p);
 			}
-		}else {
-			a.addMessageForLaterUse(m);
-		}	
+		}
+			
 	}
 
 	private static void addPermutatioToAnytimeMechanism(AgentField a, Permutation p) {
@@ -580,6 +579,23 @@ public class AgentZero {
 			a.addToPermutationPast(p);
 		}	
 	}
+	
+	/*
+	private void updateRecieverUponPermutationOneByOne(Permutation currPermutation, AgentField reciever) {
+		// Permutation currPermutation =
+		// reciever.createCurrentPermutationNonMonotonic();
+		
+		//---
+		if (reciever.isAnytimeLeaf()) {
+			reciever.addToPermutationToSendUnsynchNonMonoByValue(currPermutation);
+		} else {
+			reciever.tryToCombinePermutation(currPermutation);
+		}
+		reciever.addToPermutationPast(currPermutation);
+
+	}
+	*/
+	
 	
 	
 
