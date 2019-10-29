@@ -17,13 +17,13 @@ public class Main {
 
 	// ------- VARIABLES TO CHECK BEFORE STARTING A RUN
 	// -- variables of dcop problem
-	static int A = 10; // number of agents
+	static int A = 3; // number of agents
 	static int D = 10; // size of domain for each agent
 	static int costMax = 100; // the max value of cost
 	// -- Experiment time
 	static int meanRepsStart = 0;
 	static int meanRepsEnd = 2; // number of reps for every solve process not include
-	static int iterations = 100;//10000, 2000;
+	static int iterations = 500;//10000, 2000;
 	// versions
 	static String algo = "dsaUnsynch7"; // "mgm"; "dsa7"; "dsaUnsynch7";//"unsynchMono";//"mgmUb";//"unsynch0";
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
@@ -42,7 +42,7 @@ public class Main {
 	static String fileName; 
 	
 	// -- uniformly random dcop
-	static double[] p1sUniform = { 0.7 }; // 0.1,0.7
+	static double[] p1sUniform = { 1 }; // 0.1,0.7
 	static double[] p2sUniform = { 1};
 	// -- color dcop
 	static double[] p1sColor = { 0.1 }; // 0.1,0.7
@@ -53,7 +53,7 @@ public class Main {
 	// -- communication protocol
 	static double[] p3s = {1};
 	static boolean[] dateKnowns = { true };
-	static int[] delayUBs = {5};//10};//{ 5, 10, 20, 40 };
+	static int[] delayUBs = {20};//10};//{ 5, 10, 20, 40 };
 	static double[] p4s = { 0 };
 
 	// ------- GENERAL VARIABLES NO NEED TO CHANGE
@@ -385,7 +385,7 @@ public class Main {
 
 		}
 		if (dsaUnsynch7) {
-			ans = new UnsynchDsa(dcop, agents, agentZero, meanRun, 0.7);
+			ans = new UnsynchDSA(dcop, agents, agentZero, meanRun, 0.7);
 		}
 
 		if (mgm) {

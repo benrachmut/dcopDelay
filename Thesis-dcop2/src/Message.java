@@ -44,6 +44,9 @@ public abstract class Message<T> implements Comparable<Message> {
 	public T getMessageInformation() {
 		return messageInformation;
 	}
-}
-	
 
+	@Override
+	public String toString() {
+		return "send:"+sender+", recive:"+reciever+", date:"+this.date;
+	}
+}

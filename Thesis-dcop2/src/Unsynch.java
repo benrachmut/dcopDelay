@@ -40,7 +40,6 @@ public abstract class Unsynch extends Solution {
 			
 		
 			updateWhoCanDecide(i); // abstract
-		
 			agentDecide(i); // abstract
 			afterDecideTakeAction(i); // abstract
 			List <Message> msgToSend = agentZero.handleDelay();	

@@ -1232,7 +1232,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	 */
 	public boolean updateMessageRecordAllMap(MessageValue msgValue) {
 		int senderId = msgValue.getSender().getId();
-		
+
 		SortedSet<MessageValue> senderSetMsgs = this.messageRecordAllMap.get(senderId);
 		senderSetMsgs.add(msgValue);
 		boolean isMessageTreeSetInSequence = checkSquenceOfTreeSet(senderSetMsgs);
@@ -1278,62 +1278,66 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	}
 
-	public SortedSet<Permutation> messageCreateNoGap(MessageValue m) {
-		//messagesForLaterUse.add(m);
-		SortedSet<Permutation> ans = new TreeSet<Permutation>();
+	public Collection<Permutation> messageCreateNoGap(MessageValue m) {
+
+		Collection<Permutation> ans = new ArrayList<Permutation>();
 		Iterator<MessageValue> it = messagesForLaterUse.iterator();
-	
+
 		while (it.hasNext()) {
 			MessageValue currentMsg = it.next();
-			
-			
 			Permutation p = pCreatedFromMsgsEarlierCurrentMsg(currentMsg);
-			if (p!=null) {ans.add(p);}
+			if (p != null) {
+				ans.add(p);
+			}
 			this.messageRecordSequenceMap.get(currentMsg.getSender().getId()).add(currentMsg);
-			
-			SortedSet<MessageValue> largerTimeStampThenCurrent = getLargerTimeStampThenCurrentFromSequence(currentMsg);
+
+			Collection<MessageValue> largerTimeStampThenCurrent = getLargerTimeStampThenCurrentFromSequence(currentMsg);
 			for (MessageValue largerMsg : largerTimeStampThenCurrent) {
 				Permutation p2 = pCreatedFromMsgsEarlierCurrentMsg(largerMsg);
-				if (p2!=null) {ans.add(p2);}
+				if (p2 != null) {
+					ans.add(p2);
+				}
 				this.messageRecordSequenceMap.get(largerMsg.getSender().getId()).add(largerMsg);
 			}
 
 		}
-
+		this.messagesForLaterUse.remove(m);
 		return ans;
 	}
 
-	
+	private Collection<MessageValue> getLargerTimeStampThenCurrentFromSequence(MessageValue currentMsg) {
 
-	private SortedSet<MessageValue> getLargerTimeStampThenCurrentFromSequence(MessageValue currentMsg) {
-		
-		SortedSet<MessageValue> ans = new TreeSet<MessageValue>(new ComparatorMsgDate());
+		Collection<MessageValue> ans = new ArrayList<MessageValue>();
 		for (Entry<Integer, SortedSet<MessageValue>> e : this.messageRecordSequenceMap.entrySet()) {
-			if (e.getKey()!=currentMsg.getSender().getId()  ) {
+			if (e.getKey() != currentMsg.getSender().getId()) {
 				Iterator<MessageValue> it = e.getValue().iterator();
 				while (it.hasNext()) {
-					MessageValue otherMsg =  it.next();
-					if (otherMsg.getDate()>=currentMsg.getDate()) {
+					MessageValue otherMsg = it.next();
+					if (otherMsg.getDate() >= currentMsg.getDate()) {
 						ans.add(otherMsg);
 						it.remove();
-					}// add to ans if larger time stamp then current
-				}// iterate over msgs of other agents then sender of current msg
-			}// if not set of current msg
+					} // add to ans if larger time stamp then current
+				} // iterate over msgs of other agents then sender of current msg
+			} // if not set of current msg
 		}
 		return ans;
 	}
 
 	private Permutation pCreatedFromMsgsEarlierCurrentMsg(MessageValue currentMsg) {
-		SortedSet<MessageValue> setForPermutation = collectMessagesToBuildPermutations(currentMsg);
+		if (currentMsg.getSender().getId() == 1 && currentMsg.getReciever().getId() == 0
+				&& currentMsg.getSenderValue() == 8) {
+			int x = 3;
+		}
+		Collection<MessageValue> setForPermutation = collectMessagesToBuildPermutations(currentMsg);
 		if (setForPermutation != null) {
 			Permutation p = createPermutationFromSet(setForPermutation);
 			return p;
-		}	
+		}
 		return null;
-		
+
 	}
 
-	private Permutation createPermutationFromSet(SortedSet<MessageValue> setForPermutation) {
+	private Permutation createPermutationFromSet(Collection<MessageValue> setForPermutation) {
 
 		Map<Integer, Integer> m = new HashMap<Integer, Integer>();
 		for (MessageValue message : setForPermutation) {
@@ -1350,8 +1354,8 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	}
 
-	private SortedSet<MessageValue> collectMessagesToBuildPermutations(MessageValue currentMsg) {
-		SortedSet<MessageValue> ans = new TreeSet<MessageValue>(new ComparatorMsgDate());
+	private Collection<MessageValue> collectMessagesToBuildPermutations(MessageValue currentMsg) {
+		Collection<MessageValue> ans = new ArrayList<MessageValue>();
 		for (Integer i : this.messageRecordSequenceMap.keySet()) {
 			if (i != currentMsg.getSender().getId()) {
 				MessageValue selectedMsg = null;
@@ -1363,12 +1367,14 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 						if (currentMsg.getDate() >= m.getDate()) {
 							if (selectedMsg == null) {
 								selectedMsg = m;
-							}
-							if (selectedMsg.getDate() <= m.getDate()) {
+							} else if (selectedMsg.getDate() <= m.getDate()) {
 								selectedMsg = m;
 							}
 						}
 					} // for on set from map
+					if (selectedMsg == null) {
+						return null;
+					}
 					ans.add(selectedMsg);
 				} // else
 			} else {
@@ -1378,7 +1384,5 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		} // for keys in map
 		return ans;
 	}
-
-
 
 }

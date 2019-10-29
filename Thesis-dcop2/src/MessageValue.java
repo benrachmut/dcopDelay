@@ -7,6 +7,7 @@ public class MessageValue extends Message <Integer>  {
 	public MessageValue(AgentField sender, AgentField reciever, int senderValue, int delay, int currentIteration) {
 		super(sender, reciever,senderValue, delay, currentIteration);
 		decisonCounter = sender.getDecisonCounter();
+		this.senderValue = senderValue;
 	}
 /*
 	public MessageNormal(AgentField sender, AgentField reciever, int senderValue, int delay, int currentIteration, int senderSelfCounter) {
@@ -17,8 +18,7 @@ public class MessageValue extends Message <Integer>  {
 
 	@Override
 	public String toString() {
-		return "sender:"+sender+", reciver:"+reciever+", sender value:"+
-	senderValue+", delay:"+this.delay+", decisonCounter:"+this.decisonCounter;
+		return super.toString()+", value:"+this.senderValue+", dc:"+this.decisonCounter;
 	}
 	
 	public MessageValue(MessageValue m) {
