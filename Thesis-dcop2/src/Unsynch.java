@@ -34,7 +34,7 @@ public abstract class Unsynch extends Solution {
 			iter = i;
 			
 			//if (i % 10 == 0 ) {
-				System.out.println("---start iteration: " + i + "---");
+				//System.out.println("---start iteration: " + i + "---");
 			//}
 			
 			

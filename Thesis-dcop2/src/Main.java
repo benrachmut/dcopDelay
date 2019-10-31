@@ -17,7 +17,7 @@ public class Main {
 
 	// ------- VARIABLES TO CHECK BEFORE STARTING A RUN
 	// -- variables of dcop problem
-	static int A = 10; // number of agents
+	static int A = 5; // number of agents
 	static int D = 10; // size of domain for each agent
 	static int costMax = 100; // the max value of cost
 	// -- Experiment time
@@ -28,7 +28,7 @@ public class Main {
 	static String algo = "dsaUnsynch7"; // "mgm"; "dsa7"; "dsaUnsynch7";//"unsynchMono";//"mgmUb";//"unsynch0";
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
-	static int[] memoryVersions = {2}; // 1=exp, 2= constant, 3= reasonable
+	static int[] memoryVersions = {1}; // 1=exp, 2= constant, 3= reasonable
 	static double[] constantsPower = {1,1.5,2,2.5,3};//{1,2,3,4,5};
 	
 
@@ -53,7 +53,7 @@ public class Main {
 	// -- communication protocol
 	static double[] p3s = {1};
 	static boolean[] dateKnowns = { true };
-	static int[] delayUBs = {40};//{ 5,10,20,40};
+	static int[] delayUBs = {5};//{ 5,10,20,40};
 	static double[] p4s = { 0 };
 
 	// ------- GENERAL VARIABLES NO NEED TO CHANGE
