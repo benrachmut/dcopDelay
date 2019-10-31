@@ -19,7 +19,7 @@ public class Permutation implements Comparable<Permutation>{
 	private int iterationCreated;
 	private int date;
 
-	public Permutation(Map<Integer, Integer> m, int cost) {
+	Permutation(Map<Integer, Integer> m, int cost) {
 		this.m = new HashMap<Integer, Integer>();
 		for (Entry<Integer, Integer> e : m.entrySet()) {
 			this.m.put(e.getKey(), e.getValue());
@@ -34,7 +34,7 @@ public class Permutation implements Comparable<Permutation>{
 
 	}
 
-	public Permutation(Map<Integer, Integer> m, int cost, AgentField a) {
+	Permutation(Map<Integer, Integer> m, int cost, AgentField a) {
 		this(m, cost);
 		included = new HashMap<Integer, Boolean>();
 		List<Integer> sonsId = getSonsId(a);

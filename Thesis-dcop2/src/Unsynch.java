@@ -33,30 +33,22 @@ public abstract class Unsynch extends Solution {
 		for (int i = 0; i < this.iteration; i++) {
 			iter = i;
 			
-			//if (i % 10 == 0 ) {
-				//System.out.println("---start iteration: " + i + "---");
-			//}
+			if (i % 500 == 0 ) {
+				System.out.println("---start iteration: " + i + "---");
+			}
 			
 			
+		
 			updateWhoCanDecide(i); // abstract
-			//System.out.println("updateWhoCanDecide(i);");
+		
 			agentDecide(i); // abstract
-			//System.out.println("agentDecide(i);");
 			afterDecideTakeAction(i); // abstract
-			//System.out.println("afterDecideTakeAction(i);");
 			List <Message> msgToSend = agentZero.handleDelay();	
-			//System.out.println("List <Message> msgToSend = agentZero.handleDelay();	");
 			agentsSendMsgs(msgToSend); // abstract
-			//System.out.println("agentsSendMsgs(msgToSend);");
 			createAnytimeUp(i); // abstract
-			//System.out.println("createAnytimeUp(i);");
 			createAnytimeDown(i);
-			//System.out.println("createAnytimeDown(i);");
 			addCostToTables(i );
-			//System.out.println("addCostToTables(i );");
 			addTopCountersChanges(i);
-			//System.out.println("addTopCountersChanges(i);");
-
 			
 		}
 	}

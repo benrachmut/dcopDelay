@@ -28,16 +28,8 @@ public class Dcop {
 		this.neighbors = new TreeSet<Neighbors>();
 		this.constraints = new TreeMap<Neighbors, Set<Constraint>>();
 		initGivenDcopVersion();
-		initMessageRecordMap();
 		//printConst();
 
-	}
-
-	private void initMessageRecordMap() {
-		for (AgentField agentField : agentsF) {
-			agentField.initMessageRecordMap();
-		}
-		
 	}
 
 	public void printConst() {

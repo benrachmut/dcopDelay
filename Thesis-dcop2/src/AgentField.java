@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -46,12 +44,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private boolean unsynchFlag;
 	private List<Permutation> anytimeUpRecieved;
 
-	private SortedMap<Integer, SortedSet<MessageValue>> messageRecordAllMap;
-	private SortedMap<Integer, SortedSet<MessageValue>> messageRecordSequenceMap;
-	private SortedMap<Integer, Boolean> permutationMakerMap;
-	private List<MessageValue> messagesForLaterUse;
-	private boolean permutationMaker;
-
 	public AgentField(int domainSize, int id) {
 		super(id);
 		this.domain = createDomain(domainSize);
@@ -81,31 +73,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		this.iHaveAnytimeNews = false;
 		this.unsynchFlag = false;
 		restartAnytimeUpRecieved();
-		initMessageRecordMap();
-		setPermutationMaker(true);
-	}
-
-	public void setPermutationMaker(boolean input) {
-		permutationMaker = input;
-	}
-
-	public void initMessageRecordMap() {
-		// setPermutationMaker(true);
-		messagesForLaterUse = new ArrayList<MessageValue>();
-		messageRecordSequenceMap = new TreeMap<Integer, SortedSet<MessageValue>>();
-		messageRecordAllMap = new TreeMap<Integer, SortedSet<MessageValue>>();
-		permutationMakerMap = new TreeMap<Integer, Boolean>();
-
-		for (Integer i : neighbor.keySet()) {
-			this.messageRecordSequenceMap.put(i, new TreeSet<MessageValue>(new ComparatorMsgDate()));
-			this.messageRecordAllMap.put(i, new TreeSet<MessageValue>(new ComparatorMsgDate()));
-			this.permutationMakerMap.put(i, true);
-		}
-
-		this.messageRecordSequenceMap.put(this.id, new TreeSet<MessageValue>(new ComparatorMsgDate()));
-		this.messageRecordAllMap.put(this.id, new TreeSet<MessageValue>(new ComparatorMsgDate()));
-		this.permutationMakerMap.put(this.id, true);
-
 	}
 
 	private void setValues() {
@@ -117,7 +84,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			this.firstValue = -1;
 			this.anytimeFirstValue = -1;
 		}
-
+		
 	}
 
 	public void restartAnytimeUpRecieved() {
@@ -244,12 +211,14 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		if (this.value == -1) {
 			shouldChange = true;
 		}
-
+		
+		
+		
 		boolean didChange = maybeChange(shouldChange, minPotentialCost, stochastic);
 		/*
-		 * if (Unsynch.iter == 138 && this.id==13) {
-		 * System.out.println("currentPersonalCost:"+currentPersonalCost+", minCost:"+
-		 * minCost+", shouldChange:"+ shouldChange+", didChange:"+ didChange); }
+		 if (Unsynch.iter == 138 && this.id==13) {
+		 System.out.println("currentPersonalCost:"+currentPersonalCost+", minCost:"+
+		 minCost+", shouldChange:"+ shouldChange+", didChange:"+ didChange); }
 		 */
 		return didChange;
 	}
@@ -482,11 +451,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	public void setDecisionCounterNonMonotonic(int i) {
 		this.decisonCounter = i;
-	}
 
-	public int increaseDecisionCounterByOne() {
-		decisonCounter = decisonCounter + 1;
-		return this.decisonCounter;
 	}
 
 	public Permutation createCurrentPermutationNonMonotonic() {
@@ -891,10 +856,9 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private Comparator<Permutation> getComparatorAccordingToIndex(Permutation currentP) {
 		int comparatorIndex = Main.currentComparatorForMemory;
 
-		// 1 = minDistance,maxTrueCounter;2=minDistance,maxRatio;3=minDistance,maxMsize;
-		// 4=minDistance,minMsize
-		// 5 = maxTrueCounter,minDistance;6=maxRatio,minDistance;7=maxMsize,minDistance;
-		// 8=minMsize,minDistance
+
+		// 1 = minDistance,maxTrueCounter;2=minDistance,maxRatio;3=minDistance,maxMsize; 4=minDistance,minMsize
+		// 5 = maxTrueCounter,minDistance;6=maxRatio,minDistance;7=maxMsize,minDistance; 8=minMsize,minDistance
 
 		boolean oppositeFlag;
 		boolean max;
@@ -903,31 +867,31 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			oppositeFlag = false;
 			return comparatorGivenOppositeFlag(currentP, comparatorIndex, oppositeFlag);
 
-		} else {
+		}else {
 			oppositeFlag = true;
 			return comparatorGivenOppositeFlag(currentP, comparatorIndex, oppositeFlag);
 		}
 
+	
+
 	}
 
-	// 1 = minDistance,maxTrueCounter;2=minDistance,maxRatio;3=minDistance,maxMsize;
-	// 4=minDistance,minMsize
-	// 5 = maxTrueCounter,minDistance;6=maxRatio,minDistance;7=maxMsize,minDistance;
-	// 8=minMsize,minDistance
+	// 1 = minDistance,maxTrueCounter;2=minDistance,maxRatio;3=minDistance,maxMsize; 4=minDistance,minMsize
+	// 5 = maxTrueCounter,minDistance;6=maxRatio,minDistance;7=maxMsize,minDistance; 8=minMsize,minDistance
 
-	private Comparator<Permutation> comparatorGivenOppositeFlag(Permutation currentP, int comparatorIndex,
-			boolean oppositeFlag) {
+	private Comparator<Permutation> comparatorGivenOppositeFlag(Permutation currentP, int comparatorIndex, boolean oppositeFlag) {
 		boolean max;
-		if (comparatorIndex == 1 || comparatorIndex == 5) {
+		if (comparatorIndex == 1 || comparatorIndex == 5 ) {
 			return new ComparatorPermutationDistanceAndTrueCounter(currentP, oppositeFlag);
 		}
-		if (comparatorIndex == 2 || comparatorIndex == 6) {
+		if (comparatorIndex == 2|| comparatorIndex == 6) {
 			return new ComparatorPermutationDistanceAndTrueRatio(currentP, oppositeFlag);
 		}
-		if (comparatorIndex == 3 || comparatorIndex == 7) {
+		if (comparatorIndex == 3|| comparatorIndex == 7) {
 			max = true;
 			return new ComparatorPermutationDistanceAndMSize(currentP, max, oppositeFlag);
-		} else {
+		}
+		else {			
 			max = false;
 			return new ComparatorPermutationDistanceAndMSize(currentP, max, oppositeFlag);
 		}
@@ -943,15 +907,14 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	public void addToPermutationToSendUnsynchNonMonoByValue(Permutation input) {
 
 		if (this.isAnytimeTop()) {
-			System.out.println(
-					"ALL PERMUTATION- cost: " + input.getCost() + " permutation past size: " + this.permutationsPast.size());
 			if (this.bestPermuation == null || this.bestPermuation.getCost() > input.getCost()) {
 				recieveBetterPermutation(input);
 				iHaveAnytimeNews = true;
-				//System.out.println(
-					//	"BEST PERMUTATION- cost: " + input.getCost() + " permutation past size: " + this.permutationsPast.size());
+				System.out.println(
+						"cost: " + input.getCost() + " permutation past size: " + this.permutationsPast.size());
 			}
 			Unsynch.topCost = input.getCost();
+
 
 		} else {
 			addToSet(input, permutationsToSend);
@@ -1191,12 +1154,17 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	public Permutation createCurrentPermutationByValue() {
 
 		Map<Integer, Integer> m = new HashMap<Integer, Integer>();
+
 		for (Entry<Integer, MessageRecieve> e : this.neighbor.entrySet()) {
 			int nId = e.getKey();
 			int nValue = e.getValue().getValue();
 			m.put(nId, nValue);
 		}
 		m.put(this.id, this.value);
+
+		if (!neighborIsMinusOne(m)) {
+			int x = 3;
+		}
 		int cost = calSelfCost(m);
 		return new Permutation(m, cost, this);
 	}
@@ -1223,177 +1191,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	public boolean isNeighbor(int inputId) {
 		// TODO Auto-generated method stub
 		return this.neighbor.containsKey(inputId);
-	}
-
-	/**
-	 * place message in messageRecordAllMap change permutationMaker if any change
-	 * took place
-	 * 
-	 * @param msgValue
-	 * @return
-	 */
-	public boolean updateMessageRecordAllMap(MessageValue msgValue) {
-		int senderId = msgValue.getSender().getId();
-
-		SortedSet<MessageValue> senderSetMsgs = this.messageRecordAllMap.get(senderId);
-		senderSetMsgs.add(msgValue);
-		boolean isMessageTreeSetInSequence = checkSquenceOfTreeSet(senderSetMsgs);
-		this.permutationMakerMap.put(msgValue.getSender().getId(), isMessageTreeSetInSequence);
-		this.permutationMaker = checkPermutationMaker();
-		return permutationMaker;
-	}
-
-	private boolean checkPermutationMaker() {
-		for (Boolean b : permutationMakerMap.values()) {
-			if (!b) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private static boolean checkSquenceOfTreeSet(SortedSet<MessageValue> senderSetMsgs) {
-		int currentDecisionCounter = 0;
-		for (MessageValue m : senderSetMsgs) {
-			int mDecisionCounter = m.getDecisonCounter();
-			if (mDecisionCounter - currentDecisionCounter != 1) {
-				return false;
-			}
-			currentDecisionCounter = mDecisionCounter;
-		}
-		return true;
-	}
-	/*
-	 * public Permutation messageEnterMap(MessageValue m) { int senderId =
-	 * m.getSender().getId(); createPermutationBecauseOfMessageM for (Integer i :
-	 * messageRecordMap.keySet()) { if (i!=senderId) {
-	 * 
-	 * } }
-	 * 
-	 * 
-	 * this.messageRecordMap.get(senderId).add(m);// add message to recordMap return
-	 * null; }
-	 */
-
-	public void addMessageForLaterUse(MessageValue m) {
-		this.messagesForLaterUse.add(m);
-		Collections.sort(messagesForLaterUse, new ComparatorMsgDate());
-
-	}
-
-	public Collection<Permutation> messageCreateNoGap(MessageValue m) {
-
-		Collection<Permutation> ans = new ArrayList<Permutation>();
-		Iterator<MessageValue> it = messagesForLaterUse.iterator();
-		
-		//System.out.println("messagesForLaterUse size"+messagesForLaterUse.size());
-		int i = 0;
-		while (it.hasNext()) {
-			i++;
-			//System.out.println("messagesForLaterUse size "+messagesForLaterUse.size()+"iteration "+i);
-			//System.out.println("before");
-			MessageValue currentMsg = it.next();
-			Permutation p = pCreatedFromMsgsEarlierCurrentMsg(currentMsg);
-			if (p != null) {
-				ans.add(p);
-			}
-			//System.out.println("after");
-
-			this.messageRecordSequenceMap.get(currentMsg.getSender().getId()).add(currentMsg);
-			
-			Collection<MessageValue> largerTimeStampThenCurrent = getLargerTimeStampThenCurrentFromSequence(currentMsg);
-			for (MessageValue largerMsg : largerTimeStampThenCurrent) {
-				Permutation p2 = pCreatedFromMsgsEarlierCurrentMsg(largerMsg);
-				if (p2 != null) {
-					ans.add(p2);
-				}
-				this.messageRecordSequenceMap.get(largerMsg.getSender().getId()).add(largerMsg);
-			}
-			
-
-		}
-		this.messagesForLaterUse.remove(m);
-		return ans;
-	}
-
-	private Collection<MessageValue> getLargerTimeStampThenCurrentFromSequence(MessageValue currentMsg) {
-
-		Collection<MessageValue> ans = new ArrayList<MessageValue>();
-		for (Entry<Integer, SortedSet<MessageValue>> e : this.messageRecordSequenceMap.entrySet()) {
-			if (e.getKey() != currentMsg.getSender().getId()) {
-				Iterator<MessageValue> it = e.getValue().iterator();
-				while (it.hasNext()) {
-					MessageValue otherMsg = it.next();
-					if (otherMsg.getDate() > currentMsg.getDate()) {
-						ans.add(otherMsg);
-						it.remove();
-					} // add to ans if larger time stamp then current
-				} // iterate over msgs of other agents then sender of current msg
-			} // if not set of current msg
-		}
-		return ans;
-	}
-
-	private Permutation pCreatedFromMsgsEarlierCurrentMsg(MessageValue currentMsg) {
-		if (currentMsg.getSender().getId() == 1 && currentMsg.getReciever().getId() == 0
-				&& currentMsg.getSenderValue() == 8) {
-			int x = 3;
-		}
-		Collection<MessageValue> setForPermutation = collectMessagesToBuildPermutations(currentMsg);
-		if (setForPermutation != null) {
-			Permutation p = createPermutationFromSet(setForPermutation);
-			return p;
-		}
-		return null;
-
-	}
-
-	private Permutation createPermutationFromSet(Collection<MessageValue> setForPermutation) {
-
-		Map<Integer, Integer> m = new HashMap<Integer, Integer>();
-		for (MessageValue message : setForPermutation) {
-			int recieverId = message.getReciever().getId();
-			if (recieverId != this.id) {
-				System.err.println("logical bug in createPermutationFromSet");
-			}
-			int senderId = message.getSender().getId();
-			int value = message.getSenderValue();
-			m.put(senderId, value);
-		}
-		int cost = calSelfCost(m);
-		return new Permutation(m, cost, this);
-
-	}
-
-	private Collection<MessageValue> collectMessagesToBuildPermutations(MessageValue currentMsg) {
-		Collection<MessageValue> ans = new ArrayList<MessageValue>();
-		for (Integer i : this.messageRecordSequenceMap.keySet()) {
-			if (i != currentMsg.getSender().getId()) {
-				MessageValue selectedMsg = null;
-				SortedSet<MessageValue> msgsFromMap = this.messageRecordSequenceMap.get(i);
-				if (msgsFromMap.isEmpty()) {
-					return null;
-				} else {
-					for (MessageValue m : msgsFromMap) {
-						if (currentMsg.getDate() >= m.getDate()) {
-							if (selectedMsg == null) {
-								selectedMsg = m;
-							} else if (selectedMsg.getDate() <= m.getDate()) {
-								selectedMsg = m;
-							}
-						}
-					} // for on set from map
-					if (selectedMsg == null) {
-						return null;
-					}
-					ans.add(selectedMsg);
-				} // else
-			} else {
-				ans.add(currentMsg);
-			}
-
-		} // for keys in map
-		return ans;
 	}
 
 }

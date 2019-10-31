@@ -1,13 +1,11 @@
 
-public class MessageValue extends Message <Integer> implements Comparable<Message>  {
+public class MessageValue extends Message <Integer>  {
 	
 	private int senderValue;
-	private int decisonCounter;
+	//private int senderSelfCounter;
 
 	public MessageValue(AgentField sender, AgentField reciever, int senderValue, int delay, int currentIteration) {
 		super(sender, reciever,senderValue, delay, currentIteration);
-		decisonCounter = sender.getDecisonCounter();
-		this.senderValue = senderValue;
 	}
 /*
 	public MessageNormal(AgentField sender, AgentField reciever, int senderValue, int delay, int currentIteration, int senderSelfCounter) {
@@ -18,21 +16,19 @@ public class MessageValue extends Message <Integer> implements Comparable<Messag
 
 	@Override
 	public String toString() {
-		return super.toString()+", value:"+this.senderValue+", dc:"+this.decisonCounter+"|";
+		return "sender:"+sender+", reciver:"+reciever+", sender value:"+senderValue+", delay:"+this.delay;
 	}
 	
 	public MessageValue(MessageValue m) {
 		this( m.getSender(),  m.getReciever(),  m.getMessageInformation(),  m.getDelay(),  m.getDate());
 	}
 
-	public int getDecisonCounter() {
-		return this.decisonCounter;
-	}
-	public int getSenderValue() {
-		return this.senderValue;
-	}
 	
-
+/*
+	public int getSenderValue() {
+		return senderValue;
+	}
+*/
 	
 	
 

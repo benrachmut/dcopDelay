@@ -5,19 +5,24 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public abstract class UnsynchAnytime extends Unsynch {
-	protected SortedSet<AgentField> didDecide;
+public class UnsynchDsa extends Unsynch {
+	private double stochastic;
+	private SortedSet<AgentField> didDecide;
 
 	protected List<Double> ratioCounterTopCounterChanges;
 	protected List<Integer> counterTopChanges;
 	public  List<Integer> costOfAllTops;
 	public static int counterPermutationAtTop;
 
-	public UnsynchAnytime(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun) {
+	public UnsynchDsa(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double stochastic) {
 		super(dcop, agents, aZ, meanRun);
+
+		this.stochastic = stochastic;
 		this.didDecide = new TreeSet<AgentField>();
 		Main.rDsa.setSeed(meanRun);
+		this.algo = "DSA" + stochastic + "asynch";
 		counterPermutationAtTop = 0;
+
 		ratioCounterTopCounterChanges = new ArrayList<Double>();
 		counterTopChanges = new ArrayList<Integer>();
 		costOfAllTops = new ArrayList<Integer>();
@@ -26,12 +31,14 @@ public abstract class UnsynchAnytime extends Unsynch {
 	// ---- 1
 	@Override
 	protected void updateWhoCanDecide(int i) {
+
 		for (AgentField a : this.agents) {
 			if (i == 0) {
 				this.whoCanDecide.add(a);
 			} else if (a.getUnsynchFlag()) {
 				this.whoCanDecide.add(a);
 			}
+
 		}
 	}
 
@@ -39,7 +46,7 @@ public abstract class UnsynchAnytime extends Unsynch {
 
 	@Override
 	public void agentDecide(int i) {
-		algorithmDecide(i);
+		dsaDecide(i);
 		setFlagToFalse();
 	}
 
@@ -50,12 +57,29 @@ public abstract class UnsynchAnytime extends Unsynch {
 
 	}
 
-	public abstract void algorithmDecide(int i); 
+	private void dsaDecide(int i) {
+
+		this.didDecide = new TreeSet<AgentField>();
+		for (AgentField a : whoCanDecide) {
+			if (i != 0) {
+				boolean didChange = a.dsaDecide(stochastic);
+				if (didChange) {
+					this.didDecide.add(a);
+				}
+			} else {
+				int value = a.createRandFirstValue();
+				a.setValue(value);
+				didDecide.add(a);
+			}
+
+		}
+	}
 
 	// ---- 3
 
 	@Override
 	protected void afterDecideTakeAction(int i) {
+		//if (Main.trySendValueAsPermutation) {
 		this.agentZero.afterDecideTakeActionUnsynchNonMonotonicByValue(this.didDecide, i);
 		this.whoCanDecide = new TreeSet<AgentField>();
 		this.didDecide = new TreeSet<AgentField>();

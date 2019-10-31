@@ -17,24 +17,24 @@ public class Main {
 
 	// ------- VARIABLES TO CHECK BEFORE STARTING A RUN
 	// -- variables of dcop problem
-	static int A = 5; // number of agents
+	static int A = 10; // number of agents
 	static int D = 10; // size of domain for each agent
 	static int costMax = 100; // the max value of cost
 	// -- Experiment time
 	static int meanRepsStart = 0;
-	static int meanRepsEnd = 50; // number of reps for every solve process not include
-	static int iterations = 2000;//10000, 2000;
+	static int meanRepsEnd = 2; // number of reps for every solve process not include
+	static int iterations = 100;//10000, 2000;
 	// versions
 	static String algo = "dsaUnsynch7"; // "mgm"; "dsa7"; "dsaUnsynch7";//"unsynchMono";//"mgmUb";//"unsynch0";
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
 	static int[] memoryVersions = {1}; // 1=exp, 2= constant, 3= reasonable
-	static double[] constantsPower = {1,1.5,2,2.5,3};//{1,2,3,4,5};
+	static double[] constantsPower = {2};//{0.8,1,2,3,4};//{1,2,3,4,5};
 	
 
 	// 1 = minDistance,maxTrueCounter;2=minDistance,maxRatio;3=minDistance,maxMsize; 4=minDistance,minMsize
 	// 5 = maxTrueCounter,minDistance;6=maxRatio,minDistance;7=maxMsize,minDistance; 8=minMsize,minDistance
-	static int[] comparatorsForMemory = {8}; 
+	static int[] comparatorsForMemory = {2}; 
 	// -- synch
 	static boolean synch = false;
 	static boolean anytimeDfs = true;
@@ -53,7 +53,7 @@ public class Main {
 	// -- communication protocol
 	static double[] p3s = {1};
 	static boolean[] dateKnowns = { true };
-	static int[] delayUBs = {5};//{ 5,10,20,40};
+	static int[] delayUBs = {5};//10};//{ 5, 10, 20, 40 };
 	static double[] p4s = { 0 };
 
 	// ------- GENERAL VARIABLES NO NEED TO CHANGE
@@ -307,6 +307,7 @@ public class Main {
 		// ---- protocol ----
 		String protocol = "p3=" + currentP3 + ", ub=" + currentUb + ", mean run=" + meanRun;
 		// ---- find solution ----
+
 		Solution algo = selectedAlgo(dcop, meanRun);
 		printHeader(protocol);
 		// ---- restart ----
@@ -385,7 +386,7 @@ public class Main {
 
 		}
 		if (dsaUnsynch7) {
-			ans = new UnsynchDSA(dcop, agents, agentZero, meanRun, 0.7);
+			ans = new UnsynchDsa(dcop, agents, agentZero, meanRun, 0.7);
 		}
 
 		if (mgm) {
@@ -510,8 +511,6 @@ public class Main {
 			agents[i].restartPermutationsPast();
 			agents[i].restartAnytimeToSend();
 			agents[i].restartAnytimeValue();
-			agents[i].initMessageRecordMap();
-			agents[i].setPermutationMaker(true);
 		}
 
 	}
