@@ -12,6 +12,12 @@ public class MessageAnyTimeUp extends Message<Permutation> {
 	}
 	
 	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.toString()+",p:"+this.messageInformation;
+
+	}
 
 	/*
 	public Permutation getCurrentPermutation() {

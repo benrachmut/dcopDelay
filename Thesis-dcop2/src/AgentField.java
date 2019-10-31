@@ -49,7 +49,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private SortedMap<Integer, SortedSet<MessageValue>> messageRecordAllMap;
 	private SortedMap<Integer, SortedSet<MessageValue>> messageRecordSequenceMap;
 	private SortedMap<Integer, Boolean> permutationMakerMap;
-	private SortedSet<MessageValue> messagesForLaterUse;
+	private List<MessageValue> messagesForLaterUse;
 	private boolean permutationMaker;
 
 	public AgentField(int domainSize, int id) {
@@ -91,7 +91,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	public void initMessageRecordMap() {
 		// setPermutationMaker(true);
-		messagesForLaterUse = new TreeSet<MessageValue>();
+		messagesForLaterUse = new ArrayList<MessageValue>();
 		messageRecordSequenceMap = new TreeMap<Integer, SortedSet<MessageValue>>();
 		messageRecordAllMap = new TreeMap<Integer, SortedSet<MessageValue>>();
 		permutationMakerMap = new TreeMap<Integer, Boolean>();
@@ -943,11 +943,13 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	public void addToPermutationToSendUnsynchNonMonoByValue(Permutation input) {
 
 		if (this.isAnytimeTop()) {
+			System.out.println(
+					"ALL PERMUTATION- cost: " + input.getCost() + " permutation past size: " + this.permutationsPast.size());
 			if (this.bestPermuation == null || this.bestPermuation.getCost() > input.getCost()) {
 				recieveBetterPermutation(input);
 				iHaveAnytimeNews = true;
-				System.out.println(
-						"cost: " + input.getCost() + " permutation past size: " + this.permutationsPast.size());
+				//System.out.println(
+					//	"BEST PERMUTATION- cost: " + input.getCost() + " permutation past size: " + this.permutationsPast.size());
 			}
 			Unsynch.topCost = input.getCost();
 
@@ -1275,6 +1277,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	public void addMessageForLaterUse(MessageValue m) {
 		this.messagesForLaterUse.add(m);
+		Collections.sort(messagesForLaterUse, new ComparatorMsgDate());
 
 	}
 
@@ -1282,15 +1285,22 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 		Collection<Permutation> ans = new ArrayList<Permutation>();
 		Iterator<MessageValue> it = messagesForLaterUse.iterator();
-
+		
+		//System.out.println("messagesForLaterUse size"+messagesForLaterUse.size());
+		int i = 0;
 		while (it.hasNext()) {
+			i++;
+			//System.out.println("messagesForLaterUse size "+messagesForLaterUse.size()+"iteration "+i);
+			//System.out.println("before");
 			MessageValue currentMsg = it.next();
 			Permutation p = pCreatedFromMsgsEarlierCurrentMsg(currentMsg);
 			if (p != null) {
 				ans.add(p);
 			}
-			this.messageRecordSequenceMap.get(currentMsg.getSender().getId()).add(currentMsg);
+			//System.out.println("after");
 
+			this.messageRecordSequenceMap.get(currentMsg.getSender().getId()).add(currentMsg);
+			
 			Collection<MessageValue> largerTimeStampThenCurrent = getLargerTimeStampThenCurrentFromSequence(currentMsg);
 			for (MessageValue largerMsg : largerTimeStampThenCurrent) {
 				Permutation p2 = pCreatedFromMsgsEarlierCurrentMsg(largerMsg);
@@ -1299,6 +1309,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 				}
 				this.messageRecordSequenceMap.get(largerMsg.getSender().getId()).add(largerMsg);
 			}
+			
 
 		}
 		this.messagesForLaterUse.remove(m);
@@ -1313,7 +1324,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 				Iterator<MessageValue> it = e.getValue().iterator();
 				while (it.hasNext()) {
 					MessageValue otherMsg = it.next();
-					if (otherMsg.getDate() >= currentMsg.getDate()) {
+					if (otherMsg.getDate() > currentMsg.getDate()) {
 						ans.add(otherMsg);
 						it.remove();
 					} // add to ans if larger time stamp then current

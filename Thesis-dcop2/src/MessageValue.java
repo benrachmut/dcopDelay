@@ -1,5 +1,5 @@
 
-public class MessageValue extends Message <Integer>  {
+public class MessageValue extends Message <Integer> implements Comparable<Message>  {
 	
 	private int senderValue;
 	private int decisonCounter;
@@ -18,7 +18,7 @@ public class MessageValue extends Message <Integer>  {
 
 	@Override
 	public String toString() {
-		return super.toString()+", value:"+this.senderValue+", dc:"+this.decisonCounter;
+		return super.toString()+", value:"+this.senderValue+", dc:"+this.decisonCounter+"|";
 	}
 	
 	public MessageValue(MessageValue m) {

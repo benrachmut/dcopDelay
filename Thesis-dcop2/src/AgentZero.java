@@ -323,10 +323,8 @@ public class AgentZero {
 			int senderValue = msgValue.getMessageInformation();
 			reciever.reciveMsg(senderId, senderValue, msg.getDate());
 			createPermutationOrJustSaveMessageForLaterUse(reciever, msgValue);
-			// reciever.updateMessageRecordAllMap(msgValue);
-			// i changed stuff here
-			// Permutation p = reciever.createCurrentPermutationByValue();
-			// updateRecieverUponPermutationOneByOne(p, reciever);
+		
+
 		} // normal message
 
 		if (msg instanceof MessageAnyTimeUp) {
@@ -485,20 +483,9 @@ public class AgentZero {
 	}
 
 	public void sendUnsynchNonMonotonicByValueMsgs(List<Message> msgToSend) {
-		// Set<Integer> integerRecieved = new HashSet<Integer>();
-		//if (hasDateLagerThen(0, msgToSend)) {
-			//System.out.println(3);
-		//}
 		Collections.sort(msgToSend, new ComparatorMsgDate());
-		//Collections.reverse(msgToSend);
-		int counter=0;
 		for (Message msg : msgToSend) {
-			/*
-			if (counter==7) {
-				System.out.println(3);
-			}
-			*/
-			counter++;
+			//System.out.println(msg);
 			sendUnsynchNonMonotonicByValueMsg(msg);
 		}
 	}
@@ -569,7 +556,9 @@ public class AgentZero {
 		a.addMessageForLaterUse(m);
 		boolean permutationMaker = a.updateMessageRecordAllMap(m);
 		if (permutationMaker) {
+			
 			Collection<Permutation> permutations = a.messageCreateNoGap(m);
+			
 
 			for (Permutation p : permutations) {
 				addPermutatioToAnytimeMechanism(a, p);
