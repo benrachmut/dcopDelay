@@ -8,13 +8,16 @@ import java.util.TreeSet;
 
 public abstract class Unsynch extends Solution {
 	protected SortedSet<AgentField> whoCanDecide;
+	protected SortedSet<AgentField> didDecide;
+
 	public static int iter;
 	public static int topCost;
 
 	protected SortedSet<Permutation> permutations;
 	protected SortedSet<AgentField> fathers;
 	public static int currentPriceOfTop;
-
+	public static int counterPermutationAtTop;
+	//public static boolean bool = false;
 
 
 	public Unsynch(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun) {
@@ -22,6 +25,8 @@ public abstract class Unsynch extends Solution {
 		this.whoCanDecide = new TreeSet<AgentField>();
 		this.permutations = new TreeSet<Permutation>();
 		this.fathers = new TreeSet<AgentField>();
+		this.didDecide = new TreeSet<AgentField>();
+
 		topCost = Integer.MAX_VALUE;
  
 	}
@@ -33,20 +38,22 @@ public abstract class Unsynch extends Solution {
 		for (int i = 0; i < this.iteration; i++) {
 			iter = i;
 			
-			if (i % 500 == 0 ) {
+			if (i % 50 == 0 ) {
 				System.out.println("---start iteration: " + i + "---");
 			}
-			
-			
-		
-			updateWhoCanDecide(i); // abstract
-		
+			updateWhoCanDecide(i); // abstract		
 			agentDecide(i); // abstract
 			afterDecideTakeAction(i); // abstract
 			List <Message> msgToSend = agentZero.handleDelay();	
+			
+			//System.out.println(msgToSend.size());
+			
 			agentsSendMsgs(msgToSend); // abstract
-			createAnytimeUp(i); // abstract
-			createAnytimeDown(i);
+			if (Main.anytime) {
+				createAnytimeUp(i); // abstract
+				createAnytimeDown(i);
+			}
+			
 			addCostToTables(i );
 			addTopCountersChanges(i);
 			

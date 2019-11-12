@@ -7,18 +7,16 @@ import java.util.TreeSet;
 
 public class UnsynchDsa extends Unsynch {
 	private double stochastic;
-	private SortedSet<AgentField> didDecide;
 
 	protected List<Double> ratioCounterTopCounterChanges;
 	protected List<Integer> counterTopChanges;
 	public  List<Integer> costOfAllTops;
-	public static int counterPermutationAtTop;
+	//public static int counterPermutationAtTop;
 
 	public UnsynchDsa(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double stochastic) {
 		super(dcop, agents, aZ, meanRun);
 
 		this.stochastic = stochastic;
-		this.didDecide = new TreeSet<AgentField>();
 		Main.rDsa.setSeed(meanRun);
 		this.algo = "DSA" + stochastic + "asynch";
 		counterPermutationAtTop = 0;
@@ -113,6 +111,7 @@ public class UnsynchDsa extends Unsynch {
 	@Override
 	protected void addTopCountersChanges(int i) {
 		this.costOfAllTops.add(topCost); 
+		/*
 		if (i>1) {
 			int before =this.costOfAllTops.get(i-1);
 			int current = this.costOfAllTops.get(i);
@@ -120,6 +119,8 @@ public class UnsynchDsa extends Unsynch {
 				counterPermutationAtTop = counterPermutationAtTop+1;
 			}
 		}
+		*/
+		
 		this.counterTopChanges.add(counterPermutationAtTop);
 		int currentCentralistic = Solution.counterCentralisticChanges;
 		if (currentCentralistic == 0) {

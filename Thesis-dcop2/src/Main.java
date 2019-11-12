@@ -17,43 +17,46 @@ public class Main {
 
 	// ------- VARIABLES TO CHECK BEFORE STARTING A RUN
 	// -- variables of dcop problem
-	static int A = 10; // number of agents
+	static int A = 35; // number of agents
 	static int D = 10; // size of domain for each agent
 	static int costMax = 100; // the max value of cost
 	// -- Experiment time
 	static int meanRepsStart = 0;
-	static int meanRepsEnd = 2; // number of reps for every solve process not include
-	static int iterations = 100;//10000, 2000;
+	static int meanRepsEnd = 100; // number of reps for every solve process not include
+	static int iterations = 10000;//5000;//10000, 2000;
 	// versions
 	static String algo = "dsaUnsynch7"; // "mgm"; "dsa7"; "dsaUnsynch7";//"unsynchMono";//"mgmUb";//"unsynch0";
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
-	static int[] memoryVersions = {1}; // 1=exp, 2= constant, 3= reasonable
-	static double[] constantsPower = {2};//{0.8,1,2,3,4};//{1,2,3,4,5};
+	static int[] memoryVersions = {2}; // 1=exp, 2= constant, 3= reasonable
+	static double[] constantsPower = {2};//{2,2.3,2.5,2.7,3,3.3,3.5};//{2.75};//{}{0.8,1,2,3,4};//{2,4,6,8};//{0.8,1,2,3,4};//{1,2,3,4,5};
 	
 
 	// 1 = minDistance,maxTrueCounter;2=minDistance,maxRatio;3=minDistance,maxMsize; 4=minDistance,minMsize
 	// 5 = maxTrueCounter,minDistance;6=maxRatio,minDistance;7=maxMsize,minDistance; 8=minMsize,minDistance
-	static int[] comparatorsForMemory = {2}; 
+	static int[] comparatorsForMemory = {8}; 
 	// -- synch
 	static boolean synch = false;
+	static boolean anytime = true;
 	static boolean anytimeDfs = true;
 	static boolean anytimeBfs = false;
+	static boolean anytimeVector = false;
+
 	static String fileName; 
 	
 	// -- uniformly random dcop
-	static double[] p1sUniform = { 0.7 }; // 0.1,0.7
+	static double[] p1sUniform = { 0.1 }; // 0.1,0.7
 	static double[] p2sUniform = { 1};
 	// -- color dcop
 	static double[] p1sColor = { 0.1 }; // 0.1,0.7
 	// -- scale free AB
-	static int[] hubs = { 5 }; // 5, 10
+	static int[] hubs = { 10 }; // 5, 10
 	static int[] numOfNToNotHubs = { 3 };
 	static double[] p2sScaleFree = { 1 };
 	// -- communication protocol
-	static double[] p3s = {1};
-	static boolean[] dateKnowns = { true };
-	static int[] delayUBs = {5};//10};//{ 5, 10, 20, 40 };
+	static double[] p3s = {0,1};//{0,1};
+	static boolean[] dateKnowns = {true};
+	static int[] delayUBs = { 2,5,10,20,40,70};//{20};//{ 2,5,10,20,40,70,100 };//{ 2,3,5,10 };//{ 2,5,10,20,40,70,100 };//{10,20};//{70,100 };//{ 2,5,10,20,40,70,100 };//{2,5,10};//{1,2,3,5,10,20,40};//{ 5, 10, 20, 40 };
 	static double[] p4s = { 0 };
 
 	// ------- GENERAL VARIABLES NO NEED TO CHANGE
@@ -134,6 +137,10 @@ public class Main {
 				meanRunRange =meanRunRange+",comparator_"+comparatorsForMemory[0]+",constant_"+constantsPower[0];
 			}
 		}
+		
+		
+		meanRunRange =meanRunRange+",anytime_"+anytime;
+		
 		
 		String addOn = addOnPerProb();
 		return algo + ",A_" + A + "," + addOn + "," + meanRunRange;
@@ -451,6 +458,7 @@ public class Main {
 		if (algo.equals("unsynchMono") || algo.equals("dsa7") || algo.equals("mgm")) {
 			anytimeDfs = false;
 			anytimeBfs = false;
+			anytimeVector = false;
 		}
 		if (algo.equals("unsynchMono") || anytimeDfs) {
 			Tree psaduoTree = new Tree(agents);
@@ -467,6 +475,24 @@ public class Main {
 		else if (anytimeBfs) {
 			Tree bfs = new Tree(agents);
 			bfs.bfs();
+		}
+		else if (anytimeVector) {
+			for (int i = 0; i < agents.length; i++) {
+				List<AgentField>sons  = new ArrayList<AgentField>();
+				if (i==0) {
+					sons.add(agents[i+1]);
+					agents[i].setAnytimeSons(sons);
+				}
+				else if (i==agents.length-1) {
+					agents[i].setAnytimeFather(agents[i-1]);
+				}
+				else {
+					sons.add(agents[i+1]);
+					agents[i].setAnytimeSons(sons);
+					agents[i].setAnytimeFather(agents[i-1]);
+
+				}
+			}
 		}
 		/*
 		 * else if (anytimeDfs) { Tree psaduoTree = new Tree(agents); psaduoTree.dfs();
@@ -511,6 +537,7 @@ public class Main {
 			agents[i].restartPermutationsPast();
 			agents[i].restartAnytimeToSend();
 			agents[i].restartAnytimeValue();
+			agents[i].resetFlagForMgm();
 		}
 
 	}

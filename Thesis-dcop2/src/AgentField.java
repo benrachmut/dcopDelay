@@ -43,6 +43,10 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private int currentAnyTimeDate;
 	private boolean unsynchFlag;
 	private List<Permutation> anytimeUpRecieved;
+	
+	private boolean valueRecieveFlag;
+	private boolean rRcieveFlag;
+	private boolean waitingForValueStatuesFlag;
 
 	public AgentField(int domainSize, int id) {
 		super(id);
@@ -72,9 +76,28 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		this.counterAndValue.put(decisonCounter, value);
 		this.iHaveAnytimeNews = false;
 		this.unsynchFlag = false;
+		
+		
+		resetFlagForMgm();
 		restartAnytimeUpRecieved();
 	}
 
+	public boolean isValueRecieveFlag() {
+		return valueRecieveFlag;
+	}
+	
+	public boolean isRRecieveFlag() {
+		return rRcieveFlag;
+	}
+	
+	public boolean isWaitingForValueStatuesFlag() {
+		return waitingForValueStatuesFlag;
+	}
+	public void resetFlagForMgm() {
+		this.valueRecieveFlag=false;
+		this.rRcieveFlag=false;
+		this.waitingForValueStatuesFlag=true;
+	}
 	private void setValues() {
 		if (Main.synch) {
 			this.firstValue = createRandFirstValue();
@@ -346,22 +369,25 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	}
 
-	public void mgmDecide() {
+	public boolean mgmDecide() {
 		Entry<Integer, MessageRecieve> maxRInMap = getMaxRFromNeighbors();
 
 		if (maxRInMap == null) {
 			this.value = this.domain[0];
-			return;
+			return false;
 		}
 		int maxRVal = maxRInMap.getValue().getValue();
 		if (this.r > maxRVal) {
 			this.value = this.minPC.getValue();
+			return true;
 		}
 		int maxRId = maxRInMap.getKey();
 		if (this.r == maxRVal && this.id < maxRId) {
 			this.value = this.minPC.getValue();
-		}
+			return true;
 
+		}
+		return false;
 	}
 
 	private Entry<Integer, MessageRecieve> getMaxRFromNeighbors() {
@@ -907,14 +933,21 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	public void addToPermutationToSendUnsynchNonMonoByValue(Permutation input) {
 
 		if (this.isAnytimeTop()) {
+			
+			System.out.println(
+					"ALL PERMUTATIONS, iteration: "+Unsynch.iter+", cost: " + input.getCost() + " permutation past size: " + this.permutationsPast.size());
+			
+			
+			Unsynch.topCost = input.getCost();
+			Unsynch.counterPermutationAtTop=Unsynch.counterPermutationAtTop+1 ;
+			//Unsynch.bool = true;
 			if (this.bestPermuation == null || this.bestPermuation.getCost() > input.getCost()) {
 				recieveBetterPermutation(input);
 				iHaveAnytimeNews = true;
-				System.out.println(
-						"cost: " + input.getCost() + " permutation past size: " + this.permutationsPast.size());
+				//System.out.println(
+				//		"BEST PERMUTATIONS =cost: " + input.getCost() + " permutation past size: " + this.permutationsPast.size());
 			}
-			Unsynch.topCost = input.getCost();
-
+			
 
 		} else {
 			addToSet(input, permutationsToSend);
@@ -941,7 +974,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			if (input.getCost() == realCost) {
 				// System.out.println(input);
 			} else {
-				System.err.println("cost should be: " + realCost + " |" + input);
+				//System.err.println("cost should be: " + realCost + " |" + input);
 
 			}
 		}
@@ -1191,6 +1224,30 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	public boolean isNeighbor(int inputId) {
 		// TODO Auto-generated method stub
 		return this.neighbor.containsKey(inputId);
+	}
+
+	public void setValueRecieveFlag(boolean b) {
+		this.valueRecieveFlag = b;
+		
+	}
+
+	public void setRRecieveFlag(boolean b) {
+		this.rRcieveFlag = b;
+		
+	}
+
+	public boolean MgmUnsynchDecide() {
+		if (this.waitingForValueStatuesFlag) {
+			setR();
+
+			return true;
+			
+		}else {
+			return this.mgmDecide();
+			//this.waitingForValueStatuesFlag = true;
+			
+		}
+		
 	}
 
 }

@@ -11,16 +11,25 @@ public class MGM extends Solution {
 	public void solve() {
 		boolean first = true;
 		for (int i = 0; i < this.iteration; i++) {
-			System.out.println(i);
+			if (i%50 == 0) {
+				System.out.println(i);
+			}
 			if (!first) {
 				agentsSetR();
+				System.out.println("agentsSetR();");
+
 				sendAndRecieveRi(i);
+				System.out.println("sendAndRecieveRi(i);");
+
 				agentDecide(i);
+				System.out.println("agentDecide(i)");
+
 				first = true;
 			} else {
 				sendAndRecieve(i);
-				first = false;
+				System.out.println("sendAndRecieve(i)");
 
+				first = false;
 			}
 			addCostToList(i);
 		}
@@ -45,7 +54,6 @@ public class MGM extends Solution {
 		for (AgentField a : agents) {
 			a.mgmDecide();
 		}
-
 	}
 
 }

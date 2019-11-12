@@ -180,10 +180,7 @@ public class Permutation implements Comparable<Permutation>{
 	public static Permutation combinePermutations(Permutation p1, Permutation p2, AgentField creator) {
 
 		int cost = combineCost(p1, p2);
-		if (creator.getId() == 9 && cost == 1986) { 
-			int x =3; 
-			System.out.println(x);
-			}		
+			
 		Map<Integer, Integer> m = combineMaps(p1, p2);
 		Map<Integer, Boolean> toAddIncluded = combineIncluded(p1, p2);
 		List<Permutation> combineWith = createCombineWith(p1, p2);

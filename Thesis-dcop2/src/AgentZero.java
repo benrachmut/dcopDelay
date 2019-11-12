@@ -102,12 +102,24 @@ public class AgentZero {
 		List<Message> msgToSend = new ArrayList<Message>();
 
 		Iterator it = this.messageBox.iterator();
-
+		//System.out.println(messageBox.size());
+		int counterAnytime = 0;
+		int counterValue = 0;
+				
+		
+		
+		
 		while (it.hasNext()) {
 			Message msg = (Message) it.next();
-			/*
-			 * if (Unsynch.iter ==1) { System.out.println(msg); }
-			 */
+			
+			if (msg instanceof MessageValue) {
+				counterValue++;
+			}else {
+				counterAnytime++;
+			}
+			
+		
+			
 			if (msg.getDelay() == 0) {
 				msgToSend.add(msg);
 				it.remove();
@@ -116,7 +128,11 @@ public class AgentZero {
 			}
 
 		}
-
+		//System.out.println("value: "+counterValue);
+		//System.out.println("anytime: "+counterAnytime);
+		//if (counterAnytime>100 ) {
+		//	System.out.println();
+		//}
 		return msgToSend;
 	}
 
@@ -329,7 +345,7 @@ public class AgentZero {
 			updateRecieverUponPermutationOneByOne(p, reciever);
 			
 		} // normal message
-
+		
 		if (msg instanceof MessageAnyTimeUp) {
 			reciever.recieveAnytimeUpBfs(msg);
 		}
@@ -398,14 +414,6 @@ public class AgentZero {
 		List<AgentField> neighborsAgents = getNeighborsAgents(currentAgent);
 		for (AgentField n : neighborsAgents) {
 			MessageValue m = createUnsynchOneMsg(currentAgent, n, currentIteration, anytimeFlag);
-			/*
-			 * if (Main.trySendSelfCounter) { int selfCounter =
-			 * currentAgent.getDecisonCounter(); m =
-			 * createUnsynchOneMsgTrySendSelfCounter(currentAgent, n, currentIteration,
-			 * selfCounter); } else { m = createUnsynchOneMsg(currentAgent, n,
-			 * currentIteration); }
-			 */
-
 			this.messageBox.add(m);
 		}
 	}
@@ -416,15 +424,7 @@ public class AgentZero {
 		int delay = this.createDelay(anytimeFlag);
 		return new MessageValue(sender, reciever, senderValue, delay, currentIteration);
 	}
-	/*
-	 * private MessageNormal createUnsynchOneMsgTrySendSelfCounter(AgentField
-	 * sender, AgentField reciever, int currentIteration, int selfCounter) { int
-	 * senderValue = sender.getValue(); int delay = this.createDelay(); return new
-	 * MessageNormal(sender, reciever, senderValue, delay, currentIteration,
-	 * selfCounter);
-	 * 
-	 * }
-	 */
+
 
 	public void createAnyTimeUpUnsynchMono(int currentIteration) {
 		// List<AgentField> agentsSendAnytime = new ArrayList<AgentField>()
@@ -444,6 +444,7 @@ public class AgentZero {
 
 	public void createAnyTimeUpUnsynchNonMonotonic(int currentIteration) {
 		// List<AgentField> agentsSendAnytime = new ArrayList<AgentField>()
+		int anytimeUpCreated = 0;
 		for (AgentField a : agents) {
 			boolean isHead = a.getAnytimeFather() == null;
 			if (a.hasAnytimeUpToSend() && !isHead) {
@@ -453,10 +454,13 @@ public class AgentZero {
 					int delay = this.createDelay(true);
 					Message m = new MessageAnyTimeUp(a, a.getAnytimeFather(), p, delay, currentIteration);
 					this.messageBox.add(m);
+					anytimeUpCreated++;
+					
 				}
 				a.removeAllPermutationToSend();
 			} // if not had and have something to send
 		}
+		//System.out.println("anytimeUpCreated:"+anytimeUpCreated);
 	}
 
 	public void createAnyTimeDownUnsynchMono(int date) {
@@ -510,19 +514,47 @@ public class AgentZero {
 		//----
 		
 		for (AgentField a : agentsThatChanged) {
-			Permutation myPermutation = a.createCurrentPermutationByValue();
 			createUnsynchMsgs(a, date, false);
-			addPermutatioToAnytimeMechanism(a, myPermutation);
+			if (Main.anytime) {
+				Permutation myPermutation = a.createCurrentPermutationByValue();
+				addPermutatioToAnytimeMechanism(a, myPermutation);
+			}
 		}
 
+	}
+	
+	public void afterDecideTakeActionUnsynchNonMonotonicByValueMgm(SortedSet<AgentField> agentsThatChanged, int date) {
+		//----
+		
+		for (AgentField a : agentsThatChanged) {
+			createUnsynchMgmMsgs(a, date, false);
+			if (Main.anytime) {
+				Permutation myPermutation = a.createCurrentPermutationByValue();
+				addPermutatioToAnytimeMechanism(a, myPermutation);
+			}
+		}
+
+	}
+
+	private void createUnsynchMgmMsgs(AgentField currentAgent, int currentIteration, boolean anytimeFlag) {
+		List<AgentField> neighborsAgents = getNeighborsAgents(currentAgent);
+		for (AgentField n : neighborsAgents) {
+			Message m = null;
+			if (n.isWaitingForValueStatuesFlag()) {
+				 m = createUnsynchOneMsg(currentAgent, n, currentIteration, anytimeFlag);
+			}
+			this.messageBox.add(m);
+		}
+		
 	}
 
 	public void sendUnsynchNonMonotonicByValueMsgs(List<Message> msgToSend) {
 		Set<Integer> integerRecieved = new HashSet<Integer>();
 
-		Collections.sort(msgToSend, new ComparatorMsgDate());
+		Collections.sort(msgToSend, new ComparatorMsgSenderId());
 		Collections.reverse(msgToSend);
 		for (Message msg : msgToSend) {
+		//	System.out.println(msg);
 			sendUnsynchNonMonotonicByValueMsg(msg);
 			integerRecieved.add(msg.getReciever().getId());
 		}
@@ -532,7 +564,7 @@ public class AgentZero {
 		int minDate = 0;
 
 		if (!msgToSend.isEmpty()) {
-			MessageValue m = Collections.min(msgToSend, new ComparatorMsgDate());
+			MessageValue m = Collections.min(msgToSend, new ComparatorMsgSenderId());
 			minDate = m.getDate();
 		}
 
