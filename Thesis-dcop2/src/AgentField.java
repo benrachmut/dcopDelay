@@ -101,7 +101,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private void setValues() {
 		if (Main.synch) {
 			this.firstValue = createRandFirstValue();
-
 			this.anytimeFirstValue = firstValue;
 		} else {
 			this.firstValue = -1;
@@ -228,21 +227,14 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		int minCost = minPotentialCost.getCost();
 
 		boolean shouldChange = false;
-		if (minCost < currentPersonalCost) {
+		if (minCost <= currentPersonalCost) {
 			shouldChange = true;
 		}
 		if (this.value == -1) {
 			shouldChange = true;
 		}
-		
-		
-		
+
 		boolean didChange = maybeChange(shouldChange, minPotentialCost, stochastic);
-		/*
-		 if (Unsynch.iter == 138 && this.id==13) {
-		 System.out.println("currentPersonalCost:"+currentPersonalCost+", minCost:"+
-		 minCost+", shouldChange:"+ shouldChange+", didChange:"+ didChange); }
-		 */
 		return didChange;
 	}
 
@@ -325,7 +317,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		return ans;
 	}
 
-	public void setR() {
+	public boolean setR() {
 		List<PotentialCost> pCosts = findPotentialCost();
 		PotentialCost minPotentialCost = Collections.min(pCosts);
 
@@ -334,12 +326,32 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 		this.minPC = minPotentialCost;
 		if (currentCost <= minCost) {
-			this.r = 0;
+			int oldR = this.r;
+			int newR = 0;
+			this.r = newR;
+			if (Unsynch.iter==1) {
+				return true;
+			}
+			
+			if (newR!=oldR) {
+				return true;
+			}else {
+				return false;
+			}
 		}
 
 		if (currentCost > minCost) {
-			this.r = currentCost - minCost;
+			int oldR = this.r;
+			int newR = currentCost - minCost;
+			this.r = newR;
+			if (newR!=oldR) {
+				return true;
+			}else {
+				return false;
+			}
+			
 		}
+		return false;
 
 	}
 
@@ -1237,16 +1249,52 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	}
 
 	public boolean MgmUnsynchDecide() {
+		boolean ans;
 		if (this.waitingForValueStatuesFlag) {
-			setR();
-
-			return true;
-			
+			//if (id==26) {
+				//System.out.println();
+			//} 
+			ans =  setR();
+			if (ans) {
+				this.rRcieveFlag =true;
+			}
+			return ans;			
 		}else {
-			return this.mgmDecide();
+		
+			 ans = this.mgmDecide();
+			if (ans) {
+				this.valueRecieveFlag = true;
+			}
+			
 			//this.waitingForValueStatuesFlag = true;
 			
 		}
+		return ans;
+		
+	}
+
+	public void changeWaitForValueStatues() {
+		if (waitingForValueStatuesFlag) {
+			waitingForValueStatuesFlag = false;
+		}else {
+			waitingForValueStatuesFlag = true;
+		}
+		
+	}
+
+	public void printN() {
+		for (Entry<Integer, MessageRecieve> e : neighbor.entrySet()) {
+			System.out.print("["+e.getKey()+","+e.getValue().getValue()+"]");
+		}
+		System.out.println();
+		
+	}
+
+	public void printNR() {
+		for (Entry<Integer, MessageRecieve> e : neighborR.entrySet()) {
+			System.out.print("["+e.getKey()+","+e.getValue().getValue()+"]");
+		}
+		System.out.println();
 		
 	}
 

@@ -334,6 +334,41 @@ public class AgentZero {
 		return ans;
 	}
 
+	private void sendUnsynchNonMonotonicByValueMsgMgm(Message msg) {
+		//---	
+		int senderId = msg.getSender().getId();
+		AgentField reciever = msg.getReciever();
+		if (msg instanceof MessageValue) {
+			int senderValue = ((MessageValue) msg).getMessageInformation();
+			//if (reciever.getId()==18 && Unsynch.iter==2) {
+			//	System.out.println(5);
+			//}
+			
+			reciever.reciveMsg(senderId, senderValue, msg.getDate());
+			reciever.setValueRecieveFlag(true);
+			
+			Permutation p = reciever.createCurrentPermutationByValue();
+			updateRecieverUponPermutationOneByOne(p, reciever);
+			
+		} // normal message
+		
+		if (msg instanceof MessageR) {
+			int senderR = ((MessageR) msg).getMessageInformation();
+			reciever.reciveRMsg(senderId, senderR, msg.getDate());
+			reciever.setRRecieveFlag(true);
+
+		} // normal message
+		
+		if (msg instanceof MessageAnyTimeUp) {
+			reciever.recieveAnytimeUpBfs(msg);
+		}
+		if (msg instanceof MessageAnyTimeDown) {
+			reciever.recieveAnytimeDownNonMonotonicByValue(msg);
+		}
+
+	}
+	
+	
 	private void sendUnsynchNonMonotonicByValueMsg(Message msg) {
 		//---	
 		int senderId = msg.getSender().getId();
@@ -341,6 +376,7 @@ public class AgentZero {
 		if (msg instanceof MessageValue) {
 			int senderValue = ((MessageValue) msg).getMessageInformation();
 			reciever.reciveMsg(senderId, senderValue, msg.getDate());
+			reciever.setUnsynchFlag(true);
 			Permutation p = reciever.createCurrentPermutationByValue();
 			updateRecieverUponPermutationOneByOne(p, reciever);
 			
@@ -413,12 +449,12 @@ public class AgentZero {
 
 		List<AgentField> neighborsAgents = getNeighborsAgents(currentAgent);
 		for (AgentField n : neighborsAgents) {
-			MessageValue m = createUnsynchOneMsg(currentAgent, n, currentIteration, anytimeFlag);
+			Message m = createUnsynchOneMsg(currentAgent, n, currentIteration, anytimeFlag);
 			this.messageBox.add(m);
 		}
 	}
 
-	private MessageValue createUnsynchOneMsg(AgentField sender, AgentField reciever, int currentIteration,
+	private Message createUnsynchOneMsg(AgentField sender, AgentField reciever, int currentIteration,
 			boolean anytimeFlag) {
 		int senderValue = sender.getValue();
 		int delay = this.createDelay(anytimeFlag);
@@ -540,7 +576,14 @@ public class AgentZero {
 		List<AgentField> neighborsAgents = getNeighborsAgents(currentAgent);
 		for (AgentField n : neighborsAgents) {
 			Message m = null;
-			if (n.isWaitingForValueStatuesFlag()) {
+			
+			if (currentIteration==0) {
+				 m = createUnsynchOneMsg(currentAgent, n, currentIteration, anytimeFlag);
+			}
+			else if (n.isWaitingForValueStatuesFlag()) {
+				m = createUnsynchROneMsg(currentAgent, n, currentIteration, anytimeFlag);
+
+			}else {
 				 m = createUnsynchOneMsg(currentAgent, n, currentIteration, anytimeFlag);
 			}
 			this.messageBox.add(m);
@@ -548,15 +591,32 @@ public class AgentZero {
 		
 	}
 
+	private Message createUnsynchROneMsg(AgentField sender, AgentField reciever, int currentIteration,
+			boolean anytimeFlag) {
+		int senderR = sender.getR();
+		int delay = this.createDelay(anytimeFlag);
+		return new MessageR(sender, reciever, senderR, delay, currentIteration);
+	}
+
 	public void sendUnsynchNonMonotonicByValueMsgs(List<Message> msgToSend) {
 		Set<Integer> integerRecieved = new HashSet<Integer>();
-
 		Collections.sort(msgToSend, new ComparatorMsgSenderId());
 		Collections.reverse(msgToSend);
 		for (Message msg : msgToSend) {
 		//	System.out.println(msg);
 			sendUnsynchNonMonotonicByValueMsg(msg);
 			integerRecieved.add(msg.getReciever().getId());
+		}
+	}
+	public void sendUnsynchNonMonotonicByValueMsgsMgm(List<Message> msgToSend) {
+		Collections.sort(msgToSend, new ComparatorMsgSenderId());
+		Collections.reverse(msgToSend);
+		for (Message msg : msgToSend) {
+			
+			if (Unsynch.iter == 4 && msg.reciever.getId()== 28 && msg.sender.getId()==14) {
+				System.out.println();
+			}
+			sendUnsynchNonMonotonicByValueMsgMgm(msg);
 		}
 	}
 

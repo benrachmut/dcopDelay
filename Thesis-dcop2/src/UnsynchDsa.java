@@ -103,24 +103,12 @@ public class UnsynchDsa extends Unsynch {
 		}
 	}
 
-	@Override
-	public void createAnytimeUp(int i) {
-		agentZero.createAnyTimeUpUnsynchNonMonotonic(i);
-	}
+	
 
 	@Override
 	protected void addTopCountersChanges(int i) {
 		this.costOfAllTops.add(topCost); 
-		/*
-		if (i>1) {
-			int before =this.costOfAllTops.get(i-1);
-			int current = this.costOfAllTops.get(i);
-			if ( before!= current) {
-				counterPermutationAtTop = counterPermutationAtTop+1;
-			}
-		}
-		*/
-		
+
 		this.counterTopChanges.add(counterPermutationAtTop);
 		int currentCentralistic = Solution.counterCentralisticChanges;
 		if (currentCentralistic == 0) {

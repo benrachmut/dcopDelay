@@ -38,22 +38,19 @@ public abstract class Unsynch extends Solution {
 		for (int i = 0; i < this.iteration; i++) {
 			iter = i;
 			
-			if (i % 50 == 0 ) {
+			if (i % 500 == 0 ) {
 				System.out.println("---start iteration: " + i + "---");
 			}
-			updateWhoCanDecide(i); // abstract		
-			agentDecide(i); // abstract
+
+			updateWhoCanDecide(i); // abstract			 
+			agentDecide(i); // abstract		
 			afterDecideTakeAction(i); // abstract
-			List <Message> msgToSend = agentZero.handleDelay();	
-			
-			//System.out.println(msgToSend.size());
-			
+			List <Message> msgToSend = agentZero.handleDelay();			
 			agentsSendMsgs(msgToSend); // abstract
 			if (Main.anytime) {
 				createAnytimeUp(i); // abstract
 				createAnytimeDown(i);
-			}
-			
+			}		
 			addCostToTables(i );
 			addTopCountersChanges(i);
 			
@@ -193,7 +190,10 @@ public abstract class Unsynch extends Solution {
 
 	public abstract void agentsSendMsgs(List<Message> msgToSend);
 
-	public abstract void createAnytimeUp(int i);
+	
+	public void createAnytimeUp(int i) {
+		agentZero.createAnyTimeUpUnsynchNonMonotonic(i);
+	}
 
 	public void createAnytimeDown(int date) {
 		agentZero.createAnyTimeDownUnsynchMono(date);
@@ -228,8 +228,6 @@ public abstract class Unsynch extends Solution {
 		} else {
 			super.addCostToList(i);
 		}
-		
-		
 		if (i == 0) {
 			counterCentralisticChanges = 0;
 		}else {
@@ -259,5 +257,7 @@ public abstract class Unsynch extends Solution {
 	protected abstract int getCounterTop(int i);
 
 	protected abstract int getTopCostNotBest(int i);
+	
+	
 
 }

@@ -17,23 +17,23 @@ public class Main {
 
 	// ------- VARIABLES TO CHECK BEFORE STARTING A RUN
 	// -- variables of dcop problem
-	static int A = 35; // number of agents
+	static int A = 20;//50;//35; // number of agents
 	static int D = 10; // size of domain for each agent
 	static int costMax = 100; // the max value of cost
 	// -- Experiment time
 	static int meanRepsStart = 0;
-	static int meanRepsEnd = 100; // number of reps for every solve process not include
-	static int iterations = 10000;//5000;//10000, 2000;
+	static int meanRepsEnd = 100;//100; // number of reps for every solve process not include
+	static int iterations = 1000;//7000;//10000;//10000;//5000;//10000, 2000;
 	// versions
-	static String algo = "dsaUnsynch7"; // "mgm"; "dsa7"; "dsaUnsynch7";//"unsynchMono";//"mgmUb";//"unsynch0";
+	static String algo = "dsaUnsynch7"; // "mgmUnsynch"; "dsa7"; "dsaUnsynch7";//"unsynchMono";//"mgmUb";//"unsynch0";
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
-	static int[] memoryVersions = {2}; // 1=exp, 2= constant, 3= reasonable
-	static double[] constantsPower = {2};//{2,2.3,2.5,2.7,3,3.3,3.5};//{2.75};//{}{0.8,1,2,3,4};//{2,4,6,8};//{0.8,1,2,3,4};//{1,2,3,4,5};
+	static int[] memoryVersions = {1}; // 1=exp, 2= constant, 3= reasonable
+	static double[] constantsPower = {1.8,2,2.2,2.8,3,3.2,3.5};//{2};//{2,2.2,2.5,2.8,3,3.2,3.5};//{2};//{2,2.3,2.5,2.7,3,3.3,3.5};//{2.75};//{}{0.8,1,2,3,4};//{2,4,6,8};//{0.8,1,2,3,4};//{1,2,3,4,5};
 	
-
 	// 1 = minDistance,maxTrueCounter;2=minDistance,maxRatio;3=minDistance,maxMsize; 4=minDistance,minMsize
 	// 5 = maxTrueCounter,minDistance;6=maxRatio,minDistance;7=maxMsize,minDistance; 8=minMsize,minDistance
+	
 	static int[] comparatorsForMemory = {8}; 
 	// -- synch
 	static boolean synch = false;
@@ -54,9 +54,9 @@ public class Main {
 	static int[] numOfNToNotHubs = { 3 };
 	static double[] p2sScaleFree = { 1 };
 	// -- communication protocol
-	static double[] p3s = {0,1};//{0,1};
+	static double[] p3s = {1};//{1};//{0,1};
 	static boolean[] dateKnowns = {true};
-	static int[] delayUBs = { 2,5,10,20,40,70};//{20};//{ 2,5,10,20,40,70,100 };//{ 2,3,5,10 };//{ 2,5,10,20,40,70,100 };//{10,20};//{70,100 };//{ 2,5,10,20,40,70,100 };//{2,5,10};//{1,2,3,5,10,20,40};//{ 5, 10, 20, 40 };
+	static int[] delayUBs = {20};//{20};//{ 5,10,20,40,70,100};//{20};//{ 2,5,10,20,40,70,100 };//{ 2,3,5,10 };//{ 2,5,10,20,40,70,100 };//{10,20};//{70,100 };//{ 2,5,10,20,40,70,100 };//{2,5,10};//{1,2,3,5,10,20,40};//{ 5, 10, 20, 40 };
 	static double[] p4s = { 0 };
 
 	// ------- GENERAL VARIABLES NO NEED TO CHANGE
@@ -290,7 +290,6 @@ public class Main {
 		rCost.setSeed(meanRun);
 		rFirstValue.setSeed(meanRun);
 
-
 	}
 
 	private static void differentCommunicationProtocols(Dcop dcop, int meanRun) {
@@ -372,6 +371,8 @@ public class Main {
 		rDelay.setSeed(communicationSeed);
 		rDelayAnytime.setSeed(communicationSeed);
 		rDsa.setSeed(communicationSeed);
+		rFirstValue.setSeed(meanRun);
+
 
 	}
 
@@ -380,6 +381,8 @@ public class Main {
 
 		boolean dsa7 = algo.equals("dsa7");
 		boolean dsaUnsynch7 = algo.equals("dsaUnsynch7");
+		boolean mgmUnsynch = algo.equals("mgmUnsynch");
+
 		boolean mgm = algo.equals("mgm");
 		boolean mgmUb = algo.equals("mgmUb");
 		boolean unsynchMono = algo.equals("unsynchMono");
@@ -387,6 +390,11 @@ public class Main {
 		if (unsynchMono) {
 			ans = new UnsynchMono(dcop, agents, agentZero, meanRun);
 		}
+		
+		if (mgmUnsynch) {
+			ans = new UnsynchMgm(dcop, agents, agentZero, meanRun);
+		}
+
 
 		if (dsa7) {
 			ans = new DSA(dcop, agents, agentZero, meanRun, 0.7);

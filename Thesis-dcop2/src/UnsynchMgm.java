@@ -5,7 +5,7 @@ public class UnsynchMgm extends Unsynch{
 
 	public UnsynchMgm(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun) {
 		super(dcop, agents, aZ, meanRun);
-		this.algo="UnsynchMgm";
+		this.algo="mgmUnsynch";
 	}
 
 	@Override
@@ -22,18 +22,20 @@ public class UnsynchMgm extends Unsynch{
 		for (AgentField af : agents) {
 			
 			if (i != 0) {
+				
+			
 				if (af.isWaitingForValueStatuesFlag()) {
-					if (af.isValueRecieveFlag()) {
+					//if (af.isValueRecieveFlag()) {
 						af.setValueRecieveFlag(false);
 						this.whoCanDecide.add(af);
-					}	
+					//}	
 				}else {
-					if (af.isRRecieveFlag()) {
+					
+					//if (af.isRRecieveFlag()) {
 						af.setRRecieveFlag(false);
 						this.whoCanDecide.add(af);
-					}
+					//}
 				}
-				
 			} 
 			else {
 				this.whoCanDecide.add(af);
@@ -41,27 +43,62 @@ public class UnsynchMgm extends Unsynch{
 		}	
 	}
 
+	
+	
+	@Override
+	public void agentDecide(int i) {
+		this.didDecide = new TreeSet<AgentField>();
+		for (AgentField a : whoCanDecide) {
+			if (i != 0) {
+				//if (i==3 && a.getId()==14) {
+				//	System.out.println();
+				//}
+				//if (i==4 && a.getId()==28) {
+				//	System.out.println();
+				//}
+				boolean didChange = a.MgmUnsynchDecide();
+				if (didChange) {
+					this.didDecide.add(a);
+				}
+			} else {
+				int value = a.createRandFirstValue();
+				a.setValue(value);
+				didDecide.add(a);
+			}
+
+		}
+	}
 	@Override
 	protected void afterDecideTakeAction(int i) {
 		this.agentZero.afterDecideTakeActionUnsynchNonMonotonicByValueMgm(this.didDecide, i);
+		if (i!=0) {
+			agentsChangeStatues();
+		}
 		this.whoCanDecide = new TreeSet<AgentField>();
-		
-		agentsChangeStatues();
 		this.didDecide = new TreeSet<AgentField>();
+	}
+
+	private void agentsChangeStatues() {
+		for (AgentField a : whoCanDecide) {
+			a.changeWaitForValueStatues();
+		}
 		
 	}
 
 	@Override
 	public void agentsSendMsgs(List<Message> msgToSend) {
-		// TODO Auto-generated method stub
 		
+		
+		agentZero.sendUnsynchNonMonotonicByValueMsgsMgm(msgToSend);
+		
+	
 	}
 
-	@Override
-	public void createAnytimeUp(int i) {
-		// TODO Auto-generated method stub
+	
 		
-	}
+	
+
+
 
 	@Override
 	public double getCounterRatio(int i) {
@@ -81,23 +118,7 @@ public class UnsynchMgm extends Unsynch{
 		return 0;
 	}
 
-	@Override
-	public void agentDecide(int i) {
-		this.didDecide = new TreeSet<AgentField>();
-		for (AgentField a : whoCanDecide) {
-			if (i != 0) {
-				boolean didChange = a.MgmUnsynchDecide();
-				if (didChange) {
-					this.didDecide.add(a);
-				}
-			} else {
-				int value = a.createRandFirstValue();
-				a.setValue(value);
-				didDecide.add(a);
-			}
-
-		}
-	}
+	
 
 
 

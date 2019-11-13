@@ -16,19 +16,11 @@ public class MGM extends Solution {
 			}
 			if (!first) {
 				agentsSetR();
-				System.out.println("agentsSetR();");
-
 				sendAndRecieveRi(i);
-				System.out.println("sendAndRecieveRi(i);");
-
 				agentDecide(i);
-				System.out.println("agentDecide(i)");
-
 				first = true;
 			} else {
 				sendAndRecieve(i);
-				System.out.println("sendAndRecieve(i)");
-
 				first = false;
 			}
 			addCostToList(i);
