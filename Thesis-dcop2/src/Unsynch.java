@@ -38,7 +38,7 @@ public abstract class Unsynch extends Solution {
 		for (int i = 0; i < this.iteration; i++) {
 			iter = i;
 			
-			if (i % 500 == 0 ) {
+			if (i % 100 == 0 ) {
 				System.out.println("---start iteration: " + i + "---");
 			}
 

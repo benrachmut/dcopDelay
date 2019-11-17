@@ -946,8 +946,8 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 		if (this.isAnytimeTop()) {
 			
-			System.out.println(
-					"ALL PERMUTATIONS, iteration: "+Unsynch.iter+", cost: " + input.getCost() + " permutation past size: " + this.permutationsPast.size());
+			//System.out.println(
+				//	"ALL PERMUTATIONS, iteration: "+Unsynch.iter+", cost: " + input.getCost() + " permutation past size: " + this.permutationsPast.size());
 			
 			
 			Unsynch.topCost = input.getCost();
