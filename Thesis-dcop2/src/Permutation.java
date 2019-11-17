@@ -18,6 +18,8 @@ public class Permutation implements Comparable<Permutation>{
 	private AgentField creator;
 	private int iterationCreated;
 	private int date;
+	
+	private int timeEnter;
 
 	Permutation(Map<Integer, Integer> m, int cost) {
 		this.m = new HashMap<Integer, Integer>();
@@ -472,6 +474,14 @@ public class Permutation implements Comparable<Permutation>{
 		
 		
 		return 0;
+	}
+
+	public void setTimeEnter(int time) {
+		this.timeEnter = time;
+	}
+	
+	public int getTimeEnter() {
+		return timeEnter;
 	}
 	
 
