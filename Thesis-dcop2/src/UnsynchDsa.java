@@ -8,9 +8,7 @@ import java.util.TreeSet;
 public class UnsynchDsa extends Unsynch {
 	private double stochastic;
 
-	protected List<Double> ratioCounterTopCounterChanges;
-	protected List<Integer> counterTopChanges;
-	public  List<Integer> costOfAllTops;
+
 	//public static int counterPermutationAtTop;
 
 	public UnsynchDsa(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double stochastic) {
@@ -18,12 +16,9 @@ public class UnsynchDsa extends Unsynch {
 
 		this.stochastic = stochastic;
 		Main.rDsa.setSeed(meanRun);
-		this.algo = "DSA" + stochastic + "asynch";
-		counterPermutationAtTop = 0;
+		this.algo = "DSA asynchrony";
 
-		ratioCounterTopCounterChanges = new ArrayList<Double>();
-		counterTopChanges = new ArrayList<Integer>();
-		costOfAllTops = new ArrayList<Integer>();
+	
 	}
 
 	// ---- 1
@@ -105,34 +100,10 @@ public class UnsynchDsa extends Unsynch {
 
 	
 
-	@Override
-	protected void addTopCountersChanges(int i) {
-		this.costOfAllTops.add(topCost); 
+	
 
-		this.counterTopChanges.add(counterPermutationAtTop);
-		int currentCentralistic = Solution.counterCentralisticChanges;
-		if (currentCentralistic == 0) {
-			ratioCounterTopCounterChanges.add(0.0);
-		} else {
-			double ratio = (double)counterPermutationAtTop / currentCentralistic;
-			ratioCounterTopCounterChanges.add(ratio);
-		}
+	
 
-	}
-
-	@Override
-	public double getCounterRatio(int i) {
-		return this.ratioCounterTopCounterChanges.get(i);
-	}
-
-	@Override
-	protected int getCounterTop(int i) {
-		return counterTopChanges.get(i);
-	}
-
-	@Override
-	protected int getTopCostNotBest(int i) {
-		return costOfAllTops.get(i);
-	}
+	
 
 }

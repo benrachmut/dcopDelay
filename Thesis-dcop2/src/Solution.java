@@ -3,6 +3,7 @@ import java.util.List;
 
 public abstract class Solution {
 
+	protected int currentAnytimeBird;
 	protected int iteration;
 	protected int meanRun;
 	protected Dcop dcop;
@@ -13,6 +14,7 @@ public abstract class Solution {
 	protected List<Integer> fatherCost;
 	protected List<Integer> anytimeCost;
 	protected List<Integer> topAnytimeCost;
+	protected List<Integer> anytimeBirdCost;
 
 	protected List<Integer> agentThinkCost;
 	protected int currentItiration;
@@ -40,6 +42,8 @@ public abstract class Solution {
 		this.agentThinkCost = new ArrayList<Integer>();
 		counterChanges = new ArrayList<Integer>();
 		counterCentralisticChanges=0;
+		currentAnytimeBird = Integer.MAX_VALUE;
+		anytimeBirdCost = new ArrayList<Integer>();
 		addCostToList(0);
 		
 
@@ -54,6 +58,12 @@ public abstract class Solution {
 		int currentCost = dcop.calCost(true);
 		this.realCost.add(currentCost);
 		
+		//if (i>0) {
+			if (currentCost<this.currentAnytimeBird) {
+				this.currentAnytimeBird = currentCost;
+			}
+		//}
+		this.anytimeBirdCost.add(currentAnytimeBird);
 		
 	}
 	
@@ -123,6 +133,10 @@ public abstract class Solution {
 
 	public int getCounterChanges(int i) {
 		return this.counterChanges.get(i);
+	}
+
+	public int getBirdeyeAnytime(int i) {
+		return this.anytimeBirdCost.get(i);
 	}
 
 	

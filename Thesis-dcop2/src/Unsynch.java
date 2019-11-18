@@ -17,6 +17,10 @@ public abstract class Unsynch extends Solution {
 	protected SortedSet<AgentField> fathers;
 	public static int currentPriceOfTop;
 	public static int counterPermutationAtTop;
+	protected List<Double> ratioCounterTopCounterChanges;
+	protected List<Integer> counterTopChanges;
+	public  List<Integer> costOfAllTops;
+	
 	//public static boolean bool = false;
 
 
@@ -26,7 +30,11 @@ public abstract class Unsynch extends Solution {
 		this.permutations = new TreeSet<Permutation>();
 		this.fathers = new TreeSet<AgentField>();
 		this.didDecide = new TreeSet<AgentField>();
-
+		ratioCounterTopCounterChanges = new ArrayList<Double>();
+		counterTopChanges = new ArrayList<Integer>();
+		costOfAllTops = new ArrayList<Integer>();
+		
+		counterPermutationAtTop = 0;
 		topCost = Integer.MAX_VALUE;
  
 	}
@@ -41,23 +49,38 @@ public abstract class Unsynch extends Solution {
 			if (i % 100 == 0 ) {
 				System.out.println("---start iteration: " + i + "---");
 			}
-
+			//-------------
 			updateWhoCanDecide(i); // abstract			 
 			agentDecide(i); // abstract		
 			afterDecideTakeAction(i); // abstract
+			//-------------
+			
 			List <Message> msgToSend = agentZero.handleDelay();			
 			agentsSendMsgs(msgToSend); // abstract
+			
+			
 			if (Main.anytime) {
 				createAnytimeUp(i); // abstract
 				createAnytimeDown(i);
 			}		
 			addCostToTables(i );
-			addTopCountersChanges(i);
-			
+				
 		}
 	}
 
-	protected abstract void addTopCountersChanges(int i) ;
+	protected void addTopCountersChanges(int i) {
+		this.costOfAllTops.add(topCost); 
+
+		this.counterTopChanges.add(counterPermutationAtTop);
+		int currentCentralistic = Solution.counterCentralisticChanges;
+		if (currentCentralistic == 0) {
+			ratioCounterTopCounterChanges.add(0.0);
+		} else {
+			double ratio = (double)counterPermutationAtTop / currentCentralistic;
+			ratioCounterTopCounterChanges.add(ratio);
+		}
+
+	}
 
 	private void printWhoCanDecide() {
 		System.out.println("who can decide "+iter);
@@ -146,6 +169,8 @@ public abstract class Unsynch extends Solution {
 		addAnytimeCostToList();
 		addTopCost();
 		addToPermutationsList();
+		addTopCountersChanges(i);
+	
 	}
 
 	private void addTopCost() {
@@ -225,9 +250,17 @@ public abstract class Unsynch extends Solution {
 
 		if (atlistOneAgentMinusOne(true)) {
 			this.realCost.add(Integer.MAX_VALUE);
+			this.anytimeBirdCost.add(Integer.MAX_VALUE);
+
 		} else {
 			super.addCostToList(i);
 		}
+		
+		counterCentralisticChanges(i);
+		
+	}
+
+	private void counterCentralisticChanges(int i) {
 		if (i == 0) {
 			counterCentralisticChanges = 0;
 		}else {
@@ -240,6 +273,7 @@ public abstract class Unsynch extends Solution {
 		}
 
 		counterChanges.add(counterCentralisticChanges);
+		
 	}
 
 	@Override
@@ -252,11 +286,17 @@ public abstract class Unsynch extends Solution {
 
 	}
 
-	public abstract double getCounterRatio(int i);
 
-	protected abstract int getCounterTop(int i);
+	public double getCounterRatio(int i) {
+		return this.ratioCounterTopCounterChanges.get(i);
+	}
+	protected int getCounterTop(int i) {
+		return counterTopChanges.get(i);
+	}
 
-	protected abstract int getTopCostNotBest(int i);
+	protected int getTopCostNotBest(int i) {
+		return costOfAllTops.get(i);
+	}
 	
 	
 

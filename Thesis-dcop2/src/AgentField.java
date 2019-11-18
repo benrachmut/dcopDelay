@@ -123,13 +123,13 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	}
 
 	private void setValues() {
-		if (Main.synch) {
-			this.firstValue = createRandFirstValue();
-			this.anytimeFirstValue = firstValue;
-		} else {
+		//if (Main.synch) {
+		//	this.firstValue = createRandFirstValue();
+		//	this.anytimeFirstValue = firstValue;
+		//} else {
 			this.firstValue = -1;
 			this.anytimeFirstValue = -1;
-		}
+		//}
 
 	}
 
