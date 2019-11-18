@@ -5,9 +5,8 @@ public class MessageAnyTimeUp extends Message<Permutation> {
 	//private Set<Permutation> pastPermutations;
 	//private Permutation currentPermutation;
 	
-	public MessageAnyTimeUp(AgentField sender, AgentField reciever,Permutation p, int delay,
-			int date) {
-		super(sender, reciever, p, delay, date);
+	public MessageAnyTimeUp(AgentField sender, AgentField reciever,Permutation p, int delay) {
+		super(sender, reciever, p, delay);
 		
 	}
 	

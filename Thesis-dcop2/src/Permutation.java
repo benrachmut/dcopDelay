@@ -32,7 +32,7 @@ public class Permutation implements Comparable<Permutation>{
 		this.combinedWith = new ArrayList<Permutation>();
 		this.creator = new AgentField(10, -1);
 		this.included = new HashMap<Integer, Boolean>();
-		this.date =Unsynch.iter;
+		this.date =Asynchrony.iter;
 
 	}
 
@@ -51,7 +51,7 @@ public class Permutation implements Comparable<Permutation>{
 			AgentField creator) {
 
 		this(m, cost);
-		this.iterationCreated = Unsynch.iter;
+		this.iterationCreated = Asynchrony.iter;
 		this.creator = creator;
 		this.combinedWith = comWith;
 		/*

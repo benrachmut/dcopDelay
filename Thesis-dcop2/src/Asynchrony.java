@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public abstract class Unsynch extends Solution {
+public abstract class Asynchrony extends Solution {
 	protected SortedSet<AgentField> whoCanDecide;
 	protected SortedSet<AgentField> didDecide;
 
@@ -24,7 +24,7 @@ public abstract class Unsynch extends Solution {
 	//public static boolean bool = false;
 
 
-	public Unsynch(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun) {
+	public Asynchrony(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun) {
 		super(dcop, agents, aZ, meanRun);
 		this.whoCanDecide = new TreeSet<AgentField>();
 		this.permutations = new TreeSet<Permutation>();
@@ -50,14 +50,12 @@ public abstract class Unsynch extends Solution {
 				System.out.println("---start iteration: " + i + "---");
 			}
 			//-------------
-			updateWhoCanDecide(i); // abstract			 
-			agentDecide(i); // abstract		
-			afterDecideTakeAction(i); // abstract
+			//updateWhoCanDecide(i); // abstract			 
+			agentDecide(i); // abstract	
+			//afterDecideTakeAction(i); // abstract
 			//-------------
-			
-			List <Message> msgToSend = agentZero.handleDelay();			
+			List <Message> msgToSend = agentZero.handleDelay();	
 			agentsSendMsgs(msgToSend); // abstract
-			
 			
 			if (Main.anytime) {
 				createAnytimeUp(i); // abstract
@@ -208,10 +206,10 @@ public abstract class Unsynch extends Solution {
 
 	// public abstract List<AgentField> findHeadOfTree() ;
 
-	protected abstract void updateWhoCanDecide(int i);
+	//protected abstract void updateWhoCanDecide(int i);
 
 	// protected abstract void agentDecide();
-	protected abstract void afterDecideTakeAction(int i);
+	//protected abstract void afterDecideTakeAction(int i);
 
 	public abstract void agentsSendMsgs(List<Message> msgToSend);
 
@@ -251,13 +249,10 @@ public abstract class Unsynch extends Solution {
 		if (atlistOneAgentMinusOne(true)) {
 			this.realCost.add(Integer.MAX_VALUE);
 			this.anytimeBirdCost.add(Integer.MAX_VALUE);
-
 		} else {
 			super.addCostToList(i);
 		}
-		
-		counterCentralisticChanges(i);
-		
+		counterCentralisticChanges(i);	
 	}
 
 	private void counterCentralisticChanges(int i) {

@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class UnsynchMono extends Unsynch {
+public class UnsynchMono extends Asynchrony {
 
 
 	public UnsynchMono(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun) {
@@ -24,7 +24,8 @@ public class UnsynchMono extends Unsynch {
 	public void agentDecide(int i) {
 		for (AgentField a : this.whoCanDecide) {
 			if (a.getValue() == -1) {
-				a.unsynchDecide();
+				int value = a.createRandFirstValue();
+				a.setValue(value);
 
 			} else {
 				a.dsaDecide(1);

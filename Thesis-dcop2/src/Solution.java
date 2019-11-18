@@ -98,11 +98,12 @@ public abstract class Solution {
 	public List<Integer> getAgentThinkCost() {
 		return agentThinkCost;
 	}
-
+/*
 	public void sendAndRecieve(int i) {
 		this.agentZero.createMsgs(i);
 		this.agentZero.sendMsgs(false);
 	}
+	*/
 
 	public int getFatherCost(int i ) {
 		return this.fatherCost.get(i);

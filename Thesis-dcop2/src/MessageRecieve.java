@@ -1,23 +1,23 @@
 
 public class MessageRecieve {
 private int value;
-private int date;
-public MessageRecieve(int value, int date) {
+private int counter;
+public MessageRecieve(int value, int counter) {
 	super();
 	this.value = value;
-	this.date = date;
+	this.counter = counter;
 }
 public int getValue() {
 	return value;
 }
-public int getDate() {
-	return date;
+public int getCounter() {
+	return counter;
 }
 
 @Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "value: "+value+" date: "+date;
+		return "value: "+value+" counter: "+counter;
 	}
 
 }

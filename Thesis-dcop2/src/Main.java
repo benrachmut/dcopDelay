@@ -17,18 +17,18 @@ public class Main {
 
 	// ------- VARIABLES TO CHECK BEFORE STARTING A RUN
 	// -- variables of dcop problem
-	static int A = 10;// 50;//35; // number of agents
+	static int A = 50;// 50;//35; // number of agents
 	static int D = 10; // size of domain for each agent
 	static int costMax = 100; // the max value of cost
 	// -- Experiment time
 	static int meanRepsStart = 0;
-	static int meanRepsEnd = 2;// 100; // number of reps for every solve process not include
-	static int iterations = 200;// 1000;//10000;//10000;//5000;//10000, 2000;
+	static int meanRepsEnd = 100;// 100; // number of reps for every solve process not include
+	static int iterations = 1000;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
-	static String algo = "dsaUnsynch7"; // "mgmUnsynch"; "dsa7"; "dsaUnsynch7";//"unsynchMono";//"mgmUb";//"unsynch0";
+	static String algo = "AsynchronyMGMv1"; // "AsynchronyMGMv2""AsynchronyMGMv1"; "AsynchronyDSA";//"unsynchMono";//"mgmUb";//"unsynch0";
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
-	static int[] memoryVersions = { 2 }; // 1=exp, 2= constant, 3= reasonable
+	static int[] memoryVersions = { 1 }; // 1=exp, 2= constant, 3= reasonable
 	static double[] constantsPower = { 1.8 };// {1.8};//{0.8,1,1.4,1.8,2,2.4};//{0.8,1,1.4,1.8,2,2.4};//{1.8,2,2.2,2.8,3,3.2,3.5};//{2};//{2,2.2,2.5,2.8,3,3.2,3.5};//{2};//{2,2.3,2.5,2.7,3,3.3,3.5};//{2.75};//{}{0.8,1,2,3,4};//{2,4,6,8};//{0.8,1,2,3,4};//{1,2,3,4,5};
 
 	// 1 = maxSimilarityToAgentView, 2 = fifo,
@@ -37,8 +37,8 @@ public class Main {
 	static int[] comparatorsForMemory = { 1 };
 	// -- synch
 	// static boolean synch = false;
-	static boolean anytime = true;
-	static boolean anytimeDfs = true;
+	static boolean anytime = false;
+	static boolean anytimeDfs = false;
 	static boolean anytimeBfs = false;
 	static boolean anytimeVector = false;
 
@@ -54,9 +54,9 @@ public class Main {
 	static int[] numOfNToNotHubs = { 3 };
 	static double[] p2sScaleFree = { 1 };
 	// -- communication protocol
-	static double[] p3s = { 1 };// {1};//{0,1};
-	static boolean[] dateKnowns = { false };
-	static int[] delayUBs = {100};//{ 5, 10, 20, 40 };// {20};//{5,10,20,40};//{5,10,20,40,70,100 };//{20};//{
+	static double[] p3s = { 0,1 };// {1};//{0,1};
+	static boolean[] dateKnowns = { true };
+	static int[] delayUBs = {10,50};//{ 5, 10, 20, 40 };// {20};//{5,10,20,40};//{5,10,20,40,70,100 };//{20};//{
 												// 5,10,20,40,70,100};//{20};//{ 2,5,10,20,40,70,100 };//{ 2,3,5,10
 												// };//{ 2,5,10,20,40,70,100 };//{10,20};//{70,100 };//{
 												// 2,5,10,20,40,70,100 };//{2,5,10};//{1,2,3,5,10,20,40};//{ 5, 10, 20,
@@ -73,7 +73,9 @@ public class Main {
 	// -- random variables
 	static Random rFirstValue = new Random();
 	static Random rCost = new Random();
-	static Random rDsa = new Random();
+	
+	
+	//static Random rDsa = new Random();
 	static Dcop dcop;
 	static int dcopVersion;
 	// -- memory version
@@ -131,19 +133,42 @@ public class Main {
 
 	private static String getFileName() {
 
-		String meanRunRange = "start_" + meanRepsStart + ",end_" + meanRepsEnd;
-		if (algo.equals("dsaUnsynch7")) {
-			// meanRunRange =meanRunRange;
-			if (memoryVersions[0] == 2) {
-				meanRunRange = meanRunRange + ",comparator_" + comparatorsForMemory[0] + ",constant_"
-						+ constantsPower[0];
-			}
+		
+		
+		String dcopV = getDcopName();
+		String param = getDcopParam();
+		String ans = "algo_"+algo+",A_"+A+",dcop_"+dcopV+",param_"+param+",anytime_"+anytime;
+		String meanRunRange = ",start_" + meanRepsStart + ",end_" + meanRepsEnd+ ",iteration_" + iterations;
+		ans = ans+ meanRunRange;
+		if (memoryVersions[0]==2) {
+			String heurstic = ",huerstic_"+comparatorsForMemory[0];
+			ans = ans+heurstic;
 		}
+		return ans;
+	}
 
-		meanRunRange = meanRunRange + ",anytime_" + anytime;
+	private static String getDcopParam() {
+		if (dcopVersions[0]==1) {
+			return Double.toString(p1sUniform[0]);
+		}
+		if (dcopVersions[0]==2) {
+			return Double.toString(p1sColor[0]);
+		}
+		else {
+			return Integer.toString(A/5);
+		}
+	}
 
-		String addOn = addOnPerProb();
-		return algo + ",A_" + A + "," + addOn + "," + meanRunRange;
+	private static String getDcopName() {
+		if (dcopVersions[0]==1) {
+			return "random";
+		}
+		if (dcopVersions[0]==2) {
+			return "color";
+		}
+		else {
+			return "scaleFree";
+		}
 	}
 
 	private static String addOnPerProb() {
@@ -302,6 +327,9 @@ public class Main {
 		rNotHub.setSeed(meanRun);
 		rCost.setSeed(meanRun);
 		rFirstValue.setSeed(meanRun);
+		
+		
+		
 
 	}
 
@@ -312,9 +340,14 @@ public class Main {
 		for (Double p3 : p3s) {
 			currentP3 = p3;
 			if (p3 == 0) {
+				
+				//for (AgentField a : agents) {
+				//	a.setDsaSeed(meanRun);
+				//}
+				communicationSeeds(meanRun);
 				afterHavingAllPrameters(p3, true, 0, 0.0, dcop, meanRun);
 			} else {
-				diffCommunicationGivenP3(communicationSeed, dcop, meanRun, p3);
+				diffCommunicationGivenP3( dcop, meanRun, p3);
 			}
 		} // p3
 		printDcops();
@@ -355,16 +388,16 @@ public class Main {
 
 	}
 
-	private static void diffCommunicationGivenP3(int communicationSeed, Dcop dcop, int meanRun, Double p3) {
+	private static void diffCommunicationGivenP3 (Dcop dcop, int meanRun, Double p3) {
 		for (boolean dK : dateKnowns) {
 			dateKnown = dK;
 			for (Integer delayUB : delayUBs) {
 				currentUb = delayUB;
 				for (Double p4 : p4s) {
-					communicationSeed = communicationSeed + 1;
+					// communicationSeed = communicationSeed + 1;
 					// System.out.println("communicationSeed");
 
-					communicationSeeds(communicationSeed, meanRun);
+					communicationSeeds(meanRun);
 					currentP4 = p4;
 
 					afterHavingAllPrameters(p3, dK, delayUB, p4, dcop, meanRun);
@@ -375,25 +408,28 @@ public class Main {
 
 	}
 
-	private static void communicationSeeds(int communicationSeed, int meanRun) {
+	private static void communicationSeeds(int meanRun) {
 		// communicationSeed =0;
-		rP3.setSeed(communicationSeed);
-		rP4.setSeed(communicationSeed);
-		rDelay.setSeed(communicationSeed);
-		rDelayAnytime.setSeed(communicationSeed);
-		rDsa.setSeed(communicationSeed);
+		rP3.setSeed(meanRun);
+		rP4.setSeed(meanRun);
+		rDelay.setSeed(meanRun);
+		rDelayAnytime.setSeed(meanRun);
 		rFirstValue.setSeed(meanRun);
+		
+		for (AgentField a : agents) {
+			a.setDsaSeed(meanRun);
+		}
 
 	}
 
 	private static Solution selectedAlgo(Dcop dcop, int meanRun) {
 		Solution ans = null;
 
-		boolean dsa7 = algo.equals("dsa7");
-		boolean dsaUnsynch7 = algo.equals("dsaUnsynch7");
-		boolean mgmUnsynch = algo.equals("mgmUnsynch");
+		boolean AsynchronyDSA = algo.equals("AsynchronyDSA");
+		boolean AsynchronyMGMv1 = algo.equals("AsynchronyMGMv1");
+		boolean AsynchronyMGMv2 = algo.equals("AsynchronyMGMv2");
 
-		boolean mgm = algo.equals("mgm");
+		
 		boolean mgmUb = algo.equals("mgmUb");
 		boolean unsynchMono = algo.equals("unsynchMono");
 
@@ -401,23 +437,19 @@ public class Main {
 			ans = new UnsynchMono(dcop, agents, agentZero, meanRun);
 		}
 
-		if (mgmUnsynch) {
-			ans = new UnsynchMgm(dcop, agents, agentZero, meanRun);
+		if (AsynchronyMGMv1) {
+			ans = new AsynchronyMGMv1(dcop, agents, agentZero, meanRun);
+		}
+		
+		if (AsynchronyMGMv2) {
+			ans = new AsynchronyMGMv2(dcop, agents, agentZero, meanRun);
 		}
 
-		if (dsa7) {
-			ans = new DSA(dcop, agents, agentZero, meanRun, 0.7);
-
-		}
-		if (dsaUnsynch7) {
-			ans = new UnsynchDsa(dcop, agents, agentZero, meanRun, 0.7);
+		if (AsynchronyDSA) {
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.7);
 		}
 
-		if (mgm) {
-
-			ans = new MGM(dcop, agents, agentZero, meanRun);
-
-		}
+		
 		if (mgmUb) {
 			ans = new MGMub(dcop, agents, agentZero, meanRun);
 
@@ -443,8 +475,8 @@ public class Main {
 		for (int i = 0; i < iterations; i++) {
 			String s = dcop.toString() + "," + protocol + "," + sol.toString() + "," + i + "," + sol.getRealCost(i)+ ","+sol.getBirdeyeAnytime(i)+",";
 			if (anytime) {
-				String anytimeString = sol.getCounterChanges(i) + "," + ((Unsynch) sol).getTopCostNotBest(i) + ","
-						+ ((Unsynch) sol).getCounterTop(i) + "," + ((Unsynch) sol).getCounterRatio(i) + ","
+				String anytimeString = sol.getCounterChanges(i) + "," + ((Asynchrony) sol).getTopCostNotBest(i) + ","
+						+ ((Asynchrony) sol).getCounterTop(i) + "," + ((Asynchrony) sol).getCounterRatio(i) + ","
 						+ sol.getAnytimeCost(i) + "," + sol.getTopCost(i);
 				s=s+anytimeString;
 			}
@@ -480,10 +512,12 @@ public class Main {
 		}
 		agentZero = new AgentZero(iterations, dcop.getNeighbors(), agents);
 
+		
 		orgenizeTrees();
 		for (AgentField a : agents) {
 			a.restartLastPCreatedBy();
 			a.restartPCreatedByLists();
+			a.setAz(agentZero);
 		}
 
 		return dcop;
@@ -559,12 +593,14 @@ public class Main {
 			agents[i].resetMsgUpAndDown();
 			agents[i].setDecisionCounterNonMonotonic(0);
 			agents[i].setDecisionCounterMonotonic(0);
+			agents[i].setRCounter(0);
+
 			agents[i].initSonsAnytimeMessages();
 			agents[i].resetCounterAndValue();
 			agents[i].resetBestPermutation();
 			agents[i].resettopHasAnytimeNews();
 			agents[i].addFirstCoupleToCounterAndVal();
-			agents[i].setUnsynchFlag(false);
+			agents[i].setValueRecieveFlag(false);
 			agents[i].restartNeighborCounter();
 			agents[i].restartAnytimeUpRecieved();
 			agents[i].restartPermutationsPast();

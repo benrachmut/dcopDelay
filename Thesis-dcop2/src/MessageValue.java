@@ -3,9 +3,11 @@ public class MessageValue extends Message <Integer>  {
 	
 	private int senderValue;
 	//private int senderSelfCounter;
+	private int decisionCounter;
 
-	public MessageValue(AgentField sender, AgentField reciever, int senderValue, int delay, int currentIteration) {
-		super(sender, reciever,senderValue, delay, currentIteration);
+	public MessageValue(AgentField sender, AgentField reciever, int senderValue, int delay, int counter) {
+		super(sender, reciever,senderValue, delay);
+		this.decisionCounter = counter;
 	}
 /*
 	public MessageNormal(AgentField sender, AgentField reciever, int senderValue, int delay, int currentIteration, int senderSelfCounter) {
@@ -20,7 +22,11 @@ public class MessageValue extends Message <Integer>  {
 	}
 	
 	public MessageValue(MessageValue m) {
-		this( m.getSender(),  m.getReciever(),  m.getMessageInformation(),  m.getDelay(),  m.getDate());
+		this( m.getSender(),  m.getReciever(),  m.getMessageInformation(),  m.getDelay(), m.getDecisionCounter());
+	}
+	
+	public int getDecisionCounter() {
+		return this.decisionCounter;
 	}
 
 	
