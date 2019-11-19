@@ -56,13 +56,26 @@ public abstract class Asynchrony extends Solution {
 			//-------------
 			List <Message> msgToSend = agentZero.handleDelay();	
 			agentsSendMsgs(msgToSend); // abstract
+			/*
+			System.out.println(i);
+			int count=0;
+			int sumDes = 0;
+			for (AgentField a : agents) {
+				int val = a.getValue();
+				if (val!=-1) {
+					count++;
+				}
+				sumDes+=a.getDecisonCounter();
+			}
+			double avg = sumDes/50;
+			*/
 			
 			if (Main.anytime) {
 				createAnytimeUp(i); // abstract
 				createAnytimeDown(i);
 			}		
 			addCostToTables(i );
-				
+			//System.out.println("counter:"+count+" avg decision counter:" + avg+", cost:"+this.getRealCost(i));	
 		}
 	}
 

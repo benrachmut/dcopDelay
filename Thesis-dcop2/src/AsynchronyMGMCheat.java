@@ -1,17 +1,17 @@
 import java.util.List;
 
 
-public class AsynchronyMGMv1 extends Asynchrony{
+public class AsynchronyMGMCheat extends Asynchrony{
 
-	public AsynchronyMGMv1(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun) {
+	public AsynchronyMGMCheat(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun) {
 		super(dcop, agents, aZ, meanRun);
-		this.algo="MGM_asynchrony_v1";
+		this.algo="MGM_asynchrony_cheat";
 	}
 
 	@Override
 	public void agentDecide(int i) {
 		for (AgentField a : agents) {
-			a.mgmDecideV1();
+			a.mgmAsynchCheatDecide();
 		}
 	}
 	@Override

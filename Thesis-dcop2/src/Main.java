@@ -23,9 +23,9 @@ public class Main {
 	// -- Experiment time
 	static int meanRepsStart = 0;
 	static int meanRepsEnd = 100;// 100; // number of reps for every solve process not include
-	static int iterations = 1000;// 1000;//10000;//10000;//5000;//10000, 2000;
+	static int iterations = 5000;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
-	static String algo = "AsynchronyMGMv1"; // "AsynchronyMGMv2""AsynchronyMGMv1"; "AsynchronyDSA";//"unsynchMono";//"mgmUb";//"unsynch0";
+	static String algo ="monotonic"; // "AsynchronyMGMCheat";AsynchronyMGM; "AsynchronyDSA";//"monotonic";//"mgmUb";//"unsynch0";
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
 	static int[] memoryVersions = { 1 }; // 1=exp, 2= constant, 3= reasonable
@@ -426,23 +426,23 @@ public class Main {
 		Solution ans = null;
 
 		boolean AsynchronyDSA = algo.equals("AsynchronyDSA");
-		boolean AsynchronyMGMv1 = algo.equals("AsynchronyMGMv1");
-		boolean AsynchronyMGMv2 = algo.equals("AsynchronyMGMv2");
+		boolean AsynchronyMGMCheat = algo.equals("AsynchronyMGMCheat");
+		boolean AsynchronyMGM = algo.equals("AsynchronyMGM");
 
 		
 		boolean mgmUb = algo.equals("mgmUb");
-		boolean unsynchMono = algo.equals("unsynchMono");
+		boolean monotonic = algo.equals("monotonic");
 
-		if (unsynchMono) {
-			ans = new UnsynchMono(dcop, agents, agentZero, meanRun);
+		if (monotonic) {
+			ans = new AsynchronyMonotonic(dcop, agents, agentZero, meanRun);
 		}
 
-		if (AsynchronyMGMv1) {
-			ans = new AsynchronyMGMv1(dcop, agents, agentZero, meanRun);
+		if (AsynchronyMGMCheat) {
+			ans = new AsynchronyMGMCheat(dcop, agents, agentZero, meanRun);
 		}
 		
-		if (AsynchronyMGMv2) {
-			ans = new AsynchronyMGMv2(dcop, agents, agentZero, meanRun);
+		if (AsynchronyMGM) {
+			ans = new AsynchronyMGM(dcop, agents, agentZero, meanRun);
 		}
 
 		if (AsynchronyDSA) {
@@ -525,12 +525,12 @@ public class Main {
 
 	private static void orgenizeTrees() {
 
-		if (algo.equals("unsynchMono") || algo.equals("dsa7") || algo.equals("mgm")) {
+		if (algo.equals("monotonic") || algo.equals("dsa7") || algo.equals("mgm")) {
 			anytimeDfs = false;
 			anytimeBfs = false;
 			anytimeVector = false;
 		}
-		if (algo.equals("unsynchMono") || anytimeDfs) {
+		if (algo.equals("monotonic") || anytimeDfs) {
 			Tree psaduoTree = new Tree(agents);
 			psaduoTree.dfs();
 			psaduoTree.setIsAboveBelow();
@@ -538,7 +538,10 @@ public class Main {
 			for (AgentField a : agents) {
 				a.setAnytimeFather(a.getDfsFather());
 				a.setAnytimeSons(a.getDfsSons());
+				
 			}
+			
+			
 
 		}
 
@@ -591,8 +594,8 @@ public class Main {
 			agents[i].setAllBelowMap(0);
 			agents[i].setAllAboveMap(0);
 			agents[i].resetMsgUpAndDown();
-			agents[i].setDecisionCounterNonMonotonic(0);
-			agents[i].setDecisionCounterMonotonic(0);
+			//agents[i].setDecisionCounterNonMonotonic(0);
+			agents[i].setDecisionCounter(0);
 			agents[i].setRCounter(0);
 
 			agents[i].initSonsAnytimeMessages();

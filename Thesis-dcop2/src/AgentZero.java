@@ -211,7 +211,7 @@ public class AgentZero {
 
 	// -------------- Unsynch Monotonic-------------
 
-	public void sendUnsynchMonotonicMsgs(List<Message> msgToSend) {
+	public void sendMonotonicMsgs(List<Message> msgToSend) {
 		for (Message msg : msgToSend) {
 			sendUnsynchMonotonicMsg(msg);
 		}
@@ -224,33 +224,7 @@ public class AgentZero {
 		if ((msg instanceof MessageValue)) {
 			MessageValue msg1 = (MessageValue) msg;
 			int senderValue = msg1.getMessageInformation();
-			reciever.reciveMsg(senderId, senderValue, msg1.getDecisionCounter());
-			reciever.updateCounterAboveOrBelowMono(senderId);
-
-			Permutation currPermutation = reciever.createCurrentPermutationMonotonic();
-			if (Main.anytimeDfs) {
-				reciever.addToPermutationPast(currPermutation);
-
-				if (reciever.isAnytimeLeaf()) {
-					reciever.addToPermutationToSend(currPermutation);
-					// System.out.println("reciever.addToPermutationToSend(currPermutation);");
-				} else {
-					reciever.iterateOverSonsAndCombineWithInputPermutation(currPermutation);
-					// System.out.println("reciever.iterateOverSonsAndCombineWithInputPermutation(currPermutation);");
-
-				}
-			}
-
-		} // normal message
-		if (Main.anytimeDfs) {
-			if (msg instanceof MessageAnyTimeUp) {
-				reciever.recieveAnytimeUpMonotonic(msg);
-				// System.out.println("reciever.recieveAnytimeUpMonotonic(msg);");
-			}
-			if (msg instanceof MessageAnyTimeDown) {
-				reciever.recieveAnytimeDownMonotonic(msg);
-			}
-
+			reciever.reciveMsgMonotonic(senderId, senderValue, msg1.getDecisionCounter());
 		}
 	}
 
@@ -365,7 +339,7 @@ public class AgentZero {
 
 	public void afterDecideTakeActionUnsynchMonotonic(Collection<AgentField> agentsThatChanged, int currentIteration) {
 		for (AgentField a : agentsThatChanged) {
-			a.setDecisionCounterMonotonic(a.getDecisonCounter() + 1);
+			//a.setDecisionCounterMonotonic(a.getDecisonCounter() + 1);
 			a.setCounterAndValueHistory();
 			createUnsynchMsgs(a,  false);
 		}
