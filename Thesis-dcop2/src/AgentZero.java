@@ -128,7 +128,7 @@ public class AgentZero {
 
 	}
 
-
+/*
 	public void sendMsgs(boolean r) {
 		
 		List<Message> tMessage = new ArrayList<Message>();
@@ -153,6 +153,7 @@ public class AgentZero {
 		}
 
 	}
+	*/
 
 	public void emptyMessageBox() {
 		this.messageBox.clear();
@@ -285,7 +286,7 @@ public class AgentZero {
 			MessageValue mmm = (MessageValue)msg;
 			int senderValue = mmm.getMessageInformation();
 			int counter = mmm.getDecisionCounter();
-			reciever.reciveMsg(senderId, senderValue, counter);
+			reciever.reciveMsgValueFlag(senderId, senderValue, counter);
 			if (Main.anytime) {
 				Permutation p = reciever.createCurrentPermutationByValue();
 				reciever.updateRecieverUponPermutationOneByOne(p, reciever);
@@ -308,31 +309,9 @@ public class AgentZero {
 	}
 	
 	
-	private void sendUnsynchNonMonotonicByValueMsg(Message msg) {
-		//---	
-		int senderId = msg.getSender().getId();
-		AgentField reciever = msg.getReciever();
-		if (msg instanceof MessageValue) {
-			MessageValue mv =(MessageValue) msg; 
-			int senderValue = mv.getMessageInformation();
-			int counter = mv.getDecisionCounter();
-			reciever.reciveMsg(senderId, senderValue, counter);
-			if (Main.anytime) {
-				Permutation p = reciever.createCurrentPermutationByValue();
-				reciever.updateRecieverUponPermutationOneByOne(p, reciever);
-			}
-			
-			
-		} // normal message
-		
-		if (msg instanceof MessageAnyTimeUp) {
-			reciever.recieveAnytimeUpBfs(msg);
-		}
-		if (msg instanceof MessageAnyTimeDown) {
-			reciever.recieveAnytimeDownNonMonotonicByValue(msg);
-		}
-
-	}
+	
+	
+	
 
 
 	
@@ -527,16 +506,75 @@ public class AgentZero {
 		return new MessageR(sender, reciever, senderR, delay, counter);
 	}
 
-	public void sendUnsynchDsa(List<Message> msgToSend) {
-		//Set<Integer> integerRecieved = new HashSet<Integer>();
+	public void sendAsynchronyDsa(List<Message> msgToSend) {
 		Collections.sort(msgToSend, new ComparatorMsgSenderId());
 		Collections.reverse(msgToSend);
 		for (Message msg : msgToSend) {
-		//	System.out.println(msg);
-			sendUnsynchNonMonotonicByValueMsg(msg);
-			//integerRecieved.add(msg.getReciever().getId());
+			sendASingleMsgDsaAsynchrony(msg);
 		}
 	}
+	
+	private void sendASingleMsgDsaAsynchrony(Message msg) {
+		//---	
+		int senderId = msg.getSender().getId();
+		AgentField reciever = msg.getReciever();
+		if (msg instanceof MessageValue) {
+			MessageValue mv =(MessageValue) msg; 
+			int senderValue = mv.getMessageInformation();
+			int counter = mv.getDecisionCounter();
+			reciever.reciveMsgValueFlag(senderId, senderValue, counter);
+			if (Main.anytime) {
+				Permutation p = reciever.createCurrentPermutationByValue();
+				reciever.updateRecieverUponPermutationOneByOne(p, reciever);
+			}
+		} // normal message
+		
+		if (msg instanceof MessageAnyTimeUp) {
+			reciever.recieveAnytimeUpBfs(msg);
+		}
+		if (msg instanceof MessageAnyTimeDown) {
+			reciever.recieveAnytimeDownNonMonotonicByValue(msg);
+		}
+
+	}
+	
+	
+	public void sendSynchronicDsa(List<Message> msgToSend) {
+		Collections.sort(msgToSend, new ComparatorMsgSenderId());
+		Collections.reverse(msgToSend);
+		for (Message msg : msgToSend) {
+			sendASingleMsgDsaSynchronic(msg);
+		}
+	}
+	
+	
+	
+	private void sendASingleMsgDsaSynchronic(Message msg) {
+		//---	
+		int senderId = msg.getSender().getId();
+		AgentField reciever = msg.getReciever();
+		if (msg instanceof MessageValue) {
+			MessageValue mv =(MessageValue) msg; 
+			int senderValue = mv.getMessageInformation();
+			int counter = mv.getDecisionCounter();
+			reciever.reciveMsgValueMap(senderId, senderValue, counter);
+			if (Main.anytime) {
+				Permutation p = reciever.createCurrentPermutationByValue();
+				reciever.updateRecieverUponPermutationOneByOne(p, reciever);
+			}
+		} // normal message
+		
+		if (msg instanceof MessageAnyTimeUp) {
+			reciever.recieveAnytimeUpBfs(msg);
+		}
+		if (msg instanceof MessageAnyTimeDown) {
+			reciever.recieveAnytimeDownNonMonotonicByValue(msg);
+		}
+
+	}
+	
+	
+	
 	public void sendUnsynchNonMonotonicByValueMsgsMgm(List<Message> msgToSend) {
 		Collections.sort(msgToSend, new ComparatorMsgSenderId());
 		Collections.reverse(msgToSend);

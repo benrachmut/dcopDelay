@@ -42,7 +42,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private Map<Integer, Integer> counterAndValue;
 	private Permutation bestPermuation;
 	// private int currentAnyTimeDate;
-	//private boolean dsaDecideFlag;
+	// private boolean dsaDecideFlag;
 	private List<Permutation> anytimeUpRecieved;
 
 	private boolean valueRecieveFlag;
@@ -50,6 +50,10 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private boolean waitingForValueStatuesFlag;
 	private Map<AgentField, Permutation> lastPCreatedBy;
 	private Map<AgentField, List<Permutation>> pCreatedByLists;
+
+	private Map<Integer, Boolean> neighborRecieveBoolean;
+	private Map<Integer, List<MessageRecieve>> neighborLaterMsgs;
+
 	private Random rDsaPersonal;
 
 	private AgentZero az;
@@ -91,33 +95,43 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		rCounter = 0;
 	}
 
-	
+	public void restartForSynchronicAlgos() {
+
+		neighborLaterMsgs = new HashMap<Integer, List<MessageRecieve>>();
+		neighborRecieveBoolean = new HashMap<Integer, Boolean>();
+
+		for (Integer i : neighbor.keySet()) {
+			neighborRecieveBoolean.put(i, false);
+
+			List<MessageRecieve> t = new ArrayList<MessageRecieve>();
+			neighborLaterMsgs.put(i, t);
+		}
+
+	}
+
 	public void monotonicDecide() {
-		if (Asynchrony.iter==0) {
-			if (getDfsFather()==null) {
+		if (Asynchrony.iter == 0) {
+			if (getDfsFather() == null) {
 				firstValDsa();
 				setCounterAndValueHistory();// try without this line
 			}
-		}
-		else {
+		} else {
 			if (monotonicCanChange()) {
 				setCounterAndValueHistory(); // try without this line
 				monotonicAbleToDecide();
 			}
 		}
-		
-		
+
 		setCounterAndValueHistory();
-		
+
 	}
-	
-	
+
 	public void monotonicAbleToDecide() {
-			checkToChangeDSA(1);
-			this.decisonCounter++;
-			az.createUnsynchMsgs(this, false);
+		checkToChangeDSA(1);
+		this.decisonCounter++;
+		az.createUnsynchMsgs(this, false);
 	}
-	
+
 	private boolean monotonicCanChange() {
 		boolean aboveOneMoreThenMe = checkAllOneAboveMe();
 		boolean belowLikeMe = checkbelowLikeMe();
@@ -139,6 +153,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			updateCounterAboveOrBelowMono(senderId);
 		}
 	}
+
 	public void restartLastPCreatedBy() {
 
 		this.lastPCreatedBy = new TreeMap<AgentField, Permutation>();
@@ -192,7 +207,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		anytimeUpRecieved = new ArrayList<Permutation>();
 
 	}
-
 
 	public void restartNeighborCounter() {
 
@@ -293,27 +307,16 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		}
 	}
 
-	
-
-
-
-	
-
-	
-
-
-	
-
 	public void reciveRMsg(int senderId, int senderR, int dateOfOther) {
 		if (Main.dateKnown) {
 			int currentDate = this.neighborR.get(senderId).getCounter();
 			if (dateOfOther > currentDate) {
-				this.neighborR.put(senderId, new MessageRecieve(senderR, dateOfOther));	
-				rRcieveFlag=true;
+				this.neighborR.put(senderId, new MessageRecieve(senderR, dateOfOther));
+				rRcieveFlag = true;
 			}
 		} else {
 			this.neighborR.put(senderId, new MessageRecieve(senderR, dateOfOther));
-			rRcieveFlag=true;
+			rRcieveFlag = true;
 		}
 
 	}
@@ -327,10 +330,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		this.neighbor.put(agentId, new MessageRecieve(-1, -1));
 
 	}
-
-
-		
-	
 
 	@Override
 	public int compareTo(AgentField other) {
@@ -382,20 +381,17 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	}
 
 	/*
-	public void setDecisionCounterMonotonic(int i) {
-		this.decisonCounter = i;
-		Permutation myPermutation = this.createCurrentPermutationMonotonic();
-		this.permutationsPast.add(myPermutation);
+	 * public void setDecisionCounterMonotonic(int i) { this.decisonCounter = i;
+	 * Permutation myPermutation = this.createCurrentPermutationMonotonic();
+	 * this.permutationsPast.add(myPermutation);
+	 * 
+	 * }
+	 */
 
-	}
-	*/
-
-	
 	public void setDecisionCounter(int i) {
 		this.decisonCounter = i;
 
 	}
-
 
 	public Permutation createCurrentPermutationNonMonotonic() {
 		Map<Integer, Integer> m = new HashMap<Integer, Integer>();
@@ -440,8 +436,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	}
 
-	
-
 	private boolean checkbelowLikeMe() {
 
 		if (belowMap.keySet().size() == 0) {
@@ -470,12 +464,11 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		return true;
 	}
 
-/*
-	public void setValue(int input) {
-		this.value = input;
-
-	}
-*/
+	/*
+	 * public void setValue(int input) { this.value = input;
+	 * 
+	 * }
+	 */
 	public void resetMsgUpAndDown() {
 		this.msgDown = null;
 		this.msgUp = null;
@@ -553,14 +546,13 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		return false;
 	}
 
-	public void reciveMsg(int senderId, int senderValue, int counterOfOther) {
+	public void reciveMsgValueFlag(int senderId, int senderValue, int counterOfOther) {
 		if (Main.dateKnown) {
 			int currentDate = this.neighbor.get(senderId).getCounter();
 			if (counterOfOther > currentDate) {
 				this.neighbor.put(senderId, new MessageRecieve(senderValue, counterOfOther));
 				valueRecieveFlag = true;
-				//this.dsaDecideFlag = true;
-				//setValueRecieveFlag(false);
+
 			}
 		} else {
 			this.neighbor.put(senderId, new MessageRecieve(senderValue, counterOfOther));
@@ -568,11 +560,42 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		}
 
 	}
-	
-	
 
+	public void reciveMsgValueMap(int senderId, int senderValue, int counterOfOther) {
+		
+		
+		
+		if (Main.dateKnown) {
+		
+			int currentDate;
+			if (this.neighbor.get(senderId).getCounter() == -1) {
+				//if (Main.currentUb == 10) {
+				//	System.out.println();
+				//}
+				currentDate = 0;
+			} else {
+				currentDate = this.neighbor.get(senderId).getCounter();
+			}
+			if (counterOfOther  == currentDate+1) {
+				
+				
+				
+				this.neighbor.put(senderId, new MessageRecieve(senderValue, counterOfOther));
+				this.neighborRecieveBoolean.put(senderId, true);
+			} else {
+				this.neighborLaterMsgs.get(senderId).add(new MessageRecieve(senderValue, counterOfOther));
+			}
+		} 
+		
+		
+		
+		//--- date is not known
+		else {
+			this.neighbor.put(senderId, new MessageRecieve(senderValue, counterOfOther));
+			this.neighborRecieveBoolean.put(senderId, true);
+		}
 
-
+	}
 
 	public boolean neighborIsMinusOne() {
 		for (MessageRecieve i : this.neighbor.values()) {
@@ -677,8 +700,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		return ans;
 	}
 
-
-
 	private boolean permutationContainAllSon(Permutation itPermutation) {
 		for (AgentField son : anytimeSons) {
 			int sonId = son.getId();
@@ -689,7 +710,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		}
 		return true;
 	}
-	
 
 	public void addDfsSon(AgentField son) {
 		dfsSons.add(son);
@@ -752,94 +772,58 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	}
 
-
-
 	/*
 	 * public List<Permutation> permuatationFromAnytimeMsg(Permutation msgP) { //
 	 * return tryToCombinePermutation(msgP);
 	 * 
 	 * }
 	 */
-	
-	
-
-	
 
 	public void updateCounterNonMonoWithSelfCounterSent(int senderId, int date) {
 		neigborCounter.put(senderId, date);
 	}
 
-	
+	/*
+	 * public boolean MgmUnsynchDecide() { boolean ans; if
+	 * (this.waitingForValueStatuesFlag) { ans = setR(); if (ans) { rCounter++;
+	 * this.rRcieveFlag = true; } return ans; } else {
+	 * 
+	 * ans = this.mgmDecide(); if (ans) { this.decisonCounter++;
+	 * this.valueRecieveFlag = true; } } return ans;
+	 * 
+	 * }
+	 */
+	/*
+	 * public void changeWaitForValueStatues() { if (waitingForValueStatuesFlag) {
+	 * waitingForValueStatuesFlag = false; } else { waitingForValueStatuesFlag =
+	 * true; }
+	 * 
+	 * }
+	 */
+	/*
+	 * public void printN() { for (Entry<Integer, MessageRecieve> e :
+	 * neighbor.entrySet()) { System.out.print("[" + e.getKey() + "," +
+	 * e.getValue().getValue() + "]"); } System.out.println();
+	 * 
+	 * }
+	 */
+	/*
+	 * public void printNR() { for (Entry<Integer, MessageRecieve> e :
+	 * neighborR.entrySet()) { System.out.print("[" + e.getKey() + "," +
+	 * e.getValue().getValue() + "]"); } System.out.println();
+	 * 
+	 * }
+	 */
+	/*
+	 * public void setValueRecieveFlag(boolean b) { this.valueRecieveFlag = b;
+	 * 
+	 * }
+	 */
 
-	
-
-	
-
-
-/*
-	public boolean MgmUnsynchDecide() {
-		boolean ans;
-		if (this.waitingForValueStatuesFlag) {
-			ans = setR();
-			if (ans) {
-				rCounter++;
-				this.rRcieveFlag = true;
-			}
-			return ans;
-		} else {
-
-			ans = this.mgmDecide();
-			if (ans) {
-				this.decisonCounter++;
-				this.valueRecieveFlag = true;
-			}
-		}
-		return ans;
-
-	}
-	*/
-/*
-	public void changeWaitForValueStatues() {
-		if (waitingForValueStatuesFlag) {
-			waitingForValueStatuesFlag = false;
-		} else {
-			waitingForValueStatuesFlag = true;
-		}
-
-	}
-	*/
-/*
-	public void printN() {
-		for (Entry<Integer, MessageRecieve> e : neighbor.entrySet()) {
-			System.out.print("[" + e.getKey() + "," + e.getValue().getValue() + "]");
-		}
-		System.out.println();
-
-	}
-	*/
-/*
-	public void printNR() {
-		for (Entry<Integer, MessageRecieve> e : neighborR.entrySet()) {
-			System.out.print("[" + e.getKey() + "," + e.getValue().getValue() + "]");
-		}
-		System.out.println();
-
-	}
-	*/
-/*
-	public void setValueRecieveFlag(boolean b) {
-		this.valueRecieveFlag = b;
-
-	}
-	*/
-
-	
-	
-	
 	public void updateRecieverUponPermutationOneByOne(Permutation currPermutation, AgentField reciever) {
 		// Permutation currPermutation =
 		// reciever.createCurrentPermutationNonMonotonic();
-		//---
+		// ---
 		if (isAnytimeLeaf()) {
 			addToPermutationToSendUnsynchNonMonoByValue(currPermutation);
 		} else {
@@ -848,723 +832,773 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		addToPermutationPast(currPermutation);
 	}
 
-	
-	
+	// --------General use-----
 
-
-	
-	
-	
-	//--------General use-----
-	
 	/**
-	 * used by all algorithms to get first val rFirstValue seed is reset each time the algo is called
+	 * used by all algorithms to get first val rFirstValue seed is reset each time
+	 * the algo is called
+	 * 
 	 * @return random int from the domain
 	 */
-		public int createRandFirstValue() {
-			return Main.getRandomInt(Main.rFirstValue, 0, this.domain.length - 1);
-		}
+	public int createRandFirstValue() {
+		return Main.getRandomInt(Main.rFirstValue, 0, this.domain.length - 1);
+	}
 
-	//--------DSA-----
+	// --------DSA-----
 
-		public void dsaDecide(double stochastic) {
-			if (Asynchrony.iter == 0) {
-				firstValDsa();
-			} else {
-				boolean didChange = false;
-				if (valueRecieveFlag) {
-					valueRecieveFlag = false;
-					didChange = checkToChangeDSA(stochastic);
-				}
-				if (didChange) {
-					this.decisonCounter++;
-					az.createUnsynchMsgs(this, false);
-					doAnytime();
-				}
-			//	this.az.afterDecideTakeActionUnsynchNonMonotonicByValue(this.didDecide, i);
-			}
-		}
-				
-		private boolean checkToChangeDSA(double stochastic) {
-
-			List<PotentialCost> pCosts = findPotentialCost();
-			int currentPersonalCost = findCurrentCost(pCosts);
-
-			PotentialCost minPotentialCost = Collections.min(pCosts);
-			int minCost = minPotentialCost.getCost();
-
-			boolean shouldChange = false;
-			if (minCost <= currentPersonalCost) {
-				shouldChange = true;
-			}
-			if (this.value == -1) {
-				shouldChange = true;
-			}
-			return maybeChange(shouldChange, minPotentialCost, stochastic);
-		}
-		
-		private void firstValDsa() {
-			valueRecieveFlag = false;
-			this.value= createRandFirstValue();
-			//setValue(value);
-			this.decisonCounter++;
-			az.createUnsynchMsgs(this, false);
+	public void dsaSynchronicDecide(double stochastic) {
+		if (Asynchrony.iter == 0) {
+			firstValDsa();
+		} else {
 			
-		}
-		
-		private List<PotentialCost> findPotentialCost() {
-			List<PotentialCost> pCosts = new ArrayList<PotentialCost>();
-			for (int i = 0; i < domain.length; i++) {
-				Set<ConstraintNeighbor> neighborsAtDomain = this.constraint.get(i);
-				int costPerValue = calCostPerValue(neighborsAtDomain);
-				PotentialCost pC = new PotentialCost(domain[i], costPerValue);
-				pCosts.add(pC);
-			}
-			return pCosts;
-		}
-		
-		private int findCurrentCost(List<PotentialCost> pCosts) {
-			for (PotentialCost pC : pCosts) {
-				if (pC.getValue() == this.value) {
-					return pC.getCost();
-				}
-			}
-			return -1;
-		}
-		
-		private boolean maybeChange(boolean shouldChange, PotentialCost minPotentialCost, double stochastic) {
-			if (shouldChange) {
-				double rnd = rDsaPersonal.nextDouble();
-				if (rnd < stochastic) {
-					this.value = minPotentialCost.getValue();
-					return true;
-				}
-			}
-			return false;
-		}
-
-		private int calCostPerValue(Set<ConstraintNeighbor> neighborsAtDomain) {
-			int ans = 0;
-
-			if (neighborsAtDomain == null) {
-				return 0;
-			}
-			for (ConstraintNeighbor cN : neighborsAtDomain) {
-				Agent a = cN.getAgent();
-				int aId = a.getId();
-
-				int aCheckedValue = a.getValue();
-				int aNeighborKnownValue = this.neighbor.get(aId).getValue();
-
-				if (aCheckedValue == aNeighborKnownValue) {
-					int costFromNeighbor = cN.getCost();
-					ans += costFromNeighbor;
-				}
-			}
-			return ans;
-		}
-
-		public void setDsaSeed(int meanRun) {
-			int newSeed = meanRun+this.id;
-			rDsaPersonal.setSeed(meanRun*88+this.id*555);
-		}
-		
-		public void resetDsaSeed(int meanRun) {
-			this.rDsaPersonal = new Random(meanRun*88+this.id*555);
-		}
-		
-		//--------ANY TIME-----
-
-		private void doAnytime() {
-
-			if (Main.anytime) {
-				Permutation myPermutation = createCurrentPermutationByValue();
-				if (this.isAnytimeLeaf()) {
-					this.addToPermutationToSendUnsynchNonMonoByValue(myPermutation);
-				} else {
-					this.tryToCombinePermutation(myPermutation);
-				}
-			}
-			
-		}
-
-		public List<Permutation> tryToCombinePermutation(Permutation currentP) {
-			List<Permutation> listToAddToPast = new ArrayList<Permutation>();
-			List<Permutation> completePermutation = new ArrayList<Permutation>();
-			List<Permutation> ans = new ArrayList<Permutation>();
-
-			iterateOverPastPermuataion(currentP, listToAddToPast, completePermutation);
-
-			for (Permutation p : listToAddToPast) {
-				addToPermutationPast(p);
-				ans.add(p);
-			}
-
-			for (Permutation p : completePermutation) {
-
-				addToPermutationToSendUnsynchNonMonoByValue(p);
-				ans.add(p);
-
-				// this.permutationsToSend.add(p);
-			}
-			addToPermutationPast(currentP);
-			return ans;
-
-		}
-	
-		public void recieveAnytimeDownNonMonotonicByValue(Message msg) {
-			//// maybe bug here
-
-			MessageAnyTimeDown mad = (MessageAnyTimeDown) msg;
-
-			// if (mad.getDate() > this.currentAnyTimeDate) {
-			this.msgDown = mad;
-			Permutation pFromMad = mad.getMessageInformation();
-			recieveBetterPermutation(pFromMad);
-			// this.currentAnyTimeDate = mad.getDate();
-			// }
-
-		}
-
-		public Permutation createCurrentPermutationByValue() {
-
-			Map<Integer, Integer> m = new HashMap<Integer, Integer>();
-
-			for (Entry<Integer, MessageRecieve> e : this.neighbor.entrySet()) {
-				int nId = e.getKey();
-				int nValue = e.getValue().getValue();
-				m.put(nId, nValue);
-			}
-			m.put(this.id, this.value);
-
-			if (!neighborIsMinusOne(m)) {
-				int x = 3;
-			}
-			int cost = calSelfCost(m);
-			return new Permutation(m, cost, this);
-		}
-		
-		private void iterateOverPastPermuataion(Permutation msgP, List<Permutation> listToAddToPast,
-				List<Permutation> completePermutation) {
-
-			for (Permutation pastP : this.permutationsPast) {
-
-				Permutation toAdd = msgP.canAdd(this, pastP);
-
-				if (toAdd != null) {
-
-					if (toAdd.getFlagReady()) {
-						completePermutation.add(toAdd);
-					} else {
-						listToAddToPast.add(toAdd);
-					}
-				}
-			}
-
-		}
-		
-		public void addToPermutationPast(Permutation input) {
-			if (Main.memoryVersion == 1 || Main.memoryVersion == 3) {
-
-				int time = Asynchrony.iter;
-				input.setTimeEnter(time);
-				addToSet(input, permutationsPast);
-			}
-			if (Main.memoryVersion == 2) {
-				// addToSet(input, permutationsPast);
-
-				memoryVersionConstant(input);
-
-			}
-
-			// this.permutationsPast.add(input);
-
-		}
-
-		private void memoryVersionConstant(Permutation input) {
-			boolean inputAlreadyInSet = checkIfInputAlreadyInSet(input);
-			if (!inputAlreadyInSet) {
-				if (this.permutationsPast.size() > Main.memoryMaxConstant) {
-					Permutation pToDelete = selectPToDelete(input);
-
-					// Permutation currentP = getPAccordingToCompIndex(input);
-					// boolean maxSimilarityFlag = getMaxSimilarityFlagAccordingToCompIndex();
-
-					// 1 = maxSimilarityToAgentView, 2 = fifo
-					// 3 = maxSimilarityToLastPFromSender, 4 = maxSimilarityToLastPFromSender
-
-					// Comparator<Permutation> c = new ComparatorPermutationSimilarty(currentP,
-					// maxSimilarityFlag);
-					// Permutation minP = Collections.min(this.permutationsPast, c);
-					this.permutationsPast.remove(pToDelete);
-				}
-
-				this.lastPCreatedBy.put(input.getCreator(), input);
-				this.pCreatedByLists.get(input.getCreator()).add(input);
-
-				int time = Asynchrony.iter;
-				input.setTimeEnter(time);
-				// addToSet(input, permutationsPast);
-				permutationsPast.add(input);
-			}
-
-		}
-
-		// 1 = maxSimilarityToAgentView, 2 = minSimilarityToAgentView,
-		// 3 = minSimilarityToLastPFromSender
-		private Permutation selectPToDelete(Permutation input) {
-			if (Main.currentComparatorForMemory == 1) {
-				boolean maxSimilarityFlag;
-				Permutation p = createCurrentPermutationByValue();
-				maxSimilarityFlag = true;
-
-				Comparator<Permutation> c = new ComparatorPermutationSimilarty(p, maxSimilarityFlag);
-				return Collections.min(this.permutationsPast, c);
-			}
-
-			if (Main.currentComparatorForMemory == 2) {
-				Comparator<Permutation> c = new ComparatorPermuatationByTimeEnter();
-				return Collections.min(this.permutationsPast, c);
-			}
-
-			else {
-				return comp3();
-			}
-		}
-
-		private Permutation comp3() {
-			Map<AgentField, Integer> keepScoreOfEachNeighbor = new TreeMap<AgentField, Integer>();
-			Map<AgentField, Permutation> keepPermutationOfEachNeighbor = new TreeMap<AgentField, Permutation>();
-
-			for (Entry<AgentField, List<Permutation>> e : pCreatedByLists.entrySet()) {
-				Permutation lastP = this.lastPCreatedBy.get(e.getKey());
-				if (lastP != null) {
-					boolean maxSimilartiyFlag = true;
-					Comparator<Permutation> c = new ComparatorPermutationSimilarty(lastP, maxSimilartiyFlag);
-					if (!e.getValue().isEmpty()) {
-						Permutation minSimilarityP = Collections.min(e.getValue(), c);
-						keepPermutationOfEachNeighbor.put(e.getKey(), minSimilarityP);
-						int similarityInt = minSimilarityP.getSimilartyCounterTo(lastP);
-						keepScoreOfEachNeighbor.put(e.getKey(), similarityInt);
-					}
-				}
-
-			}
-			Permutation toDelete = null;
-			AgentField createdBy = null;
-			int minCounterOfAll = Collections.min(keepScoreOfEachNeighbor.values());
-			for (Entry<AgentField, Integer> e : keepScoreOfEachNeighbor.entrySet()) {
-				if (e.getValue() == minCounterOfAll) {
-					toDelete = keepPermutationOfEachNeighbor.get(e.getKey());
-					createdBy = e.getKey();
-					break;
-				}
-			}
-
-			this.pCreatedByLists.get(createdBy).remove(toDelete);
-			return toDelete;
-		}
-
-		private boolean checkIfInputAlreadyInSet(Permutation input) {
-			for (Permutation pPast : this.permutationsPast) {
-				if (input.equals(pPast)) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public void addToPermutationToSendUnsynchNonMonoByValue(Permutation input) {
-
-			if (this.isAnytimeTop()) {
-
-				// System.out.println(
-				// "ALL PERMUTATIONS, iteration: "+Unsynch.iter+", cost: " + input.getCost() + "
-				// permutation past size: " + this.permutationsPast.size());
-
-				Asynchrony.topCost = input.getCost();
-				Asynchrony.counterPermutationAtTop = Asynchrony.counterPermutationAtTop + 1;
-				// Unsynch.bool = true;
-				if (this.bestPermuation == null || this.bestPermuation.getCost() > input.getCost()) {
-					recieveBetterPermutation(input);
-					iHaveAnytimeNews = true;
-					System.out.println("BEST PERMUTATIONS =cost: " + input.getCost() + " permutation past size: "
-							+ this.permutationsPast.size());
-				}
-
-			} else {
-				addToSet(input, permutationsToSend);
-			}
-		}
-
-		public void addToPermutationToSend(Permutation input) {
-			addToSet(input, permutationsToSend);
-
-		}
-
-		private void recieveBetterPermutation(Permutation input) {
-			bestPermuation = input;
-			printTopCompletePermutation(input);
-			this.anytimeValue = input.getM().get(this.id);
-
-		}
-
-		private void printTopCompletePermutation(Permutation input) {
-			int realCost = Solution.dcopS.calRealSolForDebug(input.getM());
-
-			if (this.isAnytimeTop()) {
-
-				if (input.getCost() == realCost) {
-					// System.out.println(input);
-				} else {
-					// System.err.println("cost should be: " + realCost + " |" + input);
-
-				}
-			}
-
-		}
-
-		private boolean addToSet(Permutation input, HashSet<Permutation> setToAddTo) {
-			boolean flag = false;
-			for (Permutation pFromList : setToAddTo) {
-				if (pFromList.equals(input)) {
-					flag = true;
-				}
-			}
-			if (!flag) {
-				setToAddTo.add(input);
-			}
-			return flag;
-		}
-
-		public void iterateOverSonsAndCombineWithInputPermutation(Permutation input) {
-			// Permutation myPermutation = this.createCurrentPermutation();
-			for (Permutation sonPermutation : this.sonsAnytimePermutations) {
-				if (sonPermutation.isCoherent(input)) {
-					Permutation pToSend = Permutation.combinePermutations(sonPermutation, input, this);
-					handlePToSend(pToSend);
-				}
-			}
-		}
-
-		/**
-		 * case 2- called when messaged recieved is anyTimeUp from agent zero
-		 * 
-		 * @return
-		 */
-		public void recieveAnytimeUpMonotonic(Message msg) {
-			MessageAnyTimeUp mau = (MessageAnyTimeUp) msg;
-
-			Permutation p = mau.getMessageInformation();
-			Set<Permutation> belowCoherentWithMessage = combinePermutationFromMsgWithOtherPermutationsOfReceiverSon(p);
-
-			Set<Permutation> pastCoherentWithMessage = combinePermutationFromMsgWithOtherPermutationsOfReceiverPast(p);
-
-			if (belowCoherentWithMessage.isEmpty() || pastCoherentWithMessage.isEmpty()) {
-				return;
-			}
-			combineBelowAndPast(belowCoherentWithMessage, pastCoherentWithMessage);
-
-		}
-
-		public Set<Permutation> combinePermutationFromMsgWithOtherPermutationsOfReceiverSon(Permutation msgPermutation) {
-			boolean flag = false;
-			Set<Permutation> pToAdd = new HashSet<Permutation>();
-			Set<Permutation> pToRemove = new HashSet<Permutation>();
-
-			for (Permutation sonsPermutation : sonsAnytimePermutations) {
-				if (msgPermutation.isCoherent(sonsPermutation)) {
-					flag = true;
-					pToAdd.add(Permutation.combinePermutations(sonsPermutation, msgPermutation, this));
-					pToRemove.add(sonsPermutation); // the un
-				}
-			}
-
-			if (!flag) {
-				this.sonsAnytimePermutations.add(msgPermutation);
-				pToAdd.add(msgPermutation);
-				return pToAdd;
-
-			} else {
-				this.sonsAnytimePermutations.removeAll(pToRemove);
-				this.sonsAnytimePermutations.addAll(pToAdd);
-			}
-
-			// pToAdd will contain only permutations that are ready to be sent
-			Iterator<Permutation> it = pToAdd.iterator();
-			while (it.hasNext()) {
-				Permutation itPermutation = it.next();
-				if (!permutationContainAllSon(itPermutation)) {
-					it.remove();
-				}
-
-			}
-			return pToAdd;
-		}
-
-		private Set<Permutation> combinePermutationFromMsgWithOtherPermutationsOfReceiverPast(
-				Permutation permutationFromMessage) {
-			Set<Permutation> ans = new HashSet<Permutation>();
-			for (Permutation pastPermutation : permutationsPast) {
-				if (pastPermutation.isCoherent(permutationFromMessage)) {
-					ans.add(pastPermutation);
-				}
-			}
-			return ans;
-		}
-
-		private void combineBelowAndPast(Set<Permutation> belowCoherentWithMessage,
-				Set<Permutation> pastCoherentWithMessage) {
-
-			for (Permutation belowP : belowCoherentWithMessage) {
-				for (Permutation aboveP : pastCoherentWithMessage) {
-					if (belowP.isCoherent(aboveP)) {
-						Permutation pToSend = Permutation.combinePermutations(belowP, aboveP);
-
-						handlePToSend(pToSend);
-
-					}
-				}
-			}
-
-		}
-
-		public void recieveAnytimeDownMonotonic(Message input) {
-			//// maybe bug here
-
-			MessageAnyTimeDown mad = (MessageAnyTimeDown) input;
-
-			// if (mad.getDate() > this.currentAnyTimeDate) {
-			this.msgDown = mad;
-			doPermutationToSend(mad.getMessageInformation());
-			// this.currentAnyTimeDate = mad.get;
-			// }
-		}
-
-		public void recieveAnytimeUpBfs(Message msg) {
-			if (msg instanceof MessageAnyTimeUp) {
-
-				MessageAnyTimeUp mau = (MessageAnyTimeUp) msg;
-				Permutation msgP = mau.getMessageInformation();
-				tryToCombinePermutation(msgP);
-
-			} else {
-				System.err.println("logical bug from recieveAnytimeUpBfs");
-			}
-
-		}
-		
-		//--------MGM-----
-		public void mgmAsynchDecide() {
-
-			if (Asynchrony.iter == 0) {
-				firstValMgm();
-				
-			} 
-			else {		
-				//boolean didChange = false;
-				if (waitingForValueStatuesFlag) {
-					if (valueRecieveFlag) {
-						waitForValMgm();	
-					}	
-				} //waitingForValueStatuesFlag = true
-				else {
-					if (rRcieveFlag) {
-						waitForRMgm();
-					}
-				}// waitingForValueStatuesFlag = false
-			}
-		}
-			
-		public void mgmAsynchCheatDecide() {
-			if (Asynchrony.iter == 0) {
-				firstValMgm();
-			} 
-			else {		
-				if (waitingForValueStatuesFlag) {
-					waitForValMgm();	
-				}// waitingForValueStatuesFlag = true
-				else {
-					waitForRMgm();
-				}// waitingForValueStatuesFlag = false
-			}
-		}
-		
-		private void waitForRMgm() {
-			boolean didChange = false;
-			rRcieveFlag = false;		
-			didChange = this.mgmValueDecide();
-			if (didChange) {
+			if (checkNeighborRecieveBoolean()) {
+				valueRecieveFlag = false;
+				checkToChangeDSA(stochastic);
 				this.decisonCounter++;
-				this.valueRecieveFlag = true;
+				az.createUnsynchMsgs(this, false);
 				doAnytime();
 			}
-			az.createUnsynchMgmMsgs(this, false);
-			waitingForValueStatuesFlag =true;
-			
+		}
+	}
+
+	private boolean checkNeighborRecieveBoolean() {
+		boolean valueOfNeighborRecieveBoolean = checkCurrentNeighborRecieveBoolean();
+		if (!valueOfNeighborRecieveBoolean) {
+			return false;
+		} else {
+			updateMapsAfterReset();
+		}
+		return true;
+	}
+
+	private void updateMapsAfterReset() {
+		for (Integer i : neighborRecieveBoolean.keySet()) {
+			neighborRecieveBoolean.put(i, false);
 		}
 
-		private void waitForValMgm() {
-			boolean didChange =false;
-			valueRecieveFlag = false;
-			didChange = setR();
-			if (didChange) {
-				rCounter++;
-				this.rRcieveFlag = true;	
-			}
-			az.createUnsynchMgmMsgs(this, false);
-			waitingForValueStatuesFlag =false;
-			
-		}
-
-		private void firstValMgm() {
-			this.value = createRandFirstValue();
-			az.createUnsynchMgmMsgs(this, false);
-			waitingForValueStatuesFlag = true;
-		}
-
-		private Entry<Integer, MessageRecieve> getMaxRFromNeighbors() {
-			Entry<Integer, MessageRecieve> max = null;
-			boolean flag = false;
-			for (Entry<Integer, MessageRecieve> nr : neighborR.entrySet()) {
-				if (!flag) {
-					max = nr;
-					flag = true;
-				}
-				int maxR = max.getValue().getValue();
-				int nrR = nr.getValue().getValue();
-				if (nrR > maxR) {
-					max = nr;
-				}
-				int idMax = max.getKey();
-				int idNr = nr.getKey();
-				if (nrR == maxR && idMax > idNr) {
-					max = nr;
+		for (Entry<Integer, List<MessageRecieve>> e : neighborLaterMsgs.entrySet()) {
+			List<MessageRecieve> recievedAlready = e.getValue();
+			if (!recievedAlready.isEmpty()) {
+				MessageRecieve minRecieve = Collections.min(recievedAlready, new ComparatorMsgCounter());
+				int counterOfCurrentMsg = this.neighbor.get(e.getKey()).getCounter();
+				if (minRecieve.getCounter() == counterOfCurrentMsg + 1) {
+					
+					
+					
+					recievedAlready.remove(minRecieve);
+					this.neighbor.put(e.getKey(), minRecieve);
+					neighborRecieveBoolean.put(e.getKey(), true);
 				}
 			}
-			return max;
 		}
+		
+	}
 
-		public void changeValR() {
-
-			for (Entry<Integer, MessageRecieve> n : neighborR.entrySet()) {
-				n.setValue(new MessageRecieve(-1, -1));
-			}
-
-		}
-
-		public boolean mgmValueDecide() {
-			Entry<Integer, MessageRecieve> maxRInMap = getMaxRFromNeighbors();
-
-			if (maxRInMap == null) {
-				this.value = this.domain[0];
+	private boolean checkCurrentNeighborRecieveBoolean() {
+		for (Boolean b : neighborRecieveBoolean.values()) {
+			if (!b) {
 				return false;
 			}
-			int maxRVal = maxRInMap.getValue().getValue();
-			if (this.r > maxRVal) {
-				this.value = this.minPC.getValue();
+		}
+		return true;
+	}
+
+	public void dsaAsynchronyDecide(double stochastic) {
+		if (Asynchrony.iter == 0) {
+			firstValDsa();
+		} else {
+			boolean didChange = false;
+			if (valueRecieveFlag) {
+				valueRecieveFlag = false;
+				didChange = checkToChangeDSA(stochastic);
+			}
+			if (didChange) {
+				this.decisonCounter++;
+				az.createUnsynchMsgs(this, false);
+				doAnytime();
+			}
+			// this.az.afterDecideTakeActionUnsynchNonMonotonicByValue(this.didDecide, i);
+		}
+	}
+
+	private boolean checkToChangeDSA(double stochastic) {
+
+		List<PotentialCost> pCosts = findPotentialCost();
+		int currentPersonalCost = findCurrentCost(pCosts);
+
+		PotentialCost minPotentialCost = Collections.min(pCosts);
+		int minCost = minPotentialCost.getCost();
+
+		boolean shouldChange = false;
+		if (minCost <= currentPersonalCost) {
+			shouldChange = true;
+		}
+		if (this.value == -1) {
+			shouldChange = true;
+		}
+		return maybeChange(shouldChange, minPotentialCost, stochastic);
+	}
+
+	private void firstValDsa() {
+		valueRecieveFlag = false;
+		this.value = createRandFirstValue();
+		// setValue(value);
+		this.decisonCounter++;
+		az.createUnsynchMsgs(this, false);
+
+	}
+
+	private List<PotentialCost> findPotentialCost() {
+		List<PotentialCost> pCosts = new ArrayList<PotentialCost>();
+		for (int i = 0; i < domain.length; i++) {
+			Set<ConstraintNeighbor> neighborsAtDomain = this.constraint.get(i);
+			int costPerValue = calCostPerValue(neighborsAtDomain);
+			PotentialCost pC = new PotentialCost(domain[i], costPerValue);
+			pCosts.add(pC);
+		}
+		return pCosts;
+	}
+
+	private int findCurrentCost(List<PotentialCost> pCosts) {
+		for (PotentialCost pC : pCosts) {
+			if (pC.getValue() == this.value) {
+				return pC.getCost();
+			}
+		}
+		return -1;
+	}
+
+	private boolean maybeChange(boolean shouldChange, PotentialCost minPotentialCost, double stochastic) {
+		if (shouldChange) {
+			double rnd = rDsaPersonal.nextDouble();
+			if (rnd < stochastic) {
+				this.value = minPotentialCost.getValue();
 				return true;
 			}
-			int maxRId = maxRInMap.getKey();
-			if (this.r == maxRVal && this.id < maxRId) {
-				this.value = this.minPC.getValue();
+		}
+		return false;
+	}
+
+	private int calCostPerValue(Set<ConstraintNeighbor> neighborsAtDomain) {
+		int ans = 0;
+
+		if (neighborsAtDomain == null) {
+			return 0;
+		}
+		for (ConstraintNeighbor cN : neighborsAtDomain) {
+			Agent a = cN.getAgent();
+			int aId = a.getId();
+
+			int aCheckedValue = a.getValue();
+			int aNeighborKnownValue = this.neighbor.get(aId).getValue();
+
+			if (aCheckedValue == aNeighborKnownValue) {
+				int costFromNeighbor = cN.getCost();
+				ans += costFromNeighbor;
+			}
+		}
+		return ans;
+	}
+
+	public void setDsaSeed(int meanRun) {
+		int newSeed = meanRun + this.id;
+		rDsaPersonal.setSeed(meanRun * 88 + this.id * 555);
+	}
+
+	public void resetDsaSeed(int meanRun) {
+		this.rDsaPersonal = new Random(meanRun * 88 + this.id * 555);
+	}
+
+	// --------ANY TIME-----
+
+	private void doAnytime() {
+
+		if (Main.anytime) {
+			Permutation myPermutation = createCurrentPermutationByValue();
+			if (this.isAnytimeLeaf()) {
+				this.addToPermutationToSendUnsynchNonMonoByValue(myPermutation);
+			} else {
+				this.tryToCombinePermutation(myPermutation);
+			}
+		}
+
+	}
+
+	public List<Permutation> tryToCombinePermutation(Permutation currentP) {
+		List<Permutation> listToAddToPast = new ArrayList<Permutation>();
+		List<Permutation> completePermutation = new ArrayList<Permutation>();
+		List<Permutation> ans = new ArrayList<Permutation>();
+
+		iterateOverPastPermuataion(currentP, listToAddToPast, completePermutation);
+
+		for (Permutation p : listToAddToPast) {
+			addToPermutationPast(p);
+			ans.add(p);
+		}
+
+		for (Permutation p : completePermutation) {
+
+			addToPermutationToSendUnsynchNonMonoByValue(p);
+			ans.add(p);
+
+			// this.permutationsToSend.add(p);
+		}
+		addToPermutationPast(currentP);
+		return ans;
+
+	}
+
+	public void recieveAnytimeDownNonMonotonicByValue(Message msg) {
+		//// maybe bug here
+
+		MessageAnyTimeDown mad = (MessageAnyTimeDown) msg;
+
+		// if (mad.getDate() > this.currentAnyTimeDate) {
+		this.msgDown = mad;
+		Permutation pFromMad = mad.getMessageInformation();
+		recieveBetterPermutation(pFromMad);
+		// this.currentAnyTimeDate = mad.getDate();
+		// }
+
+	}
+
+	public Permutation createCurrentPermutationByValue() {
+
+		Map<Integer, Integer> m = new HashMap<Integer, Integer>();
+
+		for (Entry<Integer, MessageRecieve> e : this.neighbor.entrySet()) {
+			int nId = e.getKey();
+			int nValue = e.getValue().getValue();
+			m.put(nId, nValue);
+		}
+		m.put(this.id, this.value);
+
+		if (!neighborIsMinusOne(m)) {
+			int x = 3;
+		}
+		int cost = calSelfCost(m);
+		return new Permutation(m, cost, this);
+	}
+
+	private void iterateOverPastPermuataion(Permutation msgP, List<Permutation> listToAddToPast,
+			List<Permutation> completePermutation) {
+
+		for (Permutation pastP : this.permutationsPast) {
+
+			Permutation toAdd = msgP.canAdd(this, pastP);
+
+			if (toAdd != null) {
+
+				if (toAdd.getFlagReady()) {
+					completePermutation.add(toAdd);
+				} else {
+					listToAddToPast.add(toAdd);
+				}
+			}
+		}
+
+	}
+
+	public void addToPermutationPast(Permutation input) {
+		if (Main.memoryVersion == 1 || Main.memoryVersion == 3) {
+
+			int time = Asynchrony.iter;
+			input.setTimeEnter(time);
+			addToSet(input, permutationsPast);
+		}
+		if (Main.memoryVersion == 2) {
+			// addToSet(input, permutationsPast);
+
+			memoryVersionConstant(input);
+
+		}
+
+		// this.permutationsPast.add(input);
+
+	}
+
+	private void memoryVersionConstant(Permutation input) {
+		boolean inputAlreadyInSet = checkIfInputAlreadyInSet(input);
+		if (!inputAlreadyInSet) {
+			if (this.permutationsPast.size() > Main.memoryMaxConstant) {
+				Permutation pToDelete = selectPToDelete(input);
+
+				// Permutation currentP = getPAccordingToCompIndex(input);
+				// boolean maxSimilarityFlag = getMaxSimilarityFlagAccordingToCompIndex();
+
+				// 1 = maxSimilarityToAgentView, 2 = fifo
+				// 3 = maxSimilarityToLastPFromSender, 4 = maxSimilarityToLastPFromSender
+
+				// Comparator<Permutation> c = new ComparatorPermutationSimilarty(currentP,
+				// maxSimilarityFlag);
+				// Permutation minP = Collections.min(this.permutationsPast, c);
+				this.permutationsPast.remove(pToDelete);
+			}
+
+			this.lastPCreatedBy.put(input.getCreator(), input);
+			this.pCreatedByLists.get(input.getCreator()).add(input);
+
+			int time = Asynchrony.iter;
+			input.setTimeEnter(time);
+			// addToSet(input, permutationsPast);
+			permutationsPast.add(input);
+		}
+
+	}
+
+	// 1 = maxSimilarityToAgentView, 2 = minSimilarityToAgentView,
+	// 3 = minSimilarityToLastPFromSender
+	private Permutation selectPToDelete(Permutation input) {
+		if (Main.currentComparatorForMemory == 1) {
+			boolean maxSimilarityFlag;
+			Permutation p = createCurrentPermutationByValue();
+			maxSimilarityFlag = true;
+
+			Comparator<Permutation> c = new ComparatorPermutationSimilarty(p, maxSimilarityFlag);
+			return Collections.min(this.permutationsPast, c);
+		}
+
+		if (Main.currentComparatorForMemory == 2) {
+			Comparator<Permutation> c = new ComparatorPermuatationByTimeEnter();
+			return Collections.min(this.permutationsPast, c);
+		}
+
+		else {
+			return comp3();
+		}
+	}
+
+	private Permutation comp3() {
+		Map<AgentField, Integer> keepScoreOfEachNeighbor = new TreeMap<AgentField, Integer>();
+		Map<AgentField, Permutation> keepPermutationOfEachNeighbor = new TreeMap<AgentField, Permutation>();
+
+		for (Entry<AgentField, List<Permutation>> e : pCreatedByLists.entrySet()) {
+			Permutation lastP = this.lastPCreatedBy.get(e.getKey());
+			if (lastP != null) {
+				boolean maxSimilartiyFlag = true;
+				Comparator<Permutation> c = new ComparatorPermutationSimilarty(lastP, maxSimilartiyFlag);
+				if (!e.getValue().isEmpty()) {
+					Permutation minSimilarityP = Collections.min(e.getValue(), c);
+					keepPermutationOfEachNeighbor.put(e.getKey(), minSimilarityP);
+					int similarityInt = minSimilarityP.getSimilartyCounterTo(lastP);
+					keepScoreOfEachNeighbor.put(e.getKey(), similarityInt);
+				}
+			}
+
+		}
+		Permutation toDelete = null;
+		AgentField createdBy = null;
+		int minCounterOfAll = Collections.min(keepScoreOfEachNeighbor.values());
+		for (Entry<AgentField, Integer> e : keepScoreOfEachNeighbor.entrySet()) {
+			if (e.getValue() == minCounterOfAll) {
+				toDelete = keepPermutationOfEachNeighbor.get(e.getKey());
+				createdBy = e.getKey();
+				break;
+			}
+		}
+
+		this.pCreatedByLists.get(createdBy).remove(toDelete);
+		return toDelete;
+	}
+
+	private boolean checkIfInputAlreadyInSet(Permutation input) {
+		for (Permutation pPast : this.permutationsPast) {
+			if (input.equals(pPast)) {
 				return true;
+			}
+		}
+		return false;
+	}
+
+	public void addToPermutationToSendUnsynchNonMonoByValue(Permutation input) {
+
+		if (this.isAnytimeTop()) {
+
+			// System.out.println(
+			// "ALL PERMUTATIONS, iteration: "+Unsynch.iter+", cost: " + input.getCost() + "
+			// permutation past size: " + this.permutationsPast.size());
+
+			Asynchrony.topCost = input.getCost();
+			Asynchrony.counterPermutationAtTop = Asynchrony.counterPermutationAtTop + 1;
+			// Unsynch.bool = true;
+			if (this.bestPermuation == null || this.bestPermuation.getCost() > input.getCost()) {
+				recieveBetterPermutation(input);
+				iHaveAnytimeNews = true;
+				System.out.println("BEST PERMUTATIONS =cost: " + input.getCost() + " permutation past size: "
+						+ this.permutationsPast.size());
+			}
+
+		} else {
+			addToSet(input, permutationsToSend);
+		}
+	}
+
+	public void addToPermutationToSend(Permutation input) {
+		addToSet(input, permutationsToSend);
+
+	}
+
+	private void recieveBetterPermutation(Permutation input) {
+		bestPermuation = input;
+		printTopCompletePermutation(input);
+		this.anytimeValue = input.getM().get(this.id);
+
+	}
+
+	private void printTopCompletePermutation(Permutation input) {
+		int realCost = Solution.dcopS.calRealSolForDebug(input.getM());
+
+		if (this.isAnytimeTop()) {
+
+			if (input.getCost() == realCost) {
+				// System.out.println(input);
+			} else {
+				// System.err.println("cost should be: " + realCost + " |" + input);
 
 			}
+		}
+
+	}
+
+	private boolean addToSet(Permutation input, HashSet<Permutation> setToAddTo) {
+		boolean flag = false;
+		for (Permutation pFromList : setToAddTo) {
+			if (pFromList.equals(input)) {
+				flag = true;
+			}
+		}
+		if (!flag) {
+			setToAddTo.add(input);
+		}
+		return flag;
+	}
+
+	public void iterateOverSonsAndCombineWithInputPermutation(Permutation input) {
+		// Permutation myPermutation = this.createCurrentPermutation();
+		for (Permutation sonPermutation : this.sonsAnytimePermutations) {
+			if (sonPermutation.isCoherent(input)) {
+				Permutation pToSend = Permutation.combinePermutations(sonPermutation, input, this);
+				handlePToSend(pToSend);
+			}
+		}
+	}
+
+	/**
+	 * case 2- called when messaged recieved is anyTimeUp from agent zero
+	 * 
+	 * @return
+	 */
+	public void recieveAnytimeUpMonotonic(Message msg) {
+		MessageAnyTimeUp mau = (MessageAnyTimeUp) msg;
+
+		Permutation p = mau.getMessageInformation();
+		Set<Permutation> belowCoherentWithMessage = combinePermutationFromMsgWithOtherPermutationsOfReceiverSon(p);
+
+		Set<Permutation> pastCoherentWithMessage = combinePermutationFromMsgWithOtherPermutationsOfReceiverPast(p);
+
+		if (belowCoherentWithMessage.isEmpty() || pastCoherentWithMessage.isEmpty()) {
+			return;
+		}
+		combineBelowAndPast(belowCoherentWithMessage, pastCoherentWithMessage);
+
+	}
+
+	public Set<Permutation> combinePermutationFromMsgWithOtherPermutationsOfReceiverSon(Permutation msgPermutation) {
+		boolean flag = false;
+		Set<Permutation> pToAdd = new HashSet<Permutation>();
+		Set<Permutation> pToRemove = new HashSet<Permutation>();
+
+		for (Permutation sonsPermutation : sonsAnytimePermutations) {
+			if (msgPermutation.isCoherent(sonsPermutation)) {
+				flag = true;
+				pToAdd.add(Permutation.combinePermutations(sonsPermutation, msgPermutation, this));
+				pToRemove.add(sonsPermutation); // the un
+			}
+		}
+
+		if (!flag) {
+			this.sonsAnytimePermutations.add(msgPermutation);
+			pToAdd.add(msgPermutation);
+			return pToAdd;
+
+		} else {
+			this.sonsAnytimePermutations.removeAll(pToRemove);
+			this.sonsAnytimePermutations.addAll(pToAdd);
+		}
+
+		// pToAdd will contain only permutations that are ready to be sent
+		Iterator<Permutation> it = pToAdd.iterator();
+		while (it.hasNext()) {
+			Permutation itPermutation = it.next();
+			if (!permutationContainAllSon(itPermutation)) {
+				it.remove();
+			}
+
+		}
+		return pToAdd;
+	}
+
+	private Set<Permutation> combinePermutationFromMsgWithOtherPermutationsOfReceiverPast(
+			Permutation permutationFromMessage) {
+		Set<Permutation> ans = new HashSet<Permutation>();
+		for (Permutation pastPermutation : permutationsPast) {
+			if (pastPermutation.isCoherent(permutationFromMessage)) {
+				ans.add(pastPermutation);
+			}
+		}
+		return ans;
+	}
+
+	private void combineBelowAndPast(Set<Permutation> belowCoherentWithMessage,
+			Set<Permutation> pastCoherentWithMessage) {
+
+		for (Permutation belowP : belowCoherentWithMessage) {
+			for (Permutation aboveP : pastCoherentWithMessage) {
+				if (belowP.isCoherent(aboveP)) {
+					Permutation pToSend = Permutation.combinePermutations(belowP, aboveP);
+
+					handlePToSend(pToSend);
+
+				}
+			}
+		}
+
+	}
+
+	public void recieveAnytimeDownMonotonic(Message input) {
+		//// maybe bug here
+
+		MessageAnyTimeDown mad = (MessageAnyTimeDown) input;
+
+		// if (mad.getDate() > this.currentAnyTimeDate) {
+		this.msgDown = mad;
+		doPermutationToSend(mad.getMessageInformation());
+		// this.currentAnyTimeDate = mad.get;
+		// }
+	}
+
+	public void recieveAnytimeUpBfs(Message msg) {
+		if (msg instanceof MessageAnyTimeUp) {
+
+			MessageAnyTimeUp mau = (MessageAnyTimeUp) msg;
+			Permutation msgP = mau.getMessageInformation();
+			tryToCombinePermutation(msgP);
+
+		} else {
+			System.err.println("logical bug from recieveAnytimeUpBfs");
+		}
+
+	}
+
+	// --------MGM-----
+	public void mgmAsynchDecide() {
+
+		if (Asynchrony.iter == 0) {
+			firstValMgm();
+
+		} else {
+			// boolean didChange = false;
+			if (waitingForValueStatuesFlag) {
+				if (valueRecieveFlag) {
+					waitForValMgm();
+				}
+			} // waitingForValueStatuesFlag = true
+			else {
+				if (rRcieveFlag) {
+					waitForRMgm();
+				}
+			} // waitingForValueStatuesFlag = false
+		}
+	}
+
+	public void mgmAsynchCheatDecide() {
+		if (Asynchrony.iter == 0) {
+			firstValMgm();
+		} else {
+			if (waitingForValueStatuesFlag) {
+				waitForValMgm();
+			} // waitingForValueStatuesFlag = true
+			else {
+				waitForRMgm();
+			} // waitingForValueStatuesFlag = false
+		}
+	}
+
+	private void waitForRMgm() {
+		boolean didChange = false;
+		rRcieveFlag = false;
+		didChange = this.mgmValueDecide();
+		if (didChange) {
+			this.decisonCounter++;
+			this.valueRecieveFlag = true;
+			doAnytime();
+		}
+		az.createUnsynchMgmMsgs(this, false);
+		waitingForValueStatuesFlag = true;
+
+	}
+
+	private void waitForValMgm() {
+		boolean didChange = false;
+		valueRecieveFlag = false;
+		didChange = setR();
+		if (didChange) {
+			rCounter++;
+			this.rRcieveFlag = true;
+		}
+		az.createUnsynchMgmMsgs(this, false);
+		waitingForValueStatuesFlag = false;
+
+	}
+
+	private void firstValMgm() {
+		this.value = createRandFirstValue();
+		az.createUnsynchMgmMsgs(this, false);
+		waitingForValueStatuesFlag = true;
+	}
+
+	private Entry<Integer, MessageRecieve> getMaxRFromNeighbors() {
+		Entry<Integer, MessageRecieve> max = null;
+		boolean flag = false;
+		for (Entry<Integer, MessageRecieve> nr : neighborR.entrySet()) {
+			if (!flag) {
+				max = nr;
+				flag = true;
+			}
+			int maxR = max.getValue().getValue();
+			int nrR = nr.getValue().getValue();
+			if (nrR > maxR) {
+				max = nr;
+			}
+			int idMax = max.getKey();
+			int idNr = nr.getKey();
+			if (nrR == maxR && idMax > idNr) {
+				max = nr;
+			}
+		}
+		return max;
+	}
+
+	public void changeValR() {
+
+		for (Entry<Integer, MessageRecieve> n : neighborR.entrySet()) {
+			n.setValue(new MessageRecieve(-1, -1));
+		}
+
+	}
+
+	public boolean mgmValueDecide() {
+		Entry<Integer, MessageRecieve> maxRInMap = getMaxRFromNeighbors();
+
+		if (maxRInMap == null) {
+			this.value = this.domain[0];
 			return false;
 		}
+		int maxRVal = maxRInMap.getValue().getValue();
+		if (this.r > maxRVal) {
+			this.value = this.minPC.getValue();
+			return true;
+		}
+		int maxRId = maxRInMap.getKey();
+		if (this.r == maxRVal && this.id < maxRId) {
+			this.value = this.minPC.getValue();
+			return true;
 
-		public boolean setR() {
-			List<PotentialCost> pCosts = findPotentialCost();
-			PotentialCost minPotentialCost = Collections.min(pCosts);
+		}
+		return false;
+	}
 
-			int currentCost = findCurrentCost(pCosts);
-			int minCost = minPotentialCost.getCost();
+	public boolean setR() {
+		List<PotentialCost> pCosts = findPotentialCost();
+		PotentialCost minPotentialCost = Collections.min(pCosts);
 
-			this.minPC = minPotentialCost;
-			if (currentCost <= minCost) {
-				int oldR = this.r;
-				int newR = 0;
-				this.r = newR;
-				if (Asynchrony.iter == 1) {
-					return true;
-				}
+		int currentCost = findCurrentCost(pCosts);
+		int minCost = minPotentialCost.getCost();
 
-				if (newR != oldR) {
-					return true;
-				} else {
-					return false;
-				}
+		this.minPC = minPotentialCost;
+		if (currentCost <= minCost) {
+			int oldR = this.r;
+			int newR = 0;
+			this.r = newR;
+			if (Asynchrony.iter == 1) {
+				return true;
 			}
 
-			if (currentCost > minCost) {
-				int oldR = this.r;
-				int newR = currentCost - minCost;
-				this.r = newR;
-				if (newR != oldR) {
-					return true;
-				} else {
-					return false;
-				}
-
+			if (newR != oldR) {
+				return true;
+			} else {
+				return false;
 			}
-			return false;
-
 		}
 
-		public int getR() {
-			return this.r;
-		}
-		
-		
-		//--------GETTERS SETTERS-----
-		public void restartAnytimeValue() {
-			this.anytimeValue = -1;
+		if (currentCost > minCost) {
+			int oldR = this.r;
+			int newR = currentCost - minCost;
+			this.r = newR;
+			if (newR != oldR) {
+				return true;
+			} else {
+				return false;
+			}
 
 		}
+		return false;
 
-		public boolean isNeighbor(int inputId) {
-			// TODO Auto-generated method stub
-			return this.neighbor.containsKey(inputId);
-		}
+	}
 
-		public void setValueRecieveFlag(boolean b) {
-			this.valueRecieveFlag = b;
+	public int getR() {
+		return this.r;
+	}
 
-		}
+	// --------GETTERS SETTERS-----
+	public void restartAnytimeValue() {
+		this.anytimeValue = -1;
 
-		public void setRRecieveFlag(boolean b) {
-			this.rRcieveFlag = b;
+	}
 
-		}
+	public boolean isNeighbor(int inputId) {
+		// TODO Auto-generated method stub
+		return this.neighbor.containsKey(inputId);
+	}
 
-		public void restartPermutationsPast() {
-			this.permutationsPast = new HashSet<Permutation>();
-		}
+	public void setValueRecieveFlag(boolean b) {
+		this.valueRecieveFlag = b;
 
-		public void restartAnytimeToSend() {
-			this.permutationsToSend = new HashSet<Permutation>();
+	}
 
-		}
+	public void setRRecieveFlag(boolean b) {
+		this.rRcieveFlag = b;
 
-		public Set<Permutation> getPastPermutations() {
-			// TODO Auto-generated method stub
-			return this.permutationsPast;
-		}
+	}
 
-		public Map<Integer, Integer> getNeighborCounter() {
-			return this.neigborCounter;
-		}
-	
-		public void setAz(AgentZero az) {
-			this.az = az;
-		}
-		
-		public void setRCounter(int input) {
-			this.rCounter = input;
-		}
+	public void restartPermutationsPast() {
+		this.permutationsPast = new HashSet<Permutation>();
+	}
 
-		public int getRCounter() {
-			return rCounter;
-		}
+	public void restartAnytimeToSend() {
+		this.permutationsToSend = new HashSet<Permutation>();
+
+	}
+
+	public Set<Permutation> getPastPermutations() {
+		// TODO Auto-generated method stub
+		return this.permutationsPast;
+	}
+
+	public Map<Integer, Integer> getNeighborCounter() {
+		return this.neigborCounter;
+	}
+
+	public void setAz(AgentZero az) {
+		this.az = az;
+	}
+
+	public void setRCounter(int input) {
+		this.rCounter = input;
+	}
+
+	public int getRCounter() {
+		return rCounter;
+	}
+
 }

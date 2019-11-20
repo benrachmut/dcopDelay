@@ -23,9 +23,9 @@ public class Main {
 	// -- Experiment time
 	static int meanRepsStart = 0;
 	static int meanRepsEnd = 100;// 100; // number of reps for every solve process not include
-	static int iterations = 5000;// 1000;//10000;//10000;//5000;//10000, 2000;
+	static int iterations = 2000;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
-	static String algo ="monotonic"; // "AsynchronyMGMCheat";AsynchronyMGM; "AsynchronyDSA";//"monotonic";//"mgmUb";//"unsynch0";
+	static String algo ="SynchronicDSA"; // SynchronicDSA; AsynchronyMGMCheat;AsynchronyMGM; AsynchronyDSA; monotonic;//"mgmUb";//"unsynch0";
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
 	static int[] memoryVersions = { 1 }; // 1=exp, 2= constant, 3= reasonable
@@ -428,9 +428,9 @@ public class Main {
 		boolean AsynchronyDSA = algo.equals("AsynchronyDSA");
 		boolean AsynchronyMGMCheat = algo.equals("AsynchronyMGMCheat");
 		boolean AsynchronyMGM = algo.equals("AsynchronyMGM");
-
+		boolean SynchronicDSA = algo.equals("SynchronicDSA");
 		
-		boolean mgmUb = algo.equals("mgmUb");
+		
 		boolean monotonic = algo.equals("monotonic");
 
 		if (monotonic) {
@@ -448,12 +448,12 @@ public class Main {
 		if (AsynchronyDSA) {
 			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.7);
 		}
+		
+		if (SynchronicDSA) {
+			ans = new SynchronicDSA(dcop, agents, agentZero, meanRun, 0.7);
+		}
 
 		
-		if (mgmUb) {
-			ans = new MGMub(dcop, agents, agentZero, meanRun);
-
-		}
 
 		ans.solve();
 
@@ -514,13 +514,19 @@ public class Main {
 
 		
 		orgenizeTrees();
+		restartAfterNeighborsKnown();
+		
+
+		return dcop;
+	}
+
+	private static void restartAfterNeighborsKnown() {
 		for (AgentField a : agents) {
 			a.restartLastPCreatedBy();
 			a.restartPCreatedByLists();
 			a.setAz(agentZero);
+			a.restartForSynchronicAlgos();
 		}
-
-		return dcop;
 	}
 
 	private static void orgenizeTrees() {
@@ -611,6 +617,8 @@ public class Main {
 			agents[i].restartAnytimeValue();
 			agents[i].resetFlagForMgm();
 			agents[i].restartLastPCreatedBy();
+			
+			agents[i].restartForSynchronicAlgos();
 		}
 
 	}
