@@ -41,23 +41,18 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private Set<Permutation> sonsAnytimePermutations;
 	private Map<Integer, Integer> counterAndValue;
 	private Permutation bestPermuation;
-	// private int currentAnyTimeDate;
-	// private boolean dsaDecideFlag;
 	private List<Permutation> anytimeUpRecieved;
-
 	private boolean valueRecieveFlag;
 	private boolean rRcieveFlag;
 	private boolean waitingForValueStatuesFlag;
 	private Map<AgentField, Permutation> lastPCreatedBy;
 	private Map<AgentField, List<Permutation>> pCreatedByLists;
-
 	private Map<Integer, Boolean> neighborRecieveBoolean;
 	private Map<Integer, List<MessageRecieve>> neighborLaterMsgs;
-
 	private Random rDsaPersonal;
-
 	private AgentZero az;
-
+	private boolean checkGoFirst;
+	private boolean worldChangeSynchFlag;
 	public AgentField(int domainSize, int id) {
 		super(id);
 		this.az = Main.agentZero;
@@ -93,8 +88,17 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 		rDsaPersonal = new Random();
 		rCounter = 0;
+		checkGoFirst = true;
+		worldChangeSynchFlag = false;
 	}
 
+	public void setWorldChangeSynchFlag(boolean b) {
+		worldChangeSynchFlag = b;
+	}
+	public void setCheckCanGoFirst(boolean b) {
+		checkGoFirst = b;
+	}
+	
 	public void restartForSynchronicAlgos() {
 
 		neighborLaterMsgs = new HashMap<Integer, List<MessageRecieve>>();
@@ -188,7 +192,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	public void resetFlagForMgm() {
 		this.valueRecieveFlag = false;
-		this.rRcieveFlag = false;
+		this.rRcieveFlag = true;
 		this.waitingForValueStatuesFlag = true;
 	}
 
@@ -569,15 +573,15 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		
 			int currentDate;
 			if (this.neighbor.get(senderId).getCounter() == -1) {
-				//if (Main.currentUb == 10) {
-				//	System.out.println();
-				//}
 				currentDate = 0;
 			} else {
 				currentDate = this.neighbor.get(senderId).getCounter();
 			}
 			if (counterOfOther  == currentDate+1) {
-				
+				int currentValue = this.neighbor.get(senderId).getValue();
+				if (senderValue!= currentValue) {
+					worldChangeSynchFlag = true;
+				}
 				
 				
 				this.neighbor.put(senderId, new MessageRecieve(senderValue, counterOfOther));
@@ -591,6 +595,12 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		
 		//--- date is not known
 		else {
+			
+			int currentValue = this.neighbor.get(senderId).getValue();
+			if (senderValue!= currentValue) {
+				worldChangeSynchFlag = true;
+			}
+			
 			this.neighbor.put(senderId, new MessageRecieve(senderValue, counterOfOther));
 			this.neighborRecieveBoolean.put(senderId, true);
 		}
@@ -848,22 +858,37 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	public void dsaSynchronicDecide(double stochastic) {
 		if (Asynchrony.iter == 0) {
+			//firstValDsaSynch();
 			firstValDsa();
 		} else {
 			
 			if (checkNeighborRecieveBoolean()) {
-				valueRecieveFlag = false;
-				checkToChangeDSA(stochastic);
+				
+				if (worldChangeSynchFlag) {
+					worldChangeSynchFlag = false;
+					valueRecieveFlag = false;
+					checkToChangeDSA(stochastic);	
+				}
 				this.decisonCounter++;
 				az.createUnsynchMsgs(this, false);
 				doAnytime();
+				
 			}
 		}
 	}
 
+
+	
+	
+
 	private boolean checkNeighborRecieveBoolean() {
 		boolean valueOfNeighborRecieveBoolean = checkCurrentNeighborRecieveBoolean();
 		if (!valueOfNeighborRecieveBoolean) {
+			/*
+			if (Main.currentUb == 0) {
+				System.out.println();
+			}
+			*/
 			return false;
 		} else {
 			updateMapsAfterReset();
@@ -970,9 +995,20 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	private boolean maybeChange(boolean shouldChange, PotentialCost minPotentialCost, double stochastic) {
 		if (shouldChange) {
+			
+			//if (Main.currMeanRun==3) {
+			//	System.out.println();
+			//}
+			
 			double rnd = rDsaPersonal.nextDouble();
 			if (rnd < stochastic) {
+				
+				int lastValue = this.value;
 				this.value = minPotentialCost.getValue();
+				
+				if (lastValue==this.value) {
+					return false;
+				}
 				return true;
 			}
 		}
@@ -1410,6 +1446,57 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			} // waitingForValueStatuesFlag = false
 		}
 	}
+	private void waitForValMgm() {
+		boolean didChange = false;
+		valueRecieveFlag = false;
+		didChange = setR();
+		if (didChange) {
+			rCounter++;
+			this.rRcieveFlag = true;
+			az.createUnsynchMgmMsgs(this, false);
+		}
+		waitingForValueStatuesFlag = false;
+
+	}
+
+	private void waitForRMgm() {
+		boolean canGo = true;
+		if (checkGoFirst) {
+			canGo = checkGoFirst();
+			if (canGo) {
+				checkGoFirst = false;
+			}
+		}
+	
+		if (canGo) {
+			boolean didChange = false;
+			rRcieveFlag = false;
+			didChange = this.mgmValueDecide();
+			if (didChange) {
+				this.decisonCounter++;
+				az.createUnsynchMgmMsgs(this, false);
+				this.valueRecieveFlag = true;
+				doAnytime();
+			}
+			waitingForValueStatuesFlag = true;
+		}
+		
+
+	}
+
+	
+
+	
+
+	private boolean checkGoFirst() {
+		for (MessageRecieve m : neighborR.values()) {
+			int r = m.getValue();
+			if (r==-1) {		
+			return false;
+			}
+		}
+		return true;
+	}
 
 	public void mgmAsynchCheatDecide() {
 		if (Asynchrony.iter == 0) {
@@ -1423,36 +1510,9 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			} // waitingForValueStatuesFlag = false
 		}
 	}
-
-	private void waitForRMgm() {
-		boolean didChange = false;
-		rRcieveFlag = false;
-		didChange = this.mgmValueDecide();
-		if (didChange) {
-			this.decisonCounter++;
-			this.valueRecieveFlag = true;
-			doAnytime();
-		}
-		az.createUnsynchMgmMsgs(this, false);
-		waitingForValueStatuesFlag = true;
-
-	}
-
-	private void waitForValMgm() {
-		boolean didChange = false;
-		valueRecieveFlag = false;
-		didChange = setR();
-		if (didChange) {
-			rCounter++;
-			this.rRcieveFlag = true;
-		}
-		az.createUnsynchMgmMsgs(this, false);
-		waitingForValueStatuesFlag = false;
-
-	}
-
 	private void firstValMgm() {
 		this.value = createRandFirstValue();
+	
 		az.createUnsynchMgmMsgs(this, false);
 		waitingForValueStatuesFlag = true;
 	}

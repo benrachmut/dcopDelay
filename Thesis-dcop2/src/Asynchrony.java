@@ -177,10 +177,13 @@ public abstract class Asynchrony extends Solution {
 
 		
 		addCostToList(i);
-		addAnytimeCostToList();
-		addTopCost();
-		addToPermutationsList();
-		addTopCountersChanges(i);
+		if (Main.anytime) {
+			addAnytimeCostToList();
+			addTopCost();
+			addToPermutationsList();
+			addTopCountersChanges(i);
+		}
+		
 	
 	}
 

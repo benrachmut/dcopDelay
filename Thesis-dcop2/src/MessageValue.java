@@ -1,7 +1,6 @@
 
 public class MessageValue extends Message <Integer>  {
 	
-	private int senderValue;
 	//private int senderSelfCounter;
 	private int decisionCounter;
 
@@ -18,7 +17,7 @@ public class MessageValue extends Message <Integer>  {
 
 	@Override
 	public String toString() {
-		return "sender:"+sender+", reciver:"+reciever+", sender value:"+senderValue+", delay:"+this.delay;
+		return "sender:"+sender+", reciver:"+reciever+", sender value:"+messageInformation+", delay:"+this.delay;
 	}
 	
 	public MessageValue(MessageValue m) {

@@ -11,6 +11,9 @@ public class SynchronicDSA extends AsynchronyDSA{
 
 
 	public void agentDecide(int i) {
+		if (Main.currMeanRun==1) {
+			System.out.println();
+		}
 		for (AgentField a : agents) {
 				a.dsaSynchronicDecide(stochastic);
 			}

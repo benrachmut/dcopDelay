@@ -18,6 +18,8 @@ public class AsynchronyDSA extends Asynchrony {
 
 
 	public void agentDecide(int i) {
+		
+	
 		for (AgentField a : agents) {
 				a.dsaAsynchronyDecide(stochastic);
 			}

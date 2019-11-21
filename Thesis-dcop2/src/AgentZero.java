@@ -489,7 +489,7 @@ public class AgentZero {
 			if (Asynchrony.iter==0) {
 				 m = createUnsynchOneMsg(currentAgent, n,  anytimeFlag);
 			}
-			else if (n.isWaitingForValueStatuesFlag()) {
+			else if (currentAgent.isWaitingForValueStatuesFlag()) {
 				m = createUnsynchROneMsg(currentAgent, n,  anytimeFlag);
 			}else {
 				 m = createUnsynchOneMsg(currentAgent, n,  anytimeFlag);

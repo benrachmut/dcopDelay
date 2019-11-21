@@ -9,6 +9,9 @@ public class AsynchronyMGM extends Asynchrony{
 
 	@Override
 	public void agentDecide(int i) {
+		if (Main.currMeanRun==19 ) {
+			System.out.println();
+		}
 		for (AgentField a : agents) {
 			a.mgmAsynchDecide();
 		}

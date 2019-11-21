@@ -23,7 +23,8 @@ public class Main {
 	// -- Experiment time
 	static int meanRepsStart = 0;
 	static int meanRepsEnd = 100;// 100; // number of reps for every solve process not include
-	static int iterations = 2000;// 1000;//10000;//10000;//5000;//10000, 2000;
+	static int currMeanRun = 0;
+	static int iterations = 700;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
 	static String algo ="SynchronicDSA"; // SynchronicDSA; AsynchronyMGMCheat;AsynchronyMGM; AsynchronyDSA; monotonic;//"mgmUb";//"unsynch0";
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
@@ -45,7 +46,7 @@ public class Main {
 	static String fileName;
 
 	// -- uniformly random dcop
-	static double[] p1sUniform = { 0.1 }; // 0.1,0.7
+	static double[] p1sUniform = {0.1 }; // 0.1,0.7
 	static double[] p2sUniform = { 1 };
 	// -- color dcop
 	static final double[] p1sColor = { 0.05 }; // 0.1,0.7
@@ -55,7 +56,7 @@ public class Main {
 	static double[] p2sScaleFree = { 1 };
 	// -- communication protocol
 	static double[] p3s = { 0,1 };// {1};//{0,1};
-	static boolean[] dateKnowns = { true };
+	static boolean[] dateKnowns = { false };
 	static int[] delayUBs = {10,50};//{ 5, 10, 20, 40 };// {20};//{5,10,20,40};//{5,10,20,40,70,100 };//{20};//{
 												// 5,10,20,40,70,100};//{20};//{ 2,5,10,20,40,70,100 };//{ 2,3,5,10
 												// };//{ 2,5,10,20,40,70,100 };//{10,20};//{70,100 };//{
@@ -231,6 +232,7 @@ public class Main {
 					currentP2ScaleFree = k;
 
 					for (int meanRun = meanRepsStart; meanRun < meanRepsEnd; meanRun++) {
+						currMeanRun = meanRun;
 						dcopSeeds(meanRun);
 						dcop = createDcop();
 						differentCommunicationProtocols(dcop, meanRun);
@@ -290,7 +292,7 @@ public class Main {
 			currentP1Color = p1;
 
 			for (int meanRun = meanRepsStart; meanRun < meanRepsEnd; meanRun++) {
-				// only here change the tree
+				currMeanRun = meanRun;
 				dcopSeeds(meanRun);
 				dcop = createDcop();
 				differentCommunicationProtocols(dcop, meanRun);
@@ -308,6 +310,7 @@ public class Main {
 				currentP2Uniform = p2;
 
 				for (int meanRun = meanRepsStart; meanRun < meanRepsEnd; meanRun++) {
+					currMeanRun = meanRun;
 					dcopSeeds(meanRun);
 					dcop = createDcop();
 					differentCommunicationProtocols(dcop, meanRun);
@@ -619,6 +622,8 @@ public class Main {
 			agents[i].restartLastPCreatedBy();
 			
 			agents[i].restartForSynchronicAlgos();
+			agents[i].setCheckCanGoFirst(true);
+			agents[i].setWorldChangeSynchFlag(true);
 		}
 
 	}
