@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,10 +20,10 @@ public abstract class Asynchrony extends Solution {
 	public static int counterPermutationAtTop;
 	protected List<Double> ratioCounterTopCounterChanges;
 	protected List<Integer> counterTopChanges;
-	public  List<Integer> costOfAllTops;
-	
-	//public static boolean bool = false;
+	public List<Integer> costOfAllTops;
+	public double knownRatio;
 
+	// public static boolean bool = false;
 
 	public Asynchrony(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun) {
 		super(dcop, agents, aZ, meanRun);
@@ -33,77 +34,94 @@ public abstract class Asynchrony extends Solution {
 		ratioCounterTopCounterChanges = new ArrayList<Double>();
 		counterTopChanges = new ArrayList<Integer>();
 		costOfAllTops = new ArrayList<Integer>();
-		
 		counterPermutationAtTop = 0;
 		topCost = Integer.MAX_VALUE;
- 
+		knownRatio = 1;
+
+	}
+
+	public Asynchrony(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double knownRatio) {
+		this(dcop, agents, aZ, meanRun);
+		this.knownRatio = knownRatio;
 	}
 
 	@Override
 	public void solve() {
+		List<AgentField> listOfAgents = new ArrayList<AgentField>();
+		for (AgentField a : agents) {
+			listOfAgents.add(a);
+		}
+
+		Collections.sort(listOfAgents, new ComparatorAgentsByNeighborsSize());
+		Collections.reverse(listOfAgents);
+
+		double counterOfFalse = ((double) Main.A) * knownRatio;
+
+		for (AgentField a : listOfAgents) {
+			if (counterOfFalse != 0) {
+				a.setKnownCounter(true);
+				counterOfFalse--;
+			} else {
+				break;
+			}
+
+		}
 
 		findHeadOfTree();
 		for (int i = 0; i < this.iteration; i++) {
 			iter = i;
-			
-			if (i % 100 == 0 ) {
+
+			if (i % 100 == 0) {
 				System.out.println("---start iteration: " + i + "---");
 			}
-			//-------------
-			//updateWhoCanDecide(i); // abstract			 
-			agentDecide(i); // abstract	
-			//afterDecideTakeAction(i); // abstract
-			//-------------
-			List <Message> msgToSend = agentZero.handleDelay();	
+			// -------------
+			// updateWhoCanDecide(i); // abstract
+			agentDecide(i); // abstract
+			// afterDecideTakeAction(i); // abstract
+			// -------------
+			List<Message> msgToSend = agentZero.handleDelay();
 			agentsSendMsgs(msgToSend); // abstract
 			/*
-			System.out.println(i);
-			int count=0;
-			int sumDes = 0;
-			for (AgentField a : agents) {
-				int val = a.getValue();
-				if (val!=-1) {
-					count++;
-				}
-				sumDes+=a.getDecisonCounter();
-			}
-			double avg = sumDes/50;
-			*/
-			
+			 * System.out.println(i); int count=0; int sumDes = 0; for (AgentField a :
+			 * agents) { int val = a.getValue(); if (val!=-1) { count++; }
+			 * sumDes+=a.getDecisonCounter(); } double avg = sumDes/50;
+			 */
+
 			if (Main.anytime) {
 				createAnytimeUp(i); // abstract
 				createAnytimeDown(i);
-			}		
-			addCostToTables(i );
-			//System.out.println("counter:"+count+" avg decision counter:" + avg+", cost:"+this.getRealCost(i));	
+			}
+			addCostToTables(i);
+			// System.out.println("counter:"+count+" avg decision counter:" + avg+",
+			// cost:"+this.getRealCost(i));
 		}
 	}
 
 	protected void addTopCountersChanges(int i) {
-		this.costOfAllTops.add(topCost); 
+		this.costOfAllTops.add(topCost);
 
 		this.counterTopChanges.add(counterPermutationAtTop);
 		int currentCentralistic = Solution.counterCentralisticChanges;
 		if (currentCentralistic == 0) {
 			ratioCounterTopCounterChanges.add(0.0);
 		} else {
-			double ratio = (double)counterPermutationAtTop / currentCentralistic;
+			double ratio = (double) counterPermutationAtTop / currentCentralistic;
 			ratioCounterTopCounterChanges.add(ratio);
 		}
 
 	}
 
 	private void printWhoCanDecide() {
-		System.out.println("who can decide "+iter);
+		System.out.println("who can decide " + iter);
 		for (AgentField a : whoCanDecide) {
-			System.out.print(a+",");
+			System.out.print(a + ",");
 		}
-		
+
 	}
 
 	private boolean noAgentsMinus1() {
 		for (AgentField a : agents) {
-			if (a.getValue()==-1) {
+			if (a.getValue() == -1) {
 				return false;
 			}
 		}
@@ -173,9 +191,7 @@ public abstract class Asynchrony extends Solution {
 	}
 
 	private void addCostToTables(int i) {
-		
 
-		
 		addCostToList(i);
 		if (Main.anytime) {
 			addAnytimeCostToList();
@@ -183,30 +199,28 @@ public abstract class Asynchrony extends Solution {
 			addToPermutationsList();
 			addTopCountersChanges(i);
 		}
-		
-	
+
 	}
 
 	private void addTopCost() {
 		int ans = 0;
-		for (AgentField a: fathers) {
+		for (AgentField a : fathers) {
 			if (a.getBestPermutation() == null) {
 				ans = Integer.MAX_VALUE;
 				break;
-			}else {
-			
-			int cost = a.getBestPermutation().getCost();
-			ans = ans+ cost;
+			} else {
+
+				int cost = a.getBestPermutation().getCost();
+				ans = ans + cost;
 			}
 		}
 		this.topAnytimeCost.add(ans);
-		
+
 	}
 
 	private void addToPermutationsList() {
 
 		int cost = dcop.calCost(true);
-		
 
 		Map<Integer, Integer> m = new HashMap<Integer, Integer>();
 		for (AgentField a : agents) {
@@ -216,20 +230,18 @@ public abstract class Asynchrony extends Solution {
 		}
 		Permutation p = new Permutation(m, cost);
 		this.permutations.add(p);
-		
 
 	}
 
 	// public abstract List<AgentField> findHeadOfTree() ;
 
-	//protected abstract void updateWhoCanDecide(int i);
+	// protected abstract void updateWhoCanDecide(int i);
 
 	// protected abstract void agentDecide();
-	//protected abstract void afterDecideTakeAction(int i);
+	// protected abstract void afterDecideTakeAction(int i);
 
 	public abstract void agentsSendMsgs(List<Message> msgToSend);
 
-	
 	public void createAnytimeUp(int i) {
 		agentZero.createAnyTimeUpUnsynchNonMonotonic(i);
 	}
@@ -260,7 +272,7 @@ public abstract class Asynchrony extends Solution {
 	}
 
 	@Override
-	public void addCostToList(int i ) {
+	public void addCostToList(int i) {
 
 		if (atlistOneAgentMinusOne(true)) {
 			this.realCost.add(Integer.MAX_VALUE);
@@ -268,23 +280,23 @@ public abstract class Asynchrony extends Solution {
 		} else {
 			super.addCostToList(i);
 		}
-		counterCentralisticChanges(i);	
+		counterCentralisticChanges(i);
 	}
 
 	private void counterCentralisticChanges(int i) {
 		if (i == 0) {
 			counterCentralisticChanges = 0;
-		}else {
+		} else {
 			int currentCost = this.realCost.get(i);
-			int pastCost = this.realCost.get(i-1);
+			int pastCost = this.realCost.get(i - 1);
 
-			if (currentCost!=pastCost) {
-				counterCentralisticChanges = counterCentralisticChanges+1;
-			}		
+			if (currentCost != pastCost) {
+				counterCentralisticChanges = counterCentralisticChanges + 1;
+			}
 		}
 
 		counterChanges.add(counterCentralisticChanges);
-		
+
 	}
 
 	@Override
@@ -297,10 +309,10 @@ public abstract class Asynchrony extends Solution {
 
 	}
 
-
 	public double getCounterRatio(int i) {
 		return this.ratioCounterTopCounterChanges.get(i);
 	}
+
 	protected int getCounterTop(int i) {
 		return counterTopChanges.get(i);
 	}
@@ -308,7 +320,5 @@ public abstract class Asynchrony extends Solution {
 	protected int getTopCostNotBest(int i) {
 		return costOfAllTops.get(i);
 	}
-	
-	
 
 }

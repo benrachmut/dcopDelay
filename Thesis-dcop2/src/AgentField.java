@@ -1061,10 +1061,11 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 				int lastValue = this.value;
 				this.value = minPotentialCost.getValue();
-
+				
 				if (lastValue == this.value) {
 					return false;
 				}
+				
 				return true;
 			}
 		}

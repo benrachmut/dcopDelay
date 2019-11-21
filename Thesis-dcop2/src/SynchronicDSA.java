@@ -4,16 +4,14 @@ public class SynchronicDSA extends AsynchronyDSA{
 	
 	public SynchronicDSA(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double stochastic) {
 		super(dcop, agents, aZ, meanRun, stochastic);
-		this.algo = "DSA_synchronic";
+		this.algo = "DSA_synchronic_"+stochastic;
 	}
 
 
 
 
 	public void agentDecide(int i) {
-		if (Main.currMeanRun==1) {
-			System.out.println();
-		}
+	
 		for (AgentField a : agents) {
 				a.dsaSynchronicDecide(stochastic);
 			}
