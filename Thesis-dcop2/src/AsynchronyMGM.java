@@ -9,15 +9,13 @@ public class AsynchronyMGM extends Asynchrony{
 
 	@Override
 	public void agentDecide(int i) {
-		if (Main.currMeanRun==19 ) {
-			System.out.println();
-		}
+
 		for (AgentField a : agents) {
 			a.mgmAsynchDecide();
 		}
 	}
 	@Override
 	public void agentsSendMsgs(List<Message> msgToSend) {	
-		agentZero.sendUnsynchNonMonotonicByValueMsgsMgm(msgToSend);
+		agentZero.sendAsynchronyMgm(msgToSend);
 	}
 }

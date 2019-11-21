@@ -278,7 +278,7 @@ public class AgentZero {
 		return ans;
 	}
 
-	private void sendUnsynchNonMonotonicByValueMsgMgm(Message msg) {
+	private void sendASingleMsgMgmAsynchrony(Message msg) {
 		//---	
 		int senderId = msg.getSender().getId();
 		AgentField reciever = msg.getReciever();
@@ -297,7 +297,7 @@ public class AgentZero {
 			MessageR mrr = (MessageR) msg;
 			int senderR = mrr.getMessageInformation();
 			int counter = mrr.getRCounter();
-			reciever.reciveRMsg(senderId, senderR, counter);
+			reciever.reciveRMsgFlag(senderId, senderR, counter);
 		} // normal message
 		if (msg instanceof MessageAnyTimeUp) {
 			reciever.recieveAnytimeUpBfs(msg);
@@ -575,12 +575,55 @@ public class AgentZero {
 	
 	
 	
-	public void sendUnsynchNonMonotonicByValueMsgsMgm(List<Message> msgToSend) {
+	public void sendAsynchronyMgm(List<Message> msgToSend) {
 		Collections.sort(msgToSend, new ComparatorMsgSenderId());
 		Collections.reverse(msgToSend);
 		for (Message msg : msgToSend) {
-			sendUnsynchNonMonotonicByValueMsgMgm(msg);
+			sendASingleMsgMgmAsynchrony(msg);
 		}
+	}
+	
+	
+	public void sendSynchronicMgm(List<Message> msgToSend) {
+		Collections.sort(msgToSend, new ComparatorMsgSenderId());
+		Collections.reverse(msgToSend);
+		for (Message msg : msgToSend) {
+			sendASingleMsgMgmSynchronic(msg);
+		}
+	}
+	
+	
+	
+	private void sendASingleMsgMgmSynchronic(Message msg) {
+		//---	
+		int senderId = msg.getSender().getId();
+		AgentField reciever = msg.getReciever();
+		if (msg instanceof MessageValue) {
+			MessageValue mmm = (MessageValue)msg;
+			int senderValue = mmm.getMessageInformation();
+			int counter = mmm.getDecisionCounter();
+			//reciever.reciveMsgValueFlag(senderId, senderValue, counter);
+			reciever.reciveMsgValueMap(senderId, senderValue, counter);
+
+			if (Main.anytime) {
+				Permutation p = reciever.createCurrentPermutationByValue();
+				reciever.updateRecieverUponPermutationOneByOne(p, reciever);
+			}
+		} // normal message
+		
+		if (msg instanceof MessageR) {
+			MessageR mrr = (MessageR) msg;
+			int senderR = mrr.getMessageInformation();
+			int counter = mrr.getRCounter();
+			reciever.reciveRMsgMap(senderId, senderR, counter);
+		} // normal message
+		if (msg instanceof MessageAnyTimeUp) {
+			reciever.recieveAnytimeUpBfs(msg);
+		}
+		if (msg instanceof MessageAnyTimeDown) {
+			reciever.recieveAnytimeDownNonMonotonicByValue(msg);
+		}
+
 	}
 /*
 	private void debugToSeeSequence(List<MessageValue> msgToSend) {

@@ -26,7 +26,7 @@ public class Main {
 	static int currMeanRun = 0;
 	static int iterations = 700;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
-	static String algo ="SynchronicDSA"; // SynchronicDSA; AsynchronyMGMCheat;AsynchronyMGM; AsynchronyDSA; monotonic;//"mgmUb";//"unsynch0";
+	static String algo ="SynchronicMGM"; // SynchronicMGM; SynchronicDSA; AsynchronyMGM; AsynchronyDSA; monotonic;
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
 	static int[] memoryVersions = { 1 }; // 1=exp, 2= constant, 3= reasonable
@@ -429,19 +429,19 @@ public class Main {
 		Solution ans = null;
 
 		boolean AsynchronyDSA = algo.equals("AsynchronyDSA");
-		boolean AsynchronyMGMCheat = algo.equals("AsynchronyMGMCheat");
-		boolean AsynchronyMGM = algo.equals("AsynchronyMGM");
 		boolean SynchronicDSA = algo.equals("SynchronicDSA");
 		
+		boolean AsynchronyMGM = algo.equals("AsynchronyMGM");
+		boolean SynchronicMGM= algo.equals("SynchronicMGM");
 		
-		boolean monotonic = algo.equals("monotonic");
+		boolean Monotonic = algo.equals("Monotonic");
 
-		if (monotonic) {
+		if (Monotonic) {
 			ans = new AsynchronyMonotonic(dcop, agents, agentZero, meanRun);
 		}
 
-		if (AsynchronyMGMCheat) {
-			ans = new AsynchronyMGMCheat(dcop, agents, agentZero, meanRun);
+		if (SynchronicMGM) {
+			ans = new SynchronicMGM(dcop, agents, agentZero, meanRun);
 		}
 		
 		if (AsynchronyMGM) {
