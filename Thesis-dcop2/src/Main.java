@@ -35,7 +35,23 @@ public class Main {
 	//AsynchronyDSA(0.7,0);AsynchronyDSA(0.7,0.1);AsynchronyDSA(0.7,0.2);AsynchronyDSA(0.7,0.3)
 	//AsynchronyDSA(0.7,0.4);AsynchronyDSA(0.7,0.5);AsynchronyDSA(0.7,0.6);AsynchronyDSA(0.7,0.7)
 	//AsynchronyDSA(0.7,0.8);AsynchronyDSA(0.7,0.9);AsynchronyDSA(0.7,1)
-	static String algo ="AsynchronyDSA(0.7,0.8)"; 
+	
+	
+	
+	
+	
+	/*
+	
+	stochastic, knownRatio, changeFlag
+	AsynchronyDSA(0.7,1,0.5)
+	AsynchronyDSA(0.7,1,0.75)
+	AsynchronyDSA(0.7,1,1)
+	AsynchronyDSA(0.7,1,1.5)  
+	AsynchronyDSA(0.7,1,2)
+	AsynchronyDSA(0.7,1,5)
+	*/
+	
+	static String algo ="AsynchronyDSA(0.7,1,2)"; 
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
 	static int[] memoryVersions = { 1 }; // 1=exp, 2= constant, 3= reasonable
@@ -270,7 +286,7 @@ public class Main {
 		try {
 			FileWriter s = new FileWriter(fileName + ".csv");
 			out = new BufferedWriter(s);
-			String header = "dcop,p3,date_known,ub,p4,algo,p1,p2,mean_run,iteration,bird_eye_cost,anytime_bird_eye,known_ratio,";
+			String header = "dcop,p3,date_known,ub,p4,algo,p1,p2,mean_run,iteration,bird_eye_cost,anytime_bird_eye,known_ratio,known_ratio_counter";
 			// if (!synch) {
 			
 			String anytimeString =  "cost_change_counter,top_cost_not_best,top_change_counter,top_change_ratio,anytime_cost,top_cost";
@@ -450,16 +466,13 @@ public class Main {
 		boolean AsynchronyDSA01= algo.equals("AsynchronyDSA(0.1)");
 		boolean AsynchronyDSA03= algo.equals("AsynchronyDSA(0.3)");
 		boolean AsynchronyDSA05= algo.equals("AsynchronyDSA(0.5)");
-		
 		boolean AsynchronyDSA06= algo.equals("AsynchronyDSA(0.6)");
 		boolean AsynchronyDSA065= algo.equals("AsynchronyDSA(0.65)");
 		boolean AsynchronyDSA07= algo.equals("AsynchronyDSA(0.7)");
 		boolean AsynchronyDSA075= algo.equals("AsynchronyDSA(0.75)");
 		boolean AsynchronyDSA08= algo.equals("AsynchronyDSA(0.8)");
-
 		boolean AsynchronyDSA09= algo.equals("AsynchronyDSA(0.9)");
 		boolean AsynchronyDSA1= algo.equals("AsynchronyDSA(1)");
-
 		boolean SynchronicDSA01= algo.equals("SynchronicDSA(0.1)");
 		boolean SynchronicDSA03= algo.equals("SynchronicDSA(0.3)");
 		boolean SynchronicDSA05= algo.equals("SynchronicDSA(0.5)");
@@ -609,7 +622,45 @@ public class Main {
 		}
 
 		
-
+		
+		
+		
+		boolean AsynchronyDSA07_1_05= algo.equals("AsynchronyDSA(0.7,1,0.5)");
+		if (AsynchronyDSA07_1_05) {
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,0.5,0.7);
+		}
+		
+		boolean AsynchronyDSA07_1_075= algo.equals("AsynchronyDSA(0.7,1,0.75)");
+		if (AsynchronyDSA07_1_075) {
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,0.75,0.7);
+		}
+		
+		boolean AsynchronyDSA07_1_1= algo.equals("AsynchronyDSA(0.7,1,1)");
+		if (AsynchronyDSA07_1_1) {
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,1,0.7);
+		}
+		
+		boolean AsynchronyDSA07_1_15= algo.equals("AsynchronyDSA(0.7,1,1.5)");
+		if (AsynchronyDSA07_1_15) {
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,1.5,0.7);
+		}
+		
+		boolean AsynchronyDSA07_1_2= algo.equals("AsynchronyDSA(0.7,1,2)");
+		if (AsynchronyDSA07_1_2) {
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,2,0.7);
+		}
+		
+		boolean AsynchronyDSA07_1_5= algo.equals("AsynchronyDSA(0.7,1,5)");
+		if (AsynchronyDSA07_1_5) {
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,5,0.7);
+		}
+		
+		
+		
+		
+		
+		
+		
 		ans.solve();
 
 		return ans;
@@ -628,7 +679,7 @@ public class Main {
 
 	private static void addToSolutionString(Solution sol, String protocol) {
 		for (int i = 0; i < iterations; i++) {
-			String s = dcop.toString() + "," + protocol + "," + sol.toString() + "," + i + "," + sol.getRealCost(i)+ ","+sol.getBirdeyeAnytime(i)+","+((Asynchrony)sol).getKnownRatio()+",";
+			String s = dcop.toString() + "," + protocol + "," + sol.toString() + "," + i + "," + sol.getRealCost(i)+ ","+sol.getBirdeyeAnytime(i)+","+((Asynchrony)sol).getKnownRatio()+","+((Asynchrony)sol).getKnownRatioCounter()+",";
 			if (anytime) {
 				String anytimeString = sol.getCounterChanges(i) + "," + ((Asynchrony) sol).getTopCostNotBest(i) + ","
 						+ ((Asynchrony) sol).getCounterTop(i) + "," + ((Asynchrony) sol).getCounterRatio(i) + ","

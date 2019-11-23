@@ -1005,9 +1005,14 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 				doAnytime();
 			}
 			else {
-				this.counterToChangeKnownDate--;
-				if(counterToChangeKnownDate ==0) {
-					setCounter
+				this.counterToChangeKnownDateDecreases--;
+				if(counterToChangeKnownDateDecreases == 0) {
+					counterToChangeKnownDateDecreases =counterToChangeKnownDate;
+					if (personalKnownCounter) {
+						personalKnownCounter = false;
+					}else {
+						personalKnownCounter = true;
+					}
 				}
 			}
 			// this.az.afterDecideTakeActionUnsynchNonMonotonicByValue(this.didDecide, i);

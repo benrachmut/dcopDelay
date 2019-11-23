@@ -3,7 +3,7 @@ import java.util.Comparator;
 public class ComparatorAgentsByNeighborsSize implements Comparator<AgentField> {
 private boolean alotNeighborStrongerFlag;
 	
-
+4
 	public ComparatorAgentsByNeighborsSize(boolean alotNeighborStrongerFlag) {
 	super();
 	this.alotNeighborStrongerFlag = alotNeighborStrongerFlag;

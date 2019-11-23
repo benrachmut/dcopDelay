@@ -44,22 +44,23 @@ public abstract class Asynchrony extends Solution {
 	public Asynchrony(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double knownRatio) {
 		this(dcop, agents, aZ, meanRun);
 		this.knownRatio = knownRatio;
+
 	}
 	
 	public Asynchrony(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double knownRatio, double ratioOfNeighborsToChangeKnownDate) {
 		this(dcop, agents, aZ, meanRun);
-		this.knownRatio = knownRatio;
 		this.ratioOfNeighborsToChangeKnownDate = ratioOfNeighborsToChangeKnownDate ;
 	}
 
 	@Override
 	public void solve() {
-		if (this.knownRatio>=0) {
-			setKnownCounter();
-		}
-		if (this.ratioOfNeighborsToChangeKnownDate>0) {
+	
+		setKnownCounter();
+		
+		if (ratioOfNeighborsToChangeKnownDate < Double.MAX_VALUE) {
 			setFlagsOfNeighborsNumberOfRoundIterations();
 		}
+
 		
 		findHeadOfTree();
 		for (int i = 0; i < this.iteration; i++) {
@@ -348,6 +349,10 @@ public abstract class Asynchrony extends Solution {
 	public double getKnownRatio() {
 		// TODO Auto-generated method stub
 		return this.knownRatio;
+	}
+
+	protected  double getKnownRatioCounter() {
+		return ratioOfNeighborsToChangeKnownDate;
 	}
 
 }
