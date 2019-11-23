@@ -13,6 +13,18 @@ public class AsynchronyDSA extends Asynchrony {
 		this.stochastic = stochastic;
 		this.algo = "DSA_asynchrony_"+stochastic;
 	}
+	
+	public AsynchronyDSA(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double knownCounterRatio, double stochastic) {
+		super(dcop, agents, aZ, meanRun, knownCounterRatio);
+		this.stochastic = stochastic;
+		this.algo = "DSA_asynchrony_"+stochastic+"_"+knownCounterRatio;
+	}
+	public AsynchronyDSA(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double knownCounterRatio, double ratioOfNeighborsToChangeKnownDate, double stochastic) {
+		super(dcop, agents, aZ, meanRun, -1.0, ratioOfNeighborsToChangeKnownDate);
+		this.stochastic = stochastic;
+		this.algo = "DSA_asynchrony_"+stochastic+"_"+ratioOfNeighborsToChangeKnownDate;
+	}
+
 
 
 

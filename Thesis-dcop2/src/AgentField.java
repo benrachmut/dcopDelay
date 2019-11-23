@@ -59,6 +59,9 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private Map<Integer, Boolean> neighborRecieveRMsgBoolean;
 	private Map<Integer, List<MessageRecieve>>  neighborLaterRMsgs;
 
+	private boolean personalKnownCounter;
+	private int counterToChangeKnownDate;
+	private int counterToChangeKnownDateDecreases;
 	public AgentField(int domainSize, int id) {
 		super(id);
 		this.az = Main.agentZero;
@@ -96,6 +99,9 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		rCounter = 0;
 		checkGoFirst = true;
 		worldChangeSynchFlag = false;
+		personalKnownCounter = false;
+		counterToChangeKnownDate =Integer.MAX_VALUE;
+		counterToChangeKnownDateDecreases = Integer.MAX_VALUE;
 	}
 
 	public void setWorldChangeSynchFlag(boolean b) {
@@ -165,7 +171,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	}
 
 	public void reciveMsgMonotonic(int senderId, int senderValue, int counterOfOther) {
-		if (Main.dateKnown) {
+		if (this.personalKnownCounter) {
 			int currentDate = this.neighbor.get(senderId).getCounter();
 			if (counterOfOther > currentDate) {
 				this.neighbor.put(senderId, new MessageRecieve(senderValue, counterOfOther));
@@ -331,7 +337,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	}
 
 	public void reciveRMsgFlag(int senderId, int senderR, int dateOfOther) {
-		if (Main.dateKnown) {
+		if (this.personalKnownCounter) {
 			int currentDate = this.neighborR.get(senderId).getCounter();
 			if (dateOfOther > currentDate) {
 				this.neighborR.put(senderId, new MessageRecieve(senderR, dateOfOther));
@@ -570,7 +576,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	}
 
 	public void reciveMsgValueFlag(int senderId, int senderValue, int counterOfOther) {
-		if (Main.dateKnown) {
+		if (this.personalKnownCounter) {
 			int currentDate = this.neighbor.get(senderId).getCounter();
 			if (counterOfOther > currentDate) {
 				this.neighbor.put(senderId, new MessageRecieve(senderValue, counterOfOther));
@@ -586,7 +592,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	public void reciveMsgValueMap(int senderId, int senderValue, int counterOfOther) {
 
-		if (Main.dateKnown) {
+		if (this.personalKnownCounter) {
 
 			int currentDate;
 			if (this.neighbor.get(senderId).getCounter() == -1) {
@@ -625,7 +631,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	
 	public void reciveRMsgMap(int senderId, int senderValue, int counterOfOther) {
 
-		if (Main.dateKnown) {
+		if (this.personalKnownCounter) {
 
 			int currentDate;
 			if (this.neighborR.get(senderId).getCounter() == -1) {
@@ -997,6 +1003,12 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 				this.decisonCounter++;
 				az.createUnsynchMsgs(this, false);
 				doAnytime();
+			}
+			else {
+				this.counterToChangeKnownDate--;
+				if(counterToChangeKnownDate ==0) {
+					setCounter
+				}
 			}
 			// this.az.afterDecideTakeActionUnsynchNonMonotonicByValue(this.didDecide, i);
 		}
@@ -1769,6 +1781,21 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	public int getRCounter() {
 		return rCounter;
+	}
+
+	public void setKnownCounter(boolean b) {
+		this.personalKnownCounter = b;
+		
+	}
+	public boolean isKnownCounter() {
+		return personalKnownCounter ;
+		
+	}
+
+	public void setCounterToChangeKnownDate(double ratioOfNeighborsToChangeKnownDate) {
+		this.counterToChangeKnownDate = (int) (this.getNieghborSize()*ratioOfNeighborsToChangeKnownDate);
+		this.counterToChangeKnownDateDecreases = counterToChangeKnownDate;
+
 	}
 
 }

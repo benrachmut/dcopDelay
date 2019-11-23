@@ -22,6 +22,7 @@ public abstract class Asynchrony extends Solution {
 	protected List<Integer> counterTopChanges;
 	public List<Integer> costOfAllTops;
 	public double knownRatio;
+	public double ratioOfNeighborsToChangeKnownDate;
 
 	// public static boolean bool = false;
 
@@ -37,36 +38,29 @@ public abstract class Asynchrony extends Solution {
 		counterPermutationAtTop = 0;
 		topCost = Integer.MAX_VALUE;
 		knownRatio = 1;
-
+		ratioOfNeighborsToChangeKnownDate = Double.MAX_VALUE;
 	}
 
 	public Asynchrony(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double knownRatio) {
 		this(dcop, agents, aZ, meanRun);
 		this.knownRatio = knownRatio;
 	}
+	
+	public Asynchrony(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double knownRatio, double ratioOfNeighborsToChangeKnownDate) {
+		this(dcop, agents, aZ, meanRun);
+		this.knownRatio = knownRatio;
+		this.ratioOfNeighborsToChangeKnownDate = ratioOfNeighborsToChangeKnownDate ;
+	}
 
 	@Override
 	public void solve() {
-		List<AgentField> listOfAgents = new ArrayList<AgentField>();
-		for (AgentField a : agents) {
-			listOfAgents.add(a);
+		if (this.knownRatio>=0) {
+			setKnownCounter();
 		}
-
-		Collections.sort(listOfAgents, new ComparatorAgentsByNeighborsSize());
-		Collections.reverse(listOfAgents);
-
-		double counterOfFalse = ((double) Main.A) * knownRatio;
-
-		for (AgentField a : listOfAgents) {
-			if (counterOfFalse != 0) {
-				a.setKnownCounter(true);
-				counterOfFalse--;
-			} else {
-				break;
-			}
-
+		if (this.ratioOfNeighborsToChangeKnownDate>0) {
+			setFlagsOfNeighborsNumberOfRoundIterations();
 		}
-
+		
 		findHeadOfTree();
 		for (int i = 0; i < this.iteration; i++) {
 			iter = i;
@@ -95,6 +89,36 @@ public abstract class Asynchrony extends Solution {
 			// System.out.println("counter:"+count+" avg decision counter:" + avg+",
 			// cost:"+this.getRealCost(i));
 		}
+	}
+
+	private void setFlagsOfNeighborsNumberOfRoundIterations() {
+		for (AgentField a : agents) {
+			a.setCounterToChangeKnownDate(this.ratioOfNeighborsToChangeKnownDate);
+		}
+		
+	}
+
+	private void setKnownCounter() {
+		List<AgentField> listOfAgents = new ArrayList<AgentField>();
+		for (AgentField a : agents) {
+			listOfAgents.add(a);
+		}
+
+		Collections.sort(listOfAgents, new ComparatorAgentsByNeighborsSize(false));
+		Collections.reverse(listOfAgents);
+
+		double counterOfFalse = ((double) Main.A) * knownRatio;
+
+		for (AgentField a : listOfAgents) {
+			if (counterOfFalse != 0) {
+				a.setKnownCounter(true);
+				counterOfFalse--;
+			} else {
+				break;
+			}
+
+		}
+		
 	}
 
 	protected void addTopCountersChanges(int i) {
@@ -319,6 +343,11 @@ public abstract class Asynchrony extends Solution {
 
 	protected int getTopCostNotBest(int i) {
 		return costOfAllTops.get(i);
+	}
+
+	public double getKnownRatio() {
+		// TODO Auto-generated method stub
+		return this.knownRatio;
 	}
 
 }
