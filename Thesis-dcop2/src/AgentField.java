@@ -52,16 +52,17 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private AgentZero az;
 	private boolean checkGoFirst;
 	private boolean worldChangeSynchFlag;
-	
-	//--- synchronic stuff
+
+	// --- synchronic stuff
 	private Map<Integer, Boolean> neighborRecieveBoolean;
 	private Map<Integer, List<MessageRecieve>> neighborLaterMsgs;
 	private Map<Integer, Boolean> neighborRecieveRMsgBoolean;
-	private Map<Integer, List<MessageRecieve>>  neighborLaterRMsgs;
+	private Map<Integer, List<MessageRecieve>> neighborLaterRMsgs;
 
 	private boolean personalKnownCounter;
 	private int counterToChangeKnownDate;
 	private int counterToChangeKnownDateDecreases;
+
 	public AgentField(int domainSize, int id) {
 		super(id);
 		this.az = Main.agentZero;
@@ -100,7 +101,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		checkGoFirst = true;
 		worldChangeSynchFlag = false;
 		personalKnownCounter = false;
-		counterToChangeKnownDate =Integer.MAX_VALUE;
+		counterToChangeKnownDate = Integer.MAX_VALUE;
 		counterToChangeKnownDateDecreases = Integer.MAX_VALUE;
 	}
 
@@ -123,12 +124,10 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			List<MessageRecieve> t = new ArrayList<MessageRecieve>();
 			neighborLaterMsgs.put(i, t);
 		}
-		
-		
-		neighborLaterRMsgs= new HashMap<Integer, List<MessageRecieve>>();
-		neighborRecieveRMsgBoolean= new HashMap<Integer, Boolean>();
 
-		
+		neighborLaterRMsgs = new HashMap<Integer, List<MessageRecieve>>();
+		neighborRecieveRMsgBoolean = new HashMap<Integer, Boolean>();
+
 		for (Integer i : neighborR.keySet()) {
 			neighborRecieveRMsgBoolean.put(i, false);
 
@@ -627,8 +626,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	}
 
-	
-	
 	public void reciveRMsgMap(int senderId, int senderValue, int counterOfOther) {
 
 		if (this.personalKnownCounter) {
@@ -640,12 +637,10 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 				currentDate = this.neighborR.get(senderId).getCounter();
 			}
 			if (counterOfOther == currentDate + 1) {
-				//int currentValue = this.neighbor.get(senderId).getValue();
+				// int currentValue = this.neighbor.get(senderId).getValue();
 				/*
-				if (senderValue != currentValue) {
-					worldChangeSynchFlag = true;
-				}
-				*/
+				 * if (senderValue != currentValue) { worldChangeSynchFlag = true; }
+				 */
 
 				this.neighborR.put(senderId, new MessageRecieve(senderValue, counterOfOther));
 				this.neighborRecieveRMsgBoolean.put(senderId, true);
@@ -657,16 +652,14 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		// --- date is not known
 		else {
 
-			//int currentValue = this.neighborR.get(senderId).getValue();
-		
+			// int currentValue = this.neighborR.get(senderId).getValue();
 
 			this.neighborR.put(senderId, new MessageRecieve(senderValue, counterOfOther));
 			this.neighborRecieveRMsgBoolean.put(senderId, true);
 		}
 
 	}
-	
-	
+
 	public boolean neighborIsMinusOne() {
 		for (MessageRecieve i : this.neighbor.values()) {
 			if (i.getValue() == -1) {
@@ -942,26 +935,26 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		if (!valueOfNeighborRecieveBoolean) {
 			return false;
 		} else {
-			updateMapsAfterReset(neighborRecieveBoolean,neighborLaterMsgs, neighbor);
+			updateMapsAfterReset(neighborRecieveBoolean, neighborLaterMsgs, neighbor);
 		}
 		return true;
 	}
-	
 
 	private boolean checkNeighborRecieveRMsgsBoolean() {
-		
+
 		boolean valueOfNeighborRecieveBoolean = checkBooleaValueInMap(this.neighborRecieveRMsgBoolean);
-		
+
 		if (!valueOfNeighborRecieveBoolean) {
 			return false;
 		} else {
-			updateMapsAfterReset(this.neighborRecieveRMsgBoolean,this.neighborLaterRMsgs, this.neighborR);
+			updateMapsAfterReset(this.neighborRecieveRMsgBoolean, this.neighborLaterRMsgs, this.neighborR);
 		}
 		return true;
-		
+
 	}
 
-	private static void updateMapsAfterReset(Map<Integer, Boolean> booleanMap, Map<Integer, List<MessageRecieve>> laterMsgMap, Map<Integer, MessageRecieve> msgsMap) {
+	private static void updateMapsAfterReset(Map<Integer, Boolean> booleanMap,
+			Map<Integer, List<MessageRecieve>> laterMsgMap, Map<Integer, MessageRecieve> msgsMap) {
 		for (Integer i : booleanMap.keySet()) {
 			booleanMap.put(i, false);
 		}
@@ -1004,19 +997,22 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 				az.createUnsynchMsgs(this, false);
 				doAnytime();
 			}
-			else {
-				this.counterToChangeKnownDateDecreases--;
-				if(counterToChangeKnownDateDecreases == 0) {
-					counterToChangeKnownDateDecreases =counterToChangeKnownDate;
-					if (personalKnownCounter) {
-						personalKnownCounter = false;
-					}else {
-						personalKnownCounter = true;
-					}
-				}
-			}
-			// this.az.afterDecideTakeActionUnsynchNonMonotonicByValue(this.didDecide, i);
+
 		}
+		// this.az.afterDecideTakeActionUnsynchNonMonotonicByValue(this.didDecide, i);
+	}
+
+	private void checkToChangeDSASecond() {
+
+		List<PotentialCost> pCosts = findPotentialCost();
+		int currentPersonalCost = findCurrentCost(pCosts);
+
+		PotentialCost minPotentialCost = Collections.min(pCosts);
+		// int minCost = minPotentialCost.getCost();
+		pCosts.remove(minPotentialCost);
+		PotentialCost secondMin = Collections.min(pCosts);
+		this.value = secondMin.getValue();
+		// return maybeChange(shouldChange, minPotentialCost, stochastic);
 	}
 
 	private boolean checkToChangeDSA(double stochastic) {
@@ -1030,6 +1026,19 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		boolean shouldChange = false;
 		if (minCost <= currentPersonalCost) {
 			shouldChange = true;
+		} else {
+			this.counterToChangeKnownDateDecreases--;
+			if (counterToChangeKnownDateDecreases == 0) {
+				counterToChangeKnownDateDecreases = counterToChangeKnownDate;
+				checkToChangeDSASecond();
+
+				// if (personalKnownCounter) {
+				// personalKnownCounter = false;
+				// }else {
+				// personalKnownCounter = true;
+				// }
+			}
+			
 		}
 		if (this.value == -1) {
 			shouldChange = true;
@@ -1078,11 +1087,11 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 				int lastValue = this.value;
 				this.value = minPotentialCost.getValue();
-				
+
 				if (lastValue == this.value) {
 					return false;
 				}
-				
+
 				return true;
 			}
 		}
@@ -1587,56 +1596,41 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		}
 
 	}
-	
-	
-	
-	
 
 	private void waitForRMgmSynch() {
 		/*
-		boolean canGo = true;
-		if (checkGoFirst) {
-			canGo = checkGoFirst();
-			if (canGo) {
-				checkGoFirst = false;
-			}
-		}
-		*/
+		 * boolean canGo = true; if (checkGoFirst) { canGo = checkGoFirst(); if (canGo)
+		 * { checkGoFirst = false; } }
+		 */
 
-		//if (canGo) {
-			//boolean didChange = false;
-			rRcieveFlag = false;
-			//didChange = 
-			this.mgmValueDecide();
-			//if (didChange) {
-			this.decisonCounter++;
-			az.createUnsynchMgmMsgs(this, false);
-			this.valueRecieveFlag = true;
-			doAnytime();
-			//}
-			waitingForValueStatuesFlag = true;
-		//}
+		// if (canGo) {
+		// boolean didChange = false;
+		rRcieveFlag = false;
+		// didChange =
+		this.mgmValueDecide();
+		// if (didChange) {
+		this.decisonCounter++;
+		az.createUnsynchMgmMsgs(this, false);
+		this.valueRecieveFlag = true;
+		doAnytime();
+		// }
+		waitingForValueStatuesFlag = true;
+		// }
 
 	}
+
 	private void waitForValMgmSynch() {
 		boolean didChange = false;
 		valueRecieveFlag = false;
 		setR();
-		//if (didChange) {
-			rCounter++;
-			this.rRcieveFlag = true;
-			az.createUnsynchMgmMsgs(this, false);
-		//}
+		// if (didChange) {
+		rCounter++;
+		this.rRcieveFlag = true;
+		az.createUnsynchMgmMsgs(this, false);
+		// }
 		waitingForValueStatuesFlag = false;
 
 	}
-	
-	
-	
-	
-	
-	
-	
 
 	private void firstValMgm() {
 		this.value = createRandFirstValue();
@@ -1790,15 +1784,16 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	public void setKnownCounter(boolean b) {
 		this.personalKnownCounter = b;
-		
+
 	}
+
 	public boolean isKnownCounter() {
-		return personalKnownCounter ;
-		
+		return personalKnownCounter;
+
 	}
 
 	public void setCounterToChangeKnownDate(double ratioOfNeighborsToChangeKnownDate) {
-		this.counterToChangeKnownDate = (int) (this.getNieghborSize()*ratioOfNeighborsToChangeKnownDate);
+		this.counterToChangeKnownDate = (int) (this.getNieghborSize() * ratioOfNeighborsToChangeKnownDate);
 		this.counterToChangeKnownDateDecreases = counterToChangeKnownDate;
 
 	}

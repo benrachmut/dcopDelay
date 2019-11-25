@@ -24,7 +24,7 @@ public class Main {
 	static int meanRepsStart = 0;
 	static int meanRepsEnd = 100;// 100; // number of reps for every solve process not include
 	static int currMeanRun = 0;
-	static int iterations = 10000;// 1000;//10000;//10000;//5000;//10000, 2000;
+	static int iterations = 10000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
 	
 	// SynchronicMGM; SynchronicDSA; AsynchronyMGM; AsynchronyDSA; Monotonic
@@ -51,7 +51,7 @@ public class Main {
 	AsynchronyDSA(0.7,1,5)
 	*/
 	
-	static String algo ="AsynchronyDSA(0.7,1,2)"; 
+	static String algo ="AsynchronyDSA(0.7,1,15)"; 
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
 	static int[] memoryVersions = { 1 }; // 1=exp, 2= constant, 3= reasonable
@@ -82,7 +82,7 @@ public class Main {
 	// -- communication protocol
 	static double[] p3s = { 0,1 };// {1};//{0,1};
 	//static boolean[] dateKnowns = { true };
-	static int[] delayUBs = {2,5,10,25,50,75,100};//{ 5, 10, 20, 40 };// {20};//{5,10,20,40};//{5,10,20,40,70,100 };//{20};//{
+	static int[] delayUBs = {2,5,10,25,50,75,100};//{2,5,10,25,50,75,100};//{10,100};//{2,5,10,25,50,75,100};//{ 5, 10, 20, 40 };// {20};//{5,10,20,40};//{5,10,20,40,70,100 };//{20};//{
 												// 5,10,20,40,70,100};//{20};//{ 2,5,10,20,40,70,100 };//{ 2,3,5,10
 												// };//{ 2,5,10,20,40,70,100 };//{10,20};//{70,100 };//{
 												// 2,5,10,20,40,70,100 };//{2,5,10};//{1,2,3,5,10,20,40};//{ 5, 10, 20,
@@ -622,7 +622,25 @@ public class Main {
 		}
 
 		
+		boolean AsynchronyDSA07_1_10= algo.equals("AsynchronyDSA(0.7,1,10)");
+		if (AsynchronyDSA07_1_10) {
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,10,0.7);
+		}
 		
+		boolean AsynchronyDSA07_1_150= algo.equals("AsynchronyDSA(0.7,1,15)");
+		if (AsynchronyDSA07_1_150) {
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,15,0.7);
+		}
+		
+		boolean AsynchronyDSA07_1_8= algo.equals("AsynchronyDSA(0.7,1,8)");
+		if (AsynchronyDSA07_1_8) {
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,8,0.7);
+		}
+		
+		boolean AsynchronyDSA07_1_20= algo.equals("AsynchronyDSA(0.7,1,20)");
+		if (AsynchronyDSA07_1_20) {
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,20,0.7);
+		}
 		
 		
 		boolean AsynchronyDSA07_1_05= algo.equals("AsynchronyDSA(0.7,1,0.5)");
@@ -679,9 +697,9 @@ public class Main {
 
 	private static void addToSolutionString(Solution sol, String protocol) {
 		for (int i = 0; i < iterations; i++) {
-			String s = dcop.toString() + "," + protocol + "," + sol.toString() + "," + i + "," + sol.getRealCost(i)+ ","+sol.getBirdeyeAnytime(i)+","+((Asynchrony)sol).getKnownRatio()+","+((Asynchrony)sol).getKnownRatioCounter()+",";
+			String s = dcop.toString() + "," + protocol + "," + sol.toString() + "," + i + "," + sol.getRealCost(i)+ ","+sol.getBirdeyeAnytime(i)+","+((Asynchrony)sol).getKnownRatio()+","+((Asynchrony)sol).getKnownRatioCounter();
 			if (anytime) {
-				String anytimeString = sol.getCounterChanges(i) + "," + ((Asynchrony) sol).getTopCostNotBest(i) + ","
+				String anytimeString = ","+sol.getCounterChanges(i) + "," + ((Asynchrony) sol).getTopCostNotBest(i) + ","
 						+ ((Asynchrony) sol).getCounterTop(i) + "," + ((Asynchrony) sol).getCounterRatio(i) + ","
 						+ sol.getAnytimeCost(i) + "," + sol.getTopCost(i);
 				s=s+anytimeString;
