@@ -998,6 +998,10 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 				doAnytime();
 			}
 
+			else {
+				explorationIncrease();
+			}
+
 		}
 		// this.az.afterDecideTakeActionUnsynchNonMonotonicByValue(this.didDecide, i);
 	}
@@ -1026,24 +1030,30 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		boolean shouldChange = false;
 		if (minCost <= currentPersonalCost) {
 			shouldChange = true;
-		} else {
-			this.counterToChangeKnownDateDecreases--;
-			if (counterToChangeKnownDateDecreases == 0) {
-				counterToChangeKnownDateDecreases = counterToChangeKnownDate;
-				checkToChangeDSASecond();
-
-				// if (personalKnownCounter) {
-				// personalKnownCounter = false;
-				// }else {
-				// personalKnownCounter = true;
-				// }
-			}
-			
 		}
 		if (this.value == -1) {
 			shouldChange = true;
 		}
 		return maybeChange(shouldChange, minPotentialCost, stochastic);
+	}
+
+	private void explorationIncrease() {
+		if (Main.useCounterToChangeTrans) {
+			this.counterToChangeKnownDateDecreases--;
+			if (counterToChangeKnownDateDecreases == 0) {
+				counterToChangeKnownDateDecreases = counterToChangeKnownDate;
+				if (Main.secondBest) {
+					checkToChangeDSASecond();
+				} else {
+					if (personalKnownCounter) {
+						personalKnownCounter = false;
+					} else {
+						personalKnownCounter = true;
+					}
+				}
+			}
+		}
+
 	}
 
 	private void firstValDsa() {
@@ -1094,7 +1104,9 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 				return true;
 			}
+
 		}
+
 		return false;
 	}
 
@@ -1527,6 +1539,27 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 					waitForRMgm();
 				}
 			} // waitingForValueStatuesFlag = false
+		}
+	}
+	
+	
+	public void mgmAsynchDecideNotWait() {
+
+		if (Asynchrony.iter == 0) {
+			firstValMgm();
+
+		} else {
+			// boolean didChange = false;
+			//if (waitingForValueStatuesFlag) {
+				if (valueRecieveFlag) {
+					waitForValMgm();
+				}
+			//} // waitingForValueStatuesFlag = true
+			//else {
+				if (rRcieveFlag) {
+					waitForRMgm();
+				}
+			//} // waitingForValueStatuesFlag = false
 		}
 	}
 

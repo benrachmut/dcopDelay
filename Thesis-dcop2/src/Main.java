@@ -24,7 +24,7 @@ public class Main {
 	static int meanRepsStart = 0;
 	static int meanRepsEnd = 100;// 100; // number of reps for every solve process not include
 	static int currMeanRun = 0;
-	static int iterations = 10000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
+	static int iterations = 2000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
 	
 	// SynchronicMGM; SynchronicDSA; AsynchronyMGM; AsynchronyDSA; Monotonic
@@ -50,8 +50,8 @@ public class Main {
 	AsynchronyDSA(0.7,1,2)
 	AsynchronyDSA(0.7,1,5)
 	*/
-	
-	static String algo ="AsynchronyDSA(0.7,1,15)"; 
+	//AsynchronyMGMNotWait
+	static String algo ="AsynchronyDSA"; 
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
 	static int[] memoryVersions = { 1 }; // 1=exp, 2= constant, 3= reasonable
@@ -88,7 +88,8 @@ public class Main {
 												// 2,5,10,20,40,70,100 };//{2,5,10};//{1,2,3,5,10,20,40};//{ 5, 10, 20,
 												// 40 };
 	static double[] p4s = {0};//{ 0,0.05,0.1,0.15,0.2,0.25,0.3 };
-
+	public static boolean useCounterToChangeTrans = false;
+	public static boolean secondBest=false;
 	// ------- GENERAL VARIABLES NO NEED TO CHANGE
 	// -- characters
 	static AgentField[] agents;
@@ -134,8 +135,8 @@ public class Main {
 	static int currentUb;
 	static Random rDelayAnytime = new Random();
 
-	public static void main(String[] args) {
 
+	public static void main(String[] args) {
 		fileName = getFileName();
 
 		System.out.println(fileName);
@@ -373,7 +374,7 @@ public class Main {
 		for (Double p3 : p3s) {
 			currentP3 = p3;
 			if (p3 == 0) {
-				
+				currentP4 = p4s[0];
 				//for (AgentField a : agents) {
 				//	a.setDsaSeed(meanRun);
 				//}
@@ -459,10 +460,14 @@ public class Main {
 	}
 
 	private static Solution selectedAlgo(Dcop dcop, int meanRun) {
-		
-		//AsynchronyDSA(0.1);AsynchronyDSA(0.3);AsynchronyDSA(0.5);AsynchronyDSA(0.7);AsynchronyDSA(0.9);AsynchronyDSA(1);
-		
 		Solution ans = null;
+
+		//AsynchronyDSA(0.1);AsynchronyDSA(0.3);AsynchronyDSA(0.5);AsynchronyDSA(0.7);AsynchronyDSA(0.9);AsynchronyDSA(1);
+		boolean AsynchronyMGMNotWait= algo.equals("AsynchronyMGMNotWait");
+		
+		if (AsynchronyMGMNotWait) {
+			ans = new AsynchronyMGMNotWait(dcop, agents, agentZero, meanRun);
+		}
 		boolean AsynchronyDSA01= algo.equals("AsynchronyDSA(0.1)");
 		boolean AsynchronyDSA03= algo.equals("AsynchronyDSA(0.3)");
 		boolean AsynchronyDSA05= algo.equals("AsynchronyDSA(0.5)");
