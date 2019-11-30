@@ -22,7 +22,7 @@ public class AsynchronyDSA extends Asynchrony {
 	public AsynchronyDSA(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double knownCounterRatio, double ratioOfNeighborsToChangeKnownDate, double stochastic) {
 		super(dcop, agents, aZ, meanRun, 1, ratioOfNeighborsToChangeKnownDate);
 		this.stochastic = stochastic;
-		this.algo = "DSA_asynchrony_"+stochastic+"_"+ratioOfNeighborsToChangeKnownDate;
+		this.algo = "DSA_"+stochastic;
 	}
 
 

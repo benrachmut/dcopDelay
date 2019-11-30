@@ -24,7 +24,7 @@ public class Main {
 	static int meanRepsStart = 0;
 	static int meanRepsEnd = 100;// 100; // number of reps for every solve process not include
 	static int currMeanRun = 0;
-	static int iterations = 2000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
+	static int iterations = 1000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
 	
 	// SynchronicMGM; SynchronicDSA; AsynchronyMGM; AsynchronyDSA; Monotonic
@@ -50,7 +50,8 @@ public class Main {
 	AsynchronyDSA(0.7,1,2)
 	AsynchronyDSA(0.7,1,5)
 	*/
-	//AsynchronyMGMNotWait
+	//AsynchronyMGMNoPhase
+	//AsynchronyMGMPhase
 	static String algo ="AsynchronyDSA"; 
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
@@ -71,7 +72,7 @@ public class Main {
 	static String fileName;
 
 	// -- uniformly random dcop
-	static double[] p1sUniform = {0.2 }; // 0.1,0.7
+	static double[] p1sUniform ={0.2 }; //{0.2 }; // 0.1,0.7
 	static double[] p2sUniform = { 1 };
 	// -- color dcop
 	static final double[] p1sColor = { 0.05 }; // 0.1,0.7
@@ -80,9 +81,9 @@ public class Main {
 	static int[] numOfNToNotHubs = { 3 };
 	static double[] p2sScaleFree = { 1 };
 	// -- communication protocol
-	static double[] p3s = { 0,1 };// {1};//{0,1};
+	static double[] p3s = {0,1 };// {1};//{0,1};
 	//static boolean[] dateKnowns = { true };
-	static int[] delayUBs = {2,5,10,25,50,75,100};//{2,5,10,25,50,75,100};//{10,100};//{2,5,10,25,50,75,100};//{ 5, 10, 20, 40 };// {20};//{5,10,20,40};//{5,10,20,40,70,100 };//{20};//{
+	static int[] delayUBs = {2,5,10,25,50,75,100};//{2,5,10,25,50,75,100};//{2,5,10,25,50,75,100};//{10,100};//{2,5,10,25,50,75,100};//{ 5, 10, 20, 40 };// {20};//{5,10,20,40};//{5,10,20,40,70,100 };//{20};//{
 												// 5,10,20,40,70,100};//{20};//{ 2,5,10,20,40,70,100 };//{ 2,3,5,10
 												// };//{ 2,5,10,20,40,70,100 };//{10,20};//{70,100 };//{
 												// 2,5,10,20,40,70,100 };//{2,5,10};//{1,2,3,5,10,20,40};//{ 5, 10, 20,
@@ -463,10 +464,10 @@ public class Main {
 		Solution ans = null;
 
 		//AsynchronyDSA(0.1);AsynchronyDSA(0.3);AsynchronyDSA(0.5);AsynchronyDSA(0.7);AsynchronyDSA(0.9);AsynchronyDSA(1);
-		boolean AsynchronyMGMNotWait= algo.equals("AsynchronyMGMNotWait");
+		boolean AsynchronyMGMNoPhase= algo.equals("AsynchronyMGMNoPhase");
 		
-		if (AsynchronyMGMNotWait) {
-			ans = new AsynchronyMGMNotWait(dcop, agents, agentZero, meanRun);
+		if (AsynchronyMGMNoPhase) {
+			ans = new AsynchronyMGMNoPhase(dcop, agents, agentZero, meanRun);
 		}
 		boolean AsynchronyDSA01= algo.equals("AsynchronyDSA(0.1)");
 		boolean AsynchronyDSA03= algo.equals("AsynchronyDSA(0.3)");
@@ -576,7 +577,7 @@ public class Main {
 		boolean AsynchronyDSA = algo.equals("AsynchronyDSA");
 		boolean SynchronicDSA = algo.equals("SynchronicDSA");
 		
-		boolean AsynchronyMGM = algo.equals("AsynchronyMGM");
+		boolean AsynchronyMGMPhase = algo.equals("AsynchronyMGMPhase");
 		boolean SynchronicMGM= algo.equals("SynchronicMGM");
 		
 		boolean Monotonic = algo.equals("Monotonic");
@@ -614,8 +615,8 @@ public class Main {
 			ans = new SynchronicMGM(dcop, agents, agentZero, meanRun);
 		}
 		
-		if (AsynchronyMGM) {
-			ans = new AsynchronyMGM(dcop, agents, agentZero, meanRun);
+		if (AsynchronyMGMPhase) {
+			ans = new AsynchronyMGMPhase(dcop, agents, agentZero, meanRun);
 		}
 
 		if (AsynchronyDSA) {

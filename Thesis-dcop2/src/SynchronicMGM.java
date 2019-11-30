@@ -1,7 +1,7 @@
 import java.util.List;
 
 
-public class SynchronicMGM extends AsynchronyMGM{
+public class SynchronicMGM extends AsynchronyMGMPhase{
 
 	public SynchronicMGM(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun) {
 		super(dcop, agents, aZ, meanRun);
@@ -10,6 +10,9 @@ public class SynchronicMGM extends AsynchronyMGM{
 
 	@Override
 	public void agentDecide(int i) {
+		if (i == 0 && Main.currentUb==2) {
+			System.out.println();
+		}
 		for (AgentField a : agents) {
 			a.mgmSynchronicDecide();
 		}
