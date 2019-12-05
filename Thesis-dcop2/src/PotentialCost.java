@@ -24,6 +24,11 @@ public int compareTo(PotentialCost o) {
 	return 0;
 }
 
+@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "value:"+this.value+"_cost:"+this.cost;
+	}
 
 
 }

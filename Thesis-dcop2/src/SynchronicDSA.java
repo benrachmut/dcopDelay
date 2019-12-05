@@ -13,7 +13,8 @@ public class SynchronicDSA extends AsynchronyDSA{
 	public void agentDecide(int i) {
 	
 		for (AgentField a : agents) {
-				a.dsaSynchronicDecide(stochastic);
+		
+			a.dsaSynchronicDecide(stochastic);
 			}
 	}
 	

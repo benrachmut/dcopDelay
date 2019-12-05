@@ -10,9 +10,7 @@ public class SynchronicMGM extends AsynchronyMGMPhase{
 
 	@Override
 	public void agentDecide(int i) {
-		if (i == 0 && Main.currentUb==2) {
-			System.out.println();
-		}
+	
 		for (AgentField a : agents) {
 			a.mgmSynchronicDecide();
 		}

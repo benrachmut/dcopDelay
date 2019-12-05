@@ -24,7 +24,7 @@ public class Main {
 	static int meanRepsStart = 0;
 	static int meanRepsEnd = 100;// 100; // number of reps for every solve process not include
 	static int currMeanRun = 0;
-	static int iterations = 1000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
+	static int iterations = 5000;//15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
 	
 	// SynchronicMGM; SynchronicDSA; AsynchronyMGM; AsynchronyDSA; Monotonic
@@ -50,9 +50,13 @@ public class Main {
 	AsynchronyDSA(0.7,1,2)
 	AsynchronyDSA(0.7,1,5)
 	*/
-	//AsynchronyMGMNoPhase
-	//AsynchronyMGMPhase
-	static String algo ="AsynchronyDSA"; 
+	// AsynchronyMGMNoPhase
+	// AsynchronyMGMPhase
+	// SynchronicMGM; 
+	// SynchronicDSA;
+	// AsynchronyDSA
+	// Monotonic
+	static String algo ="SynchronicMGM"; 
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
 	static int[] memoryVersions = { 1 }; // 1=exp, 2= constant, 3= reasonable
@@ -72,7 +76,7 @@ public class Main {
 	static String fileName;
 
 	// -- uniformly random dcop
-	static double[] p1sUniform ={0.2 }; //{0.2 }; // 0.1,0.7
+	static double[] p1sUniform ={0.6 }; //{0.2 }; // 0.1,0.7
 	static double[] p2sUniform = { 1 };
 	// -- color dcop
 	static final double[] p1sColor = { 0.05 }; // 0.1,0.7
@@ -81,7 +85,7 @@ public class Main {
 	static int[] numOfNToNotHubs = { 3 };
 	static double[] p2sScaleFree = { 1 };
 	// -- communication protocol
-	static double[] p3s = {0,1 };// {1};//{0,1};
+	static double[] p3s = {0,1};// {1};//{0,1};
 	//static boolean[] dateKnowns = { true };
 	static int[] delayUBs = {2,5,10,25,50,75,100};//{2,5,10,25,50,75,100};//{2,5,10,25,50,75,100};//{10,100};//{2,5,10,25,50,75,100};//{ 5, 10, 20, 40 };// {20};//{5,10,20,40};//{5,10,20,40,70,100 };//{20};//{
 												// 5,10,20,40,70,100};//{20};//{ 2,5,10,20,40,70,100 };//{ 2,3,5,10
@@ -472,19 +476,9 @@ public class Main {
 		boolean AsynchronyDSA01= algo.equals("AsynchronyDSA(0.1)");
 		boolean AsynchronyDSA03= algo.equals("AsynchronyDSA(0.3)");
 		boolean AsynchronyDSA05= algo.equals("AsynchronyDSA(0.5)");
-		boolean AsynchronyDSA06= algo.equals("AsynchronyDSA(0.6)");
-		boolean AsynchronyDSA065= algo.equals("AsynchronyDSA(0.65)");
 		boolean AsynchronyDSA07= algo.equals("AsynchronyDSA(0.7)");
-		boolean AsynchronyDSA075= algo.equals("AsynchronyDSA(0.75)");
-		boolean AsynchronyDSA08= algo.equals("AsynchronyDSA(0.8)");
 		boolean AsynchronyDSA09= algo.equals("AsynchronyDSA(0.9)");
 		boolean AsynchronyDSA1= algo.equals("AsynchronyDSA(1)");
-		boolean SynchronicDSA01= algo.equals("SynchronicDSA(0.1)");
-		boolean SynchronicDSA03= algo.equals("SynchronicDSA(0.3)");
-		boolean SynchronicDSA05= algo.equals("SynchronicDSA(0.5)");
-		boolean SynchronicDSA07= algo.equals("SynchronicDSA(0.7)");
-		boolean SynchronicDSA09= algo.equals("SynchronicDSA(0.9)");
-		boolean SynchronicDSA1= algo.equals("SynchronicDSA(1)");
 		
 		if (AsynchronyDSA01) {
 			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.1);
@@ -495,22 +489,11 @@ public class Main {
 		if (AsynchronyDSA05) {
 			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.5);
 		}
-		if (AsynchronyDSA06) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.6);
-		}
-		if (AsynchronyDSA065) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.65);
-		}
+		
 		if (AsynchronyDSA07) {
 			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.7);
 		}
-		if (AsynchronyDSA075) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.75);
-		}
-		if (AsynchronyDSA08) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.8);
-		}
-		
+
 		if (AsynchronyDSA09) {
 			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.9);
 		}
@@ -585,25 +568,6 @@ public class Main {
 	
 		
 		
-		
-		if (SynchronicDSA01) {
-			ans = new SynchronicDSA(dcop, agents, agentZero, meanRun, 0.1);
-		}
-		if (SynchronicDSA03) {
-			ans = new SynchronicDSA(dcop, agents, agentZero, meanRun, 0.3);
-		}
-		if (SynchronicDSA05) {
-			ans = new SynchronicDSA(dcop, agents, agentZero, meanRun, 0.5);
-		}
-		if (SynchronicDSA07) {
-			ans = new SynchronicDSA(dcop, agents, agentZero, meanRun, 0.7);
-		}
-		if (SynchronicDSA09) {
-			ans = new SynchronicDSA(dcop, agents, agentZero, meanRun, 0.9);
-		}
-		if (SynchronicDSA1) {
-			ans = new SynchronicDSA(dcop, agents, agentZero, meanRun, 1.0);
-		}
 		
 		
 		
@@ -761,12 +725,12 @@ public class Main {
 
 	private static void orgenizeTrees() {
 
-		if (algo.equals("monotonic") || algo.equals("dsa7") || algo.equals("mgm")) {
+		if (algo.equals("Monotonic") || algo.equals("dsa7") || algo.equals("mgm")) {
 			anytimeDfs = false;
 			anytimeBfs = false;
 			anytimeVector = false;
 		}
-		if (algo.equals("monotonic") || anytimeDfs) {
+		if (algo.equals("Monotonic") || anytimeDfs) {
 			Tree psaduoTree = new Tree(agents);
 			psaduoTree.dfs();
 			psaduoTree.setIsAboveBelow();
@@ -852,6 +816,8 @@ public class Main {
 			agents[i].setCheckCanGoFirst(true);
 			agents[i].setWorldChangeSynchFlag(true);
 			agents[i].setKnownCounter(false);
+			agents[i].resetWaitingForCounterSynch();
+			agents[i].restartKsdpCounter();
 		}
 
 	}
