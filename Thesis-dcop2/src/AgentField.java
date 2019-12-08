@@ -38,6 +38,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private MessageAnyTimeUp msgUp;
 	private HashSet<Permutation> permutationsPast;
 	private HashSet<Permutation> permutationsToSend;
+	private HashSet<Permutation> permutationComplete;
 	private Set<Permutation> sonsAnytimePermutations;
 	private Map<Integer, Integer> counterAndValue;
 	private Permutation bestPermuation;
@@ -92,6 +93,9 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		initSonsAnytimeMessages();
 		this.permutationsPast = new HashSet<Permutation>();
 		this.permutationsToSend = new HashSet<Permutation>();
+		this.permutationComplete= new HashSet<Permutation>();
+		
+		
 		this.counterAndValue = new HashMap<Integer, Integer>();
 		this.counterAndValue.put(decisonCounter, value);
 		this.iHaveAnytimeNews = false;
@@ -888,9 +892,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	 */
 
 	public void updateRecieverUponPermutationOneByOne(Permutation currPermutation, AgentField reciever) {
-		// Permutation currPermutation =
-		// reciever.createCurrentPermutationNonMonotonic();
-		// ---
 		if (isAnytimeLeaf()) {
 			addToPermutationToSendUnsynchNonMonoByValue(currPermutation);
 		} else {
@@ -981,31 +982,72 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		return true;
 	}
 
-	public void dsaSdpAsynchronyDecide(double pA, double pB, double pC, double pD) {
+	public void dsaSdpAsynchronyDecide(double pA, double pB, double pC, double pD, int k) {
 		if (Asynchrony.iter == 0) {
 			firstValDsa();
 		} else {
 			boolean didChange = false;
 			if (valueRecieveFlag) {
 				valueRecieveFlag = false;
-				didChange = checkToChangeDSAsdp(pA, pB, pC, pD);
-				this.decisonCounter++;
+				
+				kCounterSdp++;
+				boolean secondBestFlag = false;
+				
+				
+				double ratio = calcRatio();
+				if (kCounterSdp == k) {
+					kCounterSdp=0;
+					double q = calcQSdp(pC,pD,ratio);					
+					double rnd = rDsaPersonal.nextDouble();
+					if (rnd<q) {
+						this.value = secondBest();
+						secondBestFlag = true;
+					}
+				}	
+				if (!secondBestFlag) {
+					double stochastic = pA+Math.min(pB, ratio);
+					checkToChangeDSA(stochastic);			
+				}
 				doAnytime();
+				this.decisonCounter++;		
 				az.createUnsynchMsgs(this, false);
-			}
-			// if (didChange) {
-
-			// }
-
-			// else {
-			// explorationIncrease();
-			// }
-
+			}	
 		}
-		// this.az.afterDecideTakeActionUnsynchNonMonotonicByValue(this.didDecide, i);
 	}
 
-	private boolean checkToChangeDSAsdp(double pA, double pB, double pC, double pD) {
+	
+
+	private double calcRatio() {
+		List<PotentialCost> pCostsList = findPotentialCost();
+		double currentCost = findCurrentCost(pCostsList);
+
+		PotentialCost minPotentialCost = Collections.min(pCostsList);
+		double newCost = minPotentialCost.getCost();
+
+		return Math.abs(currentCost-newCost)/currentCost;
+		
+	}
+
+	private int secondBest() {
+		List<PotentialCost> pCostsList = findPotentialCost();
+		PotentialCost minPotentialCost = Collections.min(pCostsList);
+		pCostsList.remove(minPotentialCost);		
+		PotentialCost minSecondPotentialCost = Collections.min(pCostsList);
+
+		return minSecondPotentialCost.getValue();
+	}
+
+	private double calcQSdp(double pC, double pD, double cond) {
+		
+		
+		if (cond>1) {
+			return 0;
+		}else {
+			return Math.max(pC, pD-cond);
+		}
+	}
+/*
+	private boolean checkToChangeDSAsdp(double p) {
 
 		List<PotentialCost> pCosts = findPotentialCost();
 		int currentPersonalCost = findCurrentCost(pCosts);
@@ -1020,8 +1062,9 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		if (this.value == -1) {
 			shouldChange = true;
 		}
-		return maybeChange(shouldChange, minPotentialCost, stochastic);
+		return maybeChange(shouldChange, minPotentialCost, p);
 	}
+	*/
 
 	public void dsaAsynchronyDecide(double stochastic) {
 		if (Asynchrony.iter == 0) {
@@ -1239,18 +1282,25 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	public Permutation createCurrentPermutationByValue() {
 
 		Map<Integer, Integer> m = new HashMap<Integer, Integer>();
-
 		for (Entry<Integer, MessageRecieve> e : this.neighbor.entrySet()) {
 			int nId = e.getKey();
 			int nValue = e.getValue().getValue();
+			if (nValue==-1) {
+				return null;
+			}
 			m.put(nId, nValue);
 		}
 		m.put(this.id, this.value);
-
-		if (!neighborIsMinusOne(m)) {
-			int x = 3;
-		}
 		int cost = calSelfCost(m);
+		
+		if (this.bestPermuation != null) {
+			int costBestPermutation = this.bestPermuation.getCost();
+			if (cost>costBestPermutation) {
+				return null;
+			}
+		}
+		
+		
 		return new Permutation(m, cost, this);
 	}
 
@@ -1388,13 +1438,8 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 		if (this.isAnytimeTop()) {
 
-			// System.out.println(
-			// "ALL PERMUTATIONS, iteration: "+Unsynch.iter+", cost: " + input.getCost() + "
-			// permutation past size: " + this.permutationsPast.size());
-
 			Asynchrony.topCost = input.getCost();
 			Asynchrony.counterPermutationAtTop = Asynchrony.counterPermutationAtTop + 1;
-			// Unsynch.bool = true;
 			if (this.bestPermuation == null || this.bestPermuation.getCost() > input.getCost()) {
 				recieveBetterPermutation(input);
 				iHaveAnytimeNews = true;
@@ -1403,14 +1448,19 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			}
 
 		} else {
-			addToSet(input, permutationsToSend);
+			boolean wasSent = addToSet(input, permutationComplete);		
+			if (!wasSent) {
+				addToSet(input, permutationsToSend);
+			}
+			
 		}
 	}
-
-	public void addToPermutationToSend(Permutation input) {
-		addToSet(input, permutationsToSend);
+/*
+	public boolean addToPermutationToSend(Permutation input) {
+		return addToSet(input, permutationsToSend);
 
 	}
+	*/
 
 	private void recieveBetterPermutation(Permutation input) {
 		bestPermuation = input;
@@ -1831,14 +1881,19 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	}
 
-	public void restartPermutationsPast() {
+	public void restartPermutationsSets() {
 		this.permutationsPast = new HashSet<Permutation>();
-	}
+		permutationComplete = new HashSet<Permutation>();
+		this.permutationsToSend = new HashSet<Permutation>();
 
+	}
+	
+	/*
 	public void restartAnytimeToSend() {
 		this.permutationsToSend = new HashSet<Permutation>();
 
 	}
+	*/
 
 	public Set<Permutation> getPastPermutations() {
 		// TODO Auto-generated method stub

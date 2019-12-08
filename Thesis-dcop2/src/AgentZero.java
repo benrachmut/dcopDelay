@@ -525,7 +525,9 @@ public class AgentZero {
 			reciever.reciveMsgValueFlag(senderId, senderValue, counter);
 			if (Main.anytime) {
 				Permutation p = reciever.createCurrentPermutationByValue();
-				reciever.updateRecieverUponPermutationOneByOne(p, reciever);
+				if (p!=null) {
+					reciever.updateRecieverUponPermutationOneByOne(p, reciever);
+				}
 			}
 		} // normal message
 		
