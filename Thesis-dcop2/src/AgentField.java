@@ -891,10 +891,14 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	 * }
 	 */
 
-	public void updateRecieverUponPermutationOneByOne(Permutation currPermutation, AgentField reciever) {
+	public void updateRecieverUponPermutationCreated(Permutation currPermutation, AgentField reciever) {
+		
+		
 		if (isAnytimeLeaf()) {
 			addToPermutationToSendUnsynchNonMonoByValue(currPermutation);
+		
 		} else {
+	
 			tryToCombinePermutation(currPermutation);
 		}
 		addToPermutationPast(currPermutation);
@@ -1172,9 +1176,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private boolean maybeChange(boolean shouldChange, PotentialCost minPotentialCost, double stochastic) {
 		if (shouldChange) {
 
-			// if (Main.currMeanRun==3) {
-			// System.out.println();
-			// }
 
 			double rnd = rDsaPersonal.nextDouble();
 			if (rnd < stochastic) {
@@ -1232,11 +1233,13 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 		if (Main.anytime) {
 			Permutation myPermutation = createCurrentPermutationByValue();
-			if (this.isAnytimeLeaf()) {
-				this.addToPermutationToSendUnsynchNonMonoByValue(myPermutation);
-			} else {
-				this.tryToCombinePermutation(myPermutation);
-			}
+			if (myPermutation!=null) {
+				if (this.isAnytimeLeaf()) {
+					this.addToPermutationToSendUnsynchNonMonoByValue(myPermutation);
+				} else {
+					this.tryToCombinePermutation(myPermutation);
+				}
+			}	
 		}
 
 	}
@@ -1248,34 +1251,29 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 		iterateOverPastPermuataion(currentP, listToAddToPast, completePermutation);
 
+		
+		
 		for (Permutation p : listToAddToPast) {
 			addToPermutationPast(p);
 			ans.add(p);
 		}
 
 		for (Permutation p : completePermutation) {
-
 			addToPermutationToSendUnsynchNonMonoByValue(p);
 			ans.add(p);
-
-			// this.permutationsToSend.add(p);
 		}
 		addToPermutationPast(currentP);
 		return ans;
 
 	}
 
-	public void recieveAnytimeDownNonMonotonicByValue(Message msg) {
-		//// maybe bug here
+	public void recieveAnytimeDown(Message msg) {
 
 		MessageAnyTimeDown mad = (MessageAnyTimeDown) msg;
-
-		// if (mad.getDate() > this.currentAnyTimeDate) {
 		this.msgDown = mad;
 		Permutation pFromMad = mad.getMessageInformation();
 		recieveBetterPermutation(pFromMad);
-		// this.currentAnyTimeDate = mad.getDate();
-		// }
+		
 
 	}
 
@@ -1309,6 +1307,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 		for (Permutation pastP : this.permutationsPast) {
 
+			
 			Permutation toAdd = msgP.canAdd(this, pastP);
 
 			if (toAdd != null) {
@@ -1326,8 +1325,8 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	public void addToPermutationPast(Permutation input) {
 		if (Main.memoryVersion == 1 || Main.memoryVersion == 3) {
 
-			int time = Asynchrony.iter;
-			input.setTimeEnter(time);
+			//int time = Asynchrony.iter;
+			//input.setTimeEnter(time);
 			addToSet(input, permutationsPast);
 		}
 		if (Main.memoryVersion == 2) {
@@ -1448,6 +1447,8 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			}
 
 		} else {
+		
+	
 			boolean wasSent = addToSet(input, permutationComplete);		
 			if (!wasSent) {
 				addToSet(input, permutationsToSend);
@@ -1464,6 +1465,9 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	private void recieveBetterPermutation(Permutation input) {
 		bestPermuation = input;
+		
+		
+		
 		printTopCompletePermutation(input);
 		this.anytimeValue = input.getM().get(this.id);
 
@@ -1477,7 +1481,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			if (input.getCost() == realCost) {
 				// System.out.println(input);
 			} else {
-				// System.err.println("cost should be: " + realCost + " |" + input);
+				System.err.println("cost should be: " + realCost + " |" + input);
 
 			}
 		}
@@ -1486,7 +1490,10 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	private boolean addToSet(Permutation input, HashSet<Permutation> setToAddTo) {
 		boolean flag = false;
+		
+		
 		for (Permutation pFromList : setToAddTo) {
+		
 			if (pFromList.equals(input)) {
 				flag = true;
 			}
@@ -1601,7 +1608,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		// }
 	}
 
-	public void recieveAnytimeUpBfs(Message msg) {
+	public void recieveAnytimeUp(Message msg) {
 		if (msg instanceof MessageAnyTimeUp) {
 
 			MessageAnyTimeUp mau = (MessageAnyTimeUp) msg;
@@ -1930,6 +1937,18 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		this.counterToChangeKnownDate = (int) (this.getNieghborSize() * ratioOfNeighborsToChangeKnownDate);
 		this.counterToChangeKnownDateDecreases = counterToChangeKnownDate;
 
+	}
+
+	public void setAnytimeValueLonleyNode() {
+		this.anytimeValue = 0;
+		
+	}
+
+	public void setCheatBestPermutation() {
+		Map<Integer, Integer> m = new HashMap<Integer,Integer>();
+		m.put(this.id, 0);
+		this.bestPermuation = new Permutation(m, 0, this);
+		
 	}
 
 }

@@ -289,7 +289,7 @@ public class AgentZero {
 			reciever.reciveMsgValueFlag(senderId, senderValue, counter);
 			if (Main.anytime) {
 				Permutation p = reciever.createCurrentPermutationByValue();
-				reciever.updateRecieverUponPermutationOneByOne(p, reciever);
+				//reciever.updateRecieverUponPermutationOneByOne(p, reciever);
 			}
 		} // normal message
 		
@@ -300,10 +300,10 @@ public class AgentZero {
 			reciever.reciveRMsgFlag(senderId, senderR, counter);
 		} // normal message
 		if (msg instanceof MessageAnyTimeUp) {
-			reciever.recieveAnytimeUpBfs(msg);
+			reciever.recieveAnytimeUp(msg);
 		}
 		if (msg instanceof MessageAnyTimeDown) {
-			reciever.recieveAnytimeDownNonMonotonicByValue(msg);
+			reciever.recieveAnytimeDown(msg);
 		}
 
 	}
@@ -327,6 +327,8 @@ public class AgentZero {
 	private void addPermutatioToAnytimeMechanism(AgentField a, Permutation p) {
 
 		if (a.isAnytimeLeaf()) {
+			
+			
 			a.addToPermutationToSendUnsynchNonMonoByValue(p);
 		}
 
@@ -388,40 +390,38 @@ public class AgentZero {
 		}
 	}
 
-	public void createAnyTimeUpUnsynchNonMonotonic(int currentIteration) {
-		// List<AgentField> agentsSendAnytime = new ArrayList<AgentField>()
-		int anytimeUpCreated = 0;
+	public void createAnyTime(int currentIteration) {
 		for (AgentField a : agents) {
 			boolean isHead = a.getAnytimeFather() == null;
 			if (a.hasAnytimeUpToSend() && !isHead) {
 				Set<Permutation> pToSendA = a.getPermutationsToSend();
 				for (Permutation p : pToSendA) {
-					// p.createdIncluded(a);
+					
+					
+					
+					
 					int delay = this.createDelay(true);
 					Message m = new MessageAnyTimeUp(a, a.getAnytimeFather(), p, delay);
 					this.messageBox.add(m);
-					anytimeUpCreated++;
-					
 				}
 				a.removeAllPermutationToSend();
 			} // if not had and have something to send
 		}
-		//System.out.println("anytimeUpCreated:"+anytimeUpCreated);
 	}
 
-	public void createAnyTimeDownUnsynchMono(int date) {
+	public void createAnyTimeDown(int date) {
 
 		for (AgentField a : this.agents) {
 			if (a.isAnytimeTop()) {
 				if (a.isTopHasAnytimeNews()) {
 					a.resettopHasAnytimeNews();
-					placeAnytimeDownMessageInBox(a, date);
+					placeAnytimeDownMessageInbox(a, date);
 				}
 			} else {
 				MessageAnyTimeDown m = a.moveDownToSend(); // take msg from msg to send down and deliever it
 				if (!a.isAnytimeLeaf()) {
 					if (m != null) {
-						placeAnytimeDownMessageInBox(a, date);
+						placeAnytimeDownMessageInbox(a, date);
 					}
 				}
 			}
@@ -437,7 +437,7 @@ public class AgentZero {
 		 */
 	}
 
-	private void placeAnytimeDownMessageInBox(AgentField from, int date) {
+	private void placeAnytimeDownMessageInbox(AgentField from, int date) {
 		for (AgentField son : from.getAnytimeSons()) {
 			AgentField sender = from;
 			AgentField reciever = son;
@@ -526,16 +526,16 @@ public class AgentZero {
 			if (Main.anytime) {
 				Permutation p = reciever.createCurrentPermutationByValue();
 				if (p!=null) {
-					reciever.updateRecieverUponPermutationOneByOne(p, reciever);
+					reciever.updateRecieverUponPermutationCreated(p, reciever);
 				}
 			}
 		} // normal message
 		
 		if (msg instanceof MessageAnyTimeUp) {
-			reciever.recieveAnytimeUpBfs(msg);
+			reciever.recieveAnytimeUp(msg);
 		}
 		if (msg instanceof MessageAnyTimeDown) {
-			reciever.recieveAnytimeDownNonMonotonicByValue(msg);
+			reciever.recieveAnytimeDown(msg);
 		}
 
 	}
@@ -562,15 +562,15 @@ public class AgentZero {
 			reciever.reciveMsgValueMap(senderId, senderValue, counter);
 			if (Main.anytime) {
 				Permutation p = reciever.createCurrentPermutationByValue();
-				reciever.updateRecieverUponPermutationOneByOne(p, reciever);
+				//reciever.updateRecieverUponPermutationOneByOne(p, reciever);
 			}
 		} // normal message
 		
 		if (msg instanceof MessageAnyTimeUp) {
-			reciever.recieveAnytimeUpBfs(msg);
+			reciever.recieveAnytimeUp(msg);
 		}
 		if (msg instanceof MessageAnyTimeDown) {
-			reciever.recieveAnytimeDownNonMonotonicByValue(msg);
+			reciever.recieveAnytimeDown(msg);
 		}
 
 	}
@@ -609,7 +609,7 @@ public class AgentZero {
 
 			if (Main.anytime) {
 				Permutation p = reciever.createCurrentPermutationByValue();
-				reciever.updateRecieverUponPermutationOneByOne(p, reciever);
+				//reciever.updateRecieverUponPermutationCreated(p, reciever);
 			}
 		} // normal message
 		
@@ -620,10 +620,10 @@ public class AgentZero {
 			reciever.reciveRMsgMap(senderId, senderR, counter);
 		} // normal message
 		if (msg instanceof MessageAnyTimeUp) {
-			reciever.recieveAnytimeUpBfs(msg);
+			reciever.recieveAnytimeUp(msg);
 		}
 		if (msg instanceof MessageAnyTimeDown) {
-			reciever.recieveAnytimeDownNonMonotonicByValue(msg);
+			reciever.recieveAnytimeDown(msg);
 		}
 
 	}

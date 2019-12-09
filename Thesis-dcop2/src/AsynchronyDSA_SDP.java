@@ -54,14 +54,10 @@ public class AsynchronyDSA_SDP extends Asynchrony {
 
 
 	@Override
-	public void agentDecide(int i) {
-
-	
-		
+	public void agentDecide(int i) {	
 		for (AgentField a : agents) {
 				a.dsaSdpAsynchronyDecide( pA, pB, pC, pD,k);
-			}
-		
+			}	
 	}
 
 }

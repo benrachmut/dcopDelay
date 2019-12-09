@@ -66,9 +66,12 @@ public abstract class Asynchrony extends Solution {
 		for (int i = 0; i < this.iteration; i++) {
 			iter = i;
 
-			if (i % 100 == 0) {
+			if (i % 20 == 0) {
 				System.out.println("---start iteration: " + i + "---");
 			}
+			
+			
+			
 			agentDecide(i); // abstract
 			List<Message> msgToSend = agentZero.handleDelay();
 			agentsSendMsgs(msgToSend); // abstract
@@ -77,7 +80,6 @@ public abstract class Asynchrony extends Solution {
 				createAnytimeDown(i);
 			}
 			addCostToTables(i);
-			
 		}
 	}
 
@@ -228,6 +230,8 @@ public abstract class Asynchrony extends Solution {
 				ans = ans + cost;
 			}
 		}
+		
+		
 		this.topAnytimeCost.add(ans);
 
 	}
@@ -247,26 +251,18 @@ public abstract class Asynchrony extends Solution {
 
 	}
 
-	// public abstract List<AgentField> findHeadOfTree() ;
-
-	// protected abstract void updateWhoCanDecide(int i);
-
-	// protected abstract void agentDecide();
-	// protected abstract void afterDecideTakeAction(int i);
+	
 
 	public abstract void agentsSendMsgs(List<Message> msgToSend);
 
 	public void createAnytimeUp(int i) {
-		agentZero.createAnyTimeUpUnsynchNonMonotonic(i);
+		agentZero.createAnyTime(i);
 	}
 
 	public void createAnytimeDown(int date) {
-		agentZero.createAnyTimeDownUnsynchMono(date);
+		agentZero.createAnyTimeDown(date);
 	}
-	// protected abstract void createAnytimeUp();
-	// protected abstract void createAnytimeDown(List<AgentField> fathers, int
-	// date);
-
+	
 	protected boolean atlistOneAgentMinusOne(boolean real) {
 
 		for (AgentField a : agents) {

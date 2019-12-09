@@ -17,37 +17,29 @@ public class Main {
 
 	// ------- VARIABLES TO CHECK BEFORE STARTING A RUN
 	// -- variables of dcop problem
-	static int A = 50;// 50;//35; // number of agents
+	static int A = 15;// 50;//35; // number of agents
 	static int D = 10; // size of domain for each agent
 	static int costMax = 100; // the max value of cost
 	// -- Experiment time
 	static int meanRepsStart = 0;
 	static int meanRepsEnd = 100;// 100; // number of reps for every solve process not include
 	static int currMeanRun = 0;
-	static int iterations = 5000;//15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
+	static int iterations = 400;// 15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
-	
-	
-	
-	
-	
+
 	/*
-	
-	stochastic, knownRatio, changeFlag
-	AsynchronyDSA(0.7,1,0.5)
-	AsynchronyDSA(0.7,1,0.75)
-	AsynchronyDSA(0.7,1,1)
-	AsynchronyDSA(0.7,1,1.5)  
-	AsynchronyDSA(0.7,1,2)
-	AsynchronyDSA(0.7,1,5)
-	*/
+	 * 
+	 * stochastic, knownRatio, changeFlag AsynchronyDSA(0.7,1,0.5)
+	 * AsynchronyDSA(0.7,1,0.75) AsynchronyDSA(0.7,1,1) AsynchronyDSA(0.7,1,1.5)
+	 * AsynchronyDSA(0.7,1,2) AsynchronyDSA(0.7,1,5)
+	 */
 	// AsynchronyMGMNoPhase
 	// AsynchronyMGMPhase
-	// SynchronicMGM; 
+	// SynchronicMGM;
 	// SynchronicDSA;
 	// AsynchronyDSA
 	// Monotonic
-	
+
 	// AsynchronyDSA_SDP(k=10)
 	// AsynchronyDSA_SDP(k=20)
 	// AsynchronyDSA_SDP(k=30)
@@ -56,18 +48,14 @@ public class Main {
 	// AsynchronyDSA_SDP(k=60)
 	// AsynchronyDSA_SDP(k=70)
 	// AsynchronyDSA_SDP(k=80)
-	
-	
-	//"AsynchronyDSA_SDP(k=10,date=0)");
-	
-	static String algo ="AsynchronyDSA_SDP(k=20)"; 
+
+	// "AsynchronyDSA_SDP(k=10,date=0)");
+
+	static String algo = "AsynchronyDSA_SDP(k=20)";
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
-	static int[] memoryVersions = { 1 }; // 1=exp, 2= constant, 3= reasonable
-	static double[] constantsPower = { 1.8 };// {1.8};//{0.8,1,1.4,1.8,2,2.4};//{0.8,1,1.4,1.8,2,2.4};//{1.8,2,2.2,2.8,3,3.2,3.5};//{2};//{2,2.2,2.5,2.8,3,3.2,3.5};//{2};//{2,2.3,2.5,2.7,3,3.3,3.5};//{2.75};//{}{0.8,1,2,3,4};//{2,4,6,8};//{0.8,1,2,3,4};//{1,2,3,4,5};
-
-	// 1 = maxSimilarityToAgentView, 2 = fifo,
-	// 3 = maxSimilarityToLastPFromSender
+	static int[] memoryVersions = { 2 }; // 1=exp, 2= constant, 3= reasonable
+	static double[] constantsPower = {  1.69897, 2, 2.1761,2.47712,2.6989,2.8751,3 };// {1.8};//{0.8,1,1.4,1.8,2,2.4};//{0.8,1,1.4,1.8,2,2.4};//{1.8,2,2.2,2.8,3,3.2,3.5};//{2};//{2,2.2,2.5,2.8,3,3.2,3.5};//{2};//{2,2.3,2.5,2.7,3,3.3,3.5};//{2.75};//{}{0.8,1,2,3,4};//{2,4,6,8};//{0.8,1,2,3,4};//{1,2,3,4,5};
 
 	static int[] comparatorsForMemory = { 1 };
 	// -- synch
@@ -80,7 +68,7 @@ public class Main {
 	static String fileName;
 
 	// -- uniformly random dcop
-	static double[] p1sUniform ={0.2 }; //{0.2 }; // 0.1,0.7
+	static double[] p1sUniform = { 0.2 }; // {0.2 }; // 0.1,0.7
 	static double[] p2sUniform = { 1 };
 	// -- color dcop
 	static final double[] p1sColor = { 0.05 }; // 0.1,0.7
@@ -89,16 +77,12 @@ public class Main {
 	static int[] numOfNToNotHubs = { 3 };
 	static double[] p2sScaleFree = { 1 };
 	// -- communication protocol
-	static double[] p3s = {0,1};// {1};//{0,1};
-	//static boolean[] dateKnowns = { true };
-	static int[] delayUBs = {5,10,25,50,75,100};//{2,5,10,25,50,75,100};//{2,5,10,25,50,75,100};//{10,100};//{2,5,10,25,50,75,100};//{ 5, 10, 20, 40 };// {20};//{5,10,20,40};//{5,10,20,40,70,100 };//{20};//{
-												// 5,10,20,40,70,100};//{20};//{ 2,5,10,20,40,70,100 };//{ 2,3,5,10
-												// };//{ 2,5,10,20,40,70,100 };//{10,20};//{70,100 };//{
-												// 2,5,10,20,40,70,100 };//{2,5,10};//{1,2,3,5,10,20,40};//{ 5, 10, 20,
-												// 40 };
-	static double[] p4s = {0};//{ 0,0.05,0.1,0.15,0.2,0.25,0.3 };
+	static double[] p3s = { 1 };// {0,1};
+	// static boolean[] dateKnowns = { true };
+	static int[] delayUBs = { 10 };// {5,10,25,50,75,100};//{2,5,10,25,50,75,100};
+	static double[] p4s = { 0 };// { 0,0.05,0.1,0.15,0.2,0.25,0.3 };
 	public static boolean useCounterToChangeTrans = false;
-	public static boolean secondBest=false;
+	public static boolean secondBest = false;
 	// ------- GENERAL VARIABLES NO NEED TO CHANGE
 	// -- characters
 	static AgentField[] agents;
@@ -109,9 +93,8 @@ public class Main {
 	// -- random variables
 	static Random rFirstValue = new Random();
 	static Random rCost = new Random();
-	
-	
-	//static Random rDsa = new Random();
+
+	// static Random rDsa = new Random();
 	static Dcop dcop;
 	static int dcopVersion;
 	// -- memory version
@@ -144,7 +127,6 @@ public class Main {
 	static int currentUb;
 	static Random rDelayAnytime = new Random();
 
-
 	public static void main(String[] args) {
 		fileName = getFileName();
 
@@ -152,7 +134,7 @@ public class Main {
 
 		for (int i : dcopVersions) {
 			dcopVersion = i;
-			if (algo == "dsaUnsynch7") {
+			if (memoryVersions[0] != 1) {
 				for (int j : memoryVersions) {
 					memoryVersion = j;
 					for (int k : comparatorsForMemory) {
@@ -161,6 +143,8 @@ public class Main {
 					}
 				}
 			} else {
+				memoryVersion = 1;
+
 				runDifferentDcop();
 			}
 			printDcops();
@@ -169,40 +153,37 @@ public class Main {
 
 	private static String getFileName() {
 
-		
-		
 		String dcopV = getDcopName();
 		String param = getDcopParam();
-		String ans = "algo_"+algo+",A_"+A+",dcop_"+dcopV+",param_"+param+",anytime_"+anytime;
-		String meanRunRange = ",start_" + meanRepsStart + ",end_" + meanRepsEnd+ ",iteration_" + iterations+",p4_"+p4s[0];
-		ans = ans+ meanRunRange;
-		if (memoryVersions[0]==2) {
-			String heurstic = ",huerstic_"+comparatorsForMemory[0];
-			ans = ans+heurstic;
+		String ans = "algo_" + algo + ",A_" + A + ",dcop_" + dcopV + ",param_" + param + ",anytime_" + anytime;
+		String meanRunRange = ",start_" + meanRepsStart + ",end_" + meanRepsEnd + ",iteration_" + iterations + ",p4_"
+				+ p4s[0];
+		ans = ans + meanRunRange;
+		if (memoryVersions[0] == 2) {
+			String heurstic = ",huerstic_" + comparatorsForMemory[0];
+			ans = ans + heurstic;
 		}
 		return ans;
 	}
 
 	private static String getDcopParam() {
-		if (dcopVersions[0]==1) {
+		if (dcopVersions[0] == 1) {
 			return Double.toString(p1sUniform[0]);
 		}
-		if (dcopVersions[0]==2) {
+		if (dcopVersions[0] == 2) {
 			return Double.toString(p1sColor[0]);
-		}
-		else {
-			return Integer.toString(A/5);
+		} else {
+			return Integer.toString(A / 5);
 		}
 	}
 
 	private static String getDcopName() {
-		if (dcopVersions[0]==1) {
+		if (dcopVersions[0] == 1) {
 			return "random";
 		}
-		if (dcopVersions[0]==2) {
+		if (dcopVersions[0] == 2) {
 			return "color";
-		}
-		else {
+		} else {
 			return "scaleFree";
 		}
 	}
@@ -232,9 +213,8 @@ public class Main {
 				runDifferentDcop();
 			}
 		}
-		
-		printDcops();
 
+		printDcops();
 
 	}
 
@@ -258,7 +238,6 @@ public class Main {
 			runScaleFreeDcop();
 		}
 		printDcops();
-
 
 	}
 
@@ -296,20 +275,19 @@ public class Main {
 		try {
 			FileWriter s = new FileWriter(fileName + ".csv");
 			out = new BufferedWriter(s);
-			String header = "dcop,p3,date_known,ub,p4,algo,p1,p2,mean_run,iteration,bird_eye_cost,anytime_bird_eye,known_ratio,known_ratio_counter";
+			String header = "dcop,p3,date_known,ub,p4,algo,p1,p2,mean_run,iteration,bird_eye_cost,anytime_bird_eye,known_ratio";
 			// if (!synch) {
-			
-			String anytimeString =  "cost_change_counter,top_cost_not_best,top_change_counter,top_change_ratio,anytime_cost,top_cost";
+
+			String anytimeString = ",cost_change_counter,top_cost_not_best,top_change_counter,top_change_ratio,anytime_cost,top_cost";
 			String huerstic = ",hyper_parametr,Heuristics";
-			
+
 			if (Main.anytime) {
-				header = header+anytimeString;
+				header = header + anytimeString;
 			}
-			if (memoryVersion==2) {
-				header = header +huerstic;
+			if (memoryVersion == 2) {
+				header = header + anytimeString+huerstic;
 			}
-			
-			
+
 			// }
 			out.write(header);
 			out.newLine();
@@ -370,9 +348,6 @@ public class Main {
 		rNotHub.setSeed(meanRun);
 		rCost.setSeed(meanRun);
 		rFirstValue.setSeed(meanRun);
-		
-		
-		
 
 	}
 
@@ -384,26 +359,26 @@ public class Main {
 			currentP3 = p3;
 			if (p3 == 0) {
 				currentP4 = p4s[0];
-				//for (AgentField a : agents) {
-				//	a.setDsaSeed(meanRun);
-				//}
+				// for (AgentField a : agents) {
+				// a.setDsaSeed(meanRun);
+				// }
 				communicationSeeds(meanRun);
 				afterHavingAllPrameters(p3, true, 0, 0.0, dcop, meanRun);
 			} else {
-				diffCommunicationGivenP3( dcop, meanRun, p3);
+				diffCommunicationGivenP3(dcop, meanRun, p3);
 			}
 		} // p3
-		if (currMeanRun%10==0) {
+		//if (currMeanRun % 10 == 0) {
 			printDcops();
 
-		}
+		//}
 
 	}
 
 	private static void afterHavingAllPrameters(Double p3, Boolean dK, Integer delayUB, Double p4, Dcop dcop,
 			int meanRun) {
 		// ---- protocol ----
-		String protocol = "p3=" + currentP3 +", p4=" + currentP4 + ", ub=" + currentUb + ", mean run=" + meanRun;
+		String protocol = "p3=" + currentP3 + ", p4=" + currentP4 + ", ub=" + currentUb + ", mean run=" + meanRun;
 		// ---- find solution ----
 
 		Solution algo = selectedAlgo(dcop, meanRun);
@@ -434,23 +409,23 @@ public class Main {
 
 	}
 
-	private static void diffCommunicationGivenP3 (Dcop dcop, int meanRun, Double p3) {
-		//for (boolean dK : dateKnowns) {
-			//dateKnown = dK;
-			for (Integer delayUB : delayUBs) {
-				currentUb = delayUB;
-				for (Double p4 : p4s) {
-					// communicationSeed = communicationSeed + 1;
-					// System.out.println("communicationSeed");
+	private static void diffCommunicationGivenP3(Dcop dcop, int meanRun, Double p3) {
+		// for (boolean dK : dateKnowns) {
+		// dateKnown = dK;
+		for (Integer delayUB : delayUBs) {
+			currentUb = delayUB;
+			for (Double p4 : p4s) {
+				// communicationSeed = communicationSeed + 1;
+				// System.out.println("communicationSeed");
 
-					communicationSeeds(meanRun);
-					currentP4 = p4;
+				communicationSeeds(meanRun);
+				currentP4 = p4;
 
-					afterHavingAllPrameters(p3, false, delayUB, p4, dcop, meanRun);
+				afterHavingAllPrameters(p3, false, delayUB, p4, dcop, meanRun);
 
-				} // p4
-			} // ub
-		//} // date known
+			} // p4
+		} // ub
+		// } // date known
 
 	}
 
@@ -461,7 +436,7 @@ public class Main {
 		rDelay.setSeed(meanRun);
 		rDelayAnytime.setSeed(meanRun);
 		rFirstValue.setSeed(meanRun);
-		
+
 		for (AgentField a : agents) {
 			a.setDsaSeed(meanRun);
 		}
@@ -471,127 +446,118 @@ public class Main {
 	private static Solution selectedAlgo(Dcop dcop, int meanRun) {
 		Solution ans = null;
 
-		
-		boolean AsynchronyDSA_SDP_10 =algo.equals("AsynchronyDSA_SDP(k=10)");
-		boolean AsynchronyDSA_SDP_20 =algo.equals("AsynchronyDSA_SDP(k=20)");
-		boolean AsynchronyDSA_SDP_30 =algo.equals("AsynchronyDSA_SDP(k=30)");
-		boolean AsynchronyDSA_SDP_40 =algo.equals("AsynchronyDSA_SDP(k=40)");
-		boolean AsynchronyDSA_SDP_50 =algo.equals("AsynchronyDSA_SDP(k=50)");
-		boolean AsynchronyDSA_SDP_60 =algo.equals("AsynchronyDSA_SDP(k=60)");
-		boolean AsynchronyDSA_SDP_70 =algo.equals("AsynchronyDSA_SDP(k=70)");
-		boolean AsynchronyDSA_SDP_80 =algo.equals("AsynchronyDSA_SDP(k=80)");
-		boolean AsynchronyDSA_SDP_160 =algo.equals("AsynchronyDSA_SDP(k=160)");
-		boolean AsynchronyDSA_SDP_160_0 =algo.equals("AsynchronyDSA_SDP(k=160,date=0)");
-		boolean AsynchronyDSA_SDP_120 =algo.equals("AsynchronyDSA_SDP(k=120)");
-		boolean AsynchronyDSA_SDP_120_0 =algo.equals("AsynchronyDSA_SDP(k=120,date=0)");
+		boolean AsynchronyDSA_SDP_10 = algo.equals("AsynchronyDSA_SDP(k=10)");
+		boolean AsynchronyDSA_SDP_20 = algo.equals("AsynchronyDSA_SDP(k=20)");
+		boolean AsynchronyDSA_SDP_30 = algo.equals("AsynchronyDSA_SDP(k=30)");
+		boolean AsynchronyDSA_SDP_40 = algo.equals("AsynchronyDSA_SDP(k=40)");
+		boolean AsynchronyDSA_SDP_50 = algo.equals("AsynchronyDSA_SDP(k=50)");
+		boolean AsynchronyDSA_SDP_60 = algo.equals("AsynchronyDSA_SDP(k=60)");
+		boolean AsynchronyDSA_SDP_70 = algo.equals("AsynchronyDSA_SDP(k=70)");
+		boolean AsynchronyDSA_SDP_80 = algo.equals("AsynchronyDSA_SDP(k=80)");
+		boolean AsynchronyDSA_SDP_160 = algo.equals("AsynchronyDSA_SDP(k=160)");
+		boolean AsynchronyDSA_SDP_160_0 = algo.equals("AsynchronyDSA_SDP(k=160,date=0)");
+		boolean AsynchronyDSA_SDP_120 = algo.equals("AsynchronyDSA_SDP(k=120)");
+		boolean AsynchronyDSA_SDP_120_0 = algo.equals("AsynchronyDSA_SDP(k=120,date=0)");
 		if (AsynchronyDSA_SDP_120) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,120);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 120);
 
 		}
 		if (AsynchronyDSA_SDP_120_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,0.0,120);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 120);
 
 		}
-		
-		
+
 		if (AsynchronyDSA_SDP_160) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,160);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 160);
 
 		}
 		if (AsynchronyDSA_SDP_160_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,0.0,160);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 160);
 
 		}
-
-		
 
 		if (AsynchronyDSA_SDP_10) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,10);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 10);
 		}
 		if (AsynchronyDSA_SDP_20) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,20);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 20);
 		}
 		if (AsynchronyDSA_SDP_30) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,30);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 30);
 		}
 		if (AsynchronyDSA_SDP_40) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,40);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 40);
 		}
 		if (AsynchronyDSA_SDP_50) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,50);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 50);
 		}
 		if (AsynchronyDSA_SDP_60) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,60);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 60);
 		}
 		if (AsynchronyDSA_SDP_70) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,70);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 70);
 		}
 		if (AsynchronyDSA_SDP_80) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,80);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 80);
 		}
-		
-		
-		
-		
 
-		boolean AsynchronyDSA_SDP_10_0 =algo.equals("AsynchronyDSA_SDP(k=10,date=0)");
-		boolean AsynchronyDSA_SDP_20_0 =algo.equals("AsynchronyDSA_SDP(k=20,date=0)");
-		boolean AsynchronyDSA_SDP_30_0 =algo.equals("AsynchronyDSA_SDP(k=30,date=0)");
-		boolean AsynchronyDSA_SDP_40_0 =algo.equals("AsynchronyDSA_SDP(k=40,date=0)");
-		boolean AsynchronyDSA_SDP_50_0 =algo.equals("AsynchronyDSA_SDP(k=50,date=0)");
-		boolean AsynchronyDSA_SDP_60_0 =algo.equals("AsynchronyDSA_SDP(k=60,date=0)");
-		boolean AsynchronyDSA_SDP_70_0 =algo.equals("AsynchronyDSA_SDP(k=70,date=0)");
-		boolean AsynchronyDSA_SDP_80_0 =algo.equals("AsynchronyDSA_SDP(k=80,date=0)");
-		boolean AsynchronyDSA_SDP_100_0 =algo.equals("AsynchronyDSA_SDP(k=100,date=0)");
-		boolean AsynchronyDSA_SDP_100=algo.equals("AsynchronyDSA_SDP(k=100)");
-		
+		boolean AsynchronyDSA_SDP_10_0 = algo.equals("AsynchronyDSA_SDP(k=10,date=0)");
+		boolean AsynchronyDSA_SDP_20_0 = algo.equals("AsynchronyDSA_SDP(k=20,date=0)");
+		boolean AsynchronyDSA_SDP_30_0 = algo.equals("AsynchronyDSA_SDP(k=30,date=0)");
+		boolean AsynchronyDSA_SDP_40_0 = algo.equals("AsynchronyDSA_SDP(k=40,date=0)");
+		boolean AsynchronyDSA_SDP_50_0 = algo.equals("AsynchronyDSA_SDP(k=50,date=0)");
+		boolean AsynchronyDSA_SDP_60_0 = algo.equals("AsynchronyDSA_SDP(k=60,date=0)");
+		boolean AsynchronyDSA_SDP_70_0 = algo.equals("AsynchronyDSA_SDP(k=70,date=0)");
+		boolean AsynchronyDSA_SDP_80_0 = algo.equals("AsynchronyDSA_SDP(k=80,date=0)");
+		boolean AsynchronyDSA_SDP_100_0 = algo.equals("AsynchronyDSA_SDP(k=100,date=0)");
+		boolean AsynchronyDSA_SDP_100 = algo.equals("AsynchronyDSA_SDP(k=100)");
+
 		if (AsynchronyDSA_SDP_100) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,100);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 100);
 
 		}
 		if (AsynchronyDSA_SDP_100_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,0.0,100);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 100);
 
 		}
 		if (AsynchronyDSA_SDP_10_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,0.0,10);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 10);
 		}
 		if (AsynchronyDSA_SDP_20_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,0.0,20);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 20);
 		}
 		if (AsynchronyDSA_SDP_30_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,0.0,30);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 30);
 		}
 		if (AsynchronyDSA_SDP_40_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,0.0,40);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 40);
 		}
 		if (AsynchronyDSA_SDP_50_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,0.0,50);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 50);
 		}
 		if (AsynchronyDSA_SDP_60_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,0.0,60);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 60);
 		}
 		if (AsynchronyDSA_SDP_70_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,0.0,70);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 70);
 		}
 		if (AsynchronyDSA_SDP_80_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun,0.0,80);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 80);
 		}
-		
-		
-		//AsynchronyDSA(0.1);AsynchronyDSA(0.3);AsynchronyDSA(0.5);AsynchronyDSA(0.7);AsynchronyDSA(0.9);AsynchronyDSA(1);
-		boolean AsynchronyMGMNoPhase= algo.equals("AsynchronyMGMNoPhase");
-		
+
+		// AsynchronyDSA(0.1);AsynchronyDSA(0.3);AsynchronyDSA(0.5);AsynchronyDSA(0.7);AsynchronyDSA(0.9);AsynchronyDSA(1);
+		boolean AsynchronyMGMNoPhase = algo.equals("AsynchronyMGMNoPhase");
+
 		if (AsynchronyMGMNoPhase) {
 			ans = new AsynchronyMGMNoPhase(dcop, agents, agentZero, meanRun);
 		}
-		boolean AsynchronyDSA01= algo.equals("AsynchronyDSA(0.1)");
-		boolean AsynchronyDSA03= algo.equals("AsynchronyDSA(0.3)");
-		boolean AsynchronyDSA05= algo.equals("AsynchronyDSA(0.5)");
-		boolean AsynchronyDSA07= algo.equals("AsynchronyDSA(0.7)");
-		boolean AsynchronyDSA09= algo.equals("AsynchronyDSA(0.9)");
-		boolean AsynchronyDSA1= algo.equals("AsynchronyDSA(1)");
-		
+		boolean AsynchronyDSA01 = algo.equals("AsynchronyDSA(0.1)");
+		boolean AsynchronyDSA03 = algo.equals("AsynchronyDSA(0.3)");
+		boolean AsynchronyDSA05 = algo.equals("AsynchronyDSA(0.5)");
+		boolean AsynchronyDSA07 = algo.equals("AsynchronyDSA(0.7)");
+		boolean AsynchronyDSA09 = algo.equals("AsynchronyDSA(0.9)");
+		boolean AsynchronyDSA1 = algo.equals("AsynchronyDSA(1)");
+
 		if (AsynchronyDSA01) {
 			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.1);
 		}
@@ -601,7 +567,7 @@ public class Main {
 		if (AsynchronyDSA05) {
 			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.5);
 		}
-		
+
 		if (AsynchronyDSA07) {
 			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.7);
 		}
@@ -612,77 +578,63 @@ public class Main {
 		if (AsynchronyDSA1) {
 			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1.0);
 		}
-		
-		boolean AsynchronyDSA07_0= algo.equals("AsynchronyDSA(0.7,0)");
-		boolean AsynchronyDSA07_01= algo.equals("AsynchronyDSA(0.7,0.1)");
-		boolean AsynchronyDSA07_02= algo.equals("AsynchronyDSA(0.7,0.2)");
-		boolean AsynchronyDSA07_03= algo.equals("AsynchronyDSA(0.7,0.3)");
-		boolean AsynchronyDSA07_04= algo.equals("AsynchronyDSA(0.7,0.4)");
-		boolean AsynchronyDSA07_05= algo.equals("AsynchronyDSA(0.7,0.5)");
-		boolean AsynchronyDSA07_06= algo.equals("AsynchronyDSA(0.7,0.6)");
-		boolean AsynchronyDSA07_07= algo.equals("AsynchronyDSA(0.7,0.7)");
-		boolean AsynchronyDSA07_08= algo.equals("AsynchronyDSA(0.7,0.8)");
-		boolean AsynchronyDSA07_09= algo.equals("AsynchronyDSA(0.7,0.9)");
-		boolean AsynchronyDSA07_1= algo.equals("AsynchronyDSA(0.7,1)");
+
+		boolean AsynchronyDSA07_0 = algo.equals("AsynchronyDSA(0.7,0)");
+		boolean AsynchronyDSA07_01 = algo.equals("AsynchronyDSA(0.7,0.1)");
+		boolean AsynchronyDSA07_02 = algo.equals("AsynchronyDSA(0.7,0.2)");
+		boolean AsynchronyDSA07_03 = algo.equals("AsynchronyDSA(0.7,0.3)");
+		boolean AsynchronyDSA07_04 = algo.equals("AsynchronyDSA(0.7,0.4)");
+		boolean AsynchronyDSA07_05 = algo.equals("AsynchronyDSA(0.7,0.5)");
+		boolean AsynchronyDSA07_06 = algo.equals("AsynchronyDSA(0.7,0.6)");
+		boolean AsynchronyDSA07_07 = algo.equals("AsynchronyDSA(0.7,0.7)");
+		boolean AsynchronyDSA07_08 = algo.equals("AsynchronyDSA(0.7,0.8)");
+		boolean AsynchronyDSA07_09 = algo.equals("AsynchronyDSA(0.7,0.9)");
+		boolean AsynchronyDSA07_1 = algo.equals("AsynchronyDSA(0.7,1)");
 
 		if (AsynchronyDSA07_0) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0, 0.7);
 		}
 
 		if (AsynchronyDSA07_01) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.1,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.1, 0.7);
 		}
-		
+
 		if (AsynchronyDSA07_02) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.2,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.2, 0.7);
 		}
 		if (AsynchronyDSA07_03) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.3,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.3, 0.7);
 		}
 		if (AsynchronyDSA07_04) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.4,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.4, 0.7);
 		}
 		if (AsynchronyDSA07_05) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.5,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.5, 0.7);
 		}
 		if (AsynchronyDSA07_06) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.6,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.6, 0.7);
 		}
 		if (AsynchronyDSA07_07) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.7,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.7, 0.7);
 		}
 		if (AsynchronyDSA07_08) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.8,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.8, 0.7);
 		}
 		if (AsynchronyDSA07_09) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.9,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.9, 0.7);
 		}
 		if (AsynchronyDSA07_1) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1, 0.7);
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
 		boolean AsynchronyDSA = algo.equals("AsynchronyDSA");
 		boolean SynchronicDSA = algo.equals("SynchronicDSA");
-		
+
 		boolean AsynchronyMGMPhase = algo.equals("AsynchronyMGMPhase");
-		boolean SynchronicMGM= algo.equals("SynchronicMGM");
-		
+		boolean SynchronicMGM = algo.equals("SynchronicMGM");
+
 		boolean Monotonic = algo.equals("Monotonic");
 
-	
-		
-		
-		
-		
-		
 		if (Monotonic) {
 			ans = new AsynchronyMonotonic(dcop, agents, agentZero, meanRun);
 		}
@@ -690,7 +642,7 @@ public class Main {
 		if (SynchronicMGM) {
 			ans = new SynchronicMGM(dcop, agents, agentZero, meanRun);
 		}
-		
+
 		if (AsynchronyMGMPhase) {
 			ans = new AsynchronyMGMPhase(dcop, agents, agentZero, meanRun);
 		}
@@ -698,69 +650,61 @@ public class Main {
 		if (AsynchronyDSA) {
 			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.7);
 		}
-		
+
 		if (SynchronicDSA) {
 			ans = new SynchronicDSA(dcop, agents, agentZero, meanRun, 0.7);
 		}
 
-		
-		boolean AsynchronyDSA07_1_10= algo.equals("AsynchronyDSA(0.7,1,10)");
+		boolean AsynchronyDSA07_1_10 = algo.equals("AsynchronyDSA(0.7,1,10)");
 		if (AsynchronyDSA07_1_10) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,10,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1, 10, 0.7);
 		}
-		
-		boolean AsynchronyDSA07_1_150= algo.equals("AsynchronyDSA(0.7,1,15)");
+
+		boolean AsynchronyDSA07_1_150 = algo.equals("AsynchronyDSA(0.7,1,15)");
 		if (AsynchronyDSA07_1_150) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,15,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1, 15, 0.7);
 		}
-		
-		boolean AsynchronyDSA07_1_8= algo.equals("AsynchronyDSA(0.7,1,8)");
+
+		boolean AsynchronyDSA07_1_8 = algo.equals("AsynchronyDSA(0.7,1,8)");
 		if (AsynchronyDSA07_1_8) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,8,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1, 8, 0.7);
 		}
-		
-		boolean AsynchronyDSA07_1_20= algo.equals("AsynchronyDSA(0.7,1,20)");
+
+		boolean AsynchronyDSA07_1_20 = algo.equals("AsynchronyDSA(0.7,1,20)");
 		if (AsynchronyDSA07_1_20) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,20,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1, 20, 0.7);
 		}
-		
-		
-		boolean AsynchronyDSA07_1_05= algo.equals("AsynchronyDSA(0.7,1,0.5)");
+
+		boolean AsynchronyDSA07_1_05 = algo.equals("AsynchronyDSA(0.7,1,0.5)");
 		if (AsynchronyDSA07_1_05) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,0.5,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1, 0.5, 0.7);
 		}
-		
-		boolean AsynchronyDSA07_1_075= algo.equals("AsynchronyDSA(0.7,1,0.75)");
+
+		boolean AsynchronyDSA07_1_075 = algo.equals("AsynchronyDSA(0.7,1,0.75)");
 		if (AsynchronyDSA07_1_075) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,0.75,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1, 0.75, 0.7);
 		}
-		
-		boolean AsynchronyDSA07_1_1= algo.equals("AsynchronyDSA(0.7,1,1)");
+
+		boolean AsynchronyDSA07_1_1 = algo.equals("AsynchronyDSA(0.7,1,1)");
 		if (AsynchronyDSA07_1_1) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,1,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1, 1, 0.7);
 		}
-		
-		boolean AsynchronyDSA07_1_15= algo.equals("AsynchronyDSA(0.7,1,1.5)");
+
+		boolean AsynchronyDSA07_1_15 = algo.equals("AsynchronyDSA(0.7,1,1.5)");
 		if (AsynchronyDSA07_1_15) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,1.5,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1, 1.5, 0.7);
 		}
-		
-		boolean AsynchronyDSA07_1_2= algo.equals("AsynchronyDSA(0.7,1,2)");
+
+		boolean AsynchronyDSA07_1_2 = algo.equals("AsynchronyDSA(0.7,1,2)");
 		if (AsynchronyDSA07_1_2) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,2,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1, 2, 0.7);
 		}
-		
-		boolean AsynchronyDSA07_1_5= algo.equals("AsynchronyDSA(0.7,1,5)");
+
+		boolean AsynchronyDSA07_1_5 = algo.equals("AsynchronyDSA(0.7,1,5)");
 		if (AsynchronyDSA07_1_5) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1,5,0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1, 5, 0.7);
 		}
-		
-		
-		
-		
-		
-		
-		
+
 		ans.solve();
 
 		return ans;
@@ -779,30 +723,28 @@ public class Main {
 
 	private static void addToSolutionString(Solution sol, String protocol) {
 		for (int i = 0; i < iterations; i++) {
-			String s = dcop.toString() + "," + protocol + "," + sol.toString() + "," + i + "," + sol.getRealCost(i)+ ","+sol.getBirdeyeAnytime(i)+","+((Asynchrony)sol).getKnownRatio()+","+((Asynchrony)sol).getKnownRatioCounter();
+			String s = dcop.toString() + "," + protocol + "," + sol.toString() + "," + i + "," + sol.getRealCost(i)
+					+ "," + sol.getBirdeyeAnytime(i) + "," + ((Asynchrony) sol).getKnownRatio() ;
 			if (anytime) {
-				String anytimeString = ","+sol.getCounterChanges(i) + "," + ((Asynchrony) sol).getTopCostNotBest(i) + ","
-						+ ((Asynchrony) sol).getCounterTop(i) + "," + ((Asynchrony) sol).getCounterRatio(i) + ","
+				String anytimeString = "," + sol.getCounterChanges(i) + "," + ((Asynchrony) sol).getTopCostNotBest(i)
+						+ "," + ((Asynchrony) sol).getCounterTop(i) + "," + ((Asynchrony) sol).getCounterRatio(i) + ","
 						+ sol.getAnytimeCost(i) + "," + sol.getTopCost(i);
-				s=s+anytimeString;
+				s = s + anytimeString;
 			}
 			if (memoryVersion == 2) {
-				String huersticString =  "," + memoryMaxConstant + "," + currentComparatorForMemory;
-				s=s+huersticString;
+				String huersticString = "," + memoryMaxConstant + "," + currentComparatorForMemory;
+				s = s + huersticString;
 
 			}
 			/*
-			s = s + sol.getCounterChanges(i) + "," + ((Unsynch) sol).getTopCostNotBest(i) + ","
-					+ ((Unsynch) sol).getCounterTop(i) + "," + ((Unsynch) sol).getCounterRatio(i) + ","
-					+ sol.getAnytimeCost(i) + "," + sol.getTopCost(i) + "," + memoryVersion ;
-
-			if (memoryVersion == 1) {
-				s = s ;
-			}
-			if (memoryVersion == 2) {
-				s = s + memoryMaxConstant + "," + currentComparatorForMemory;
-			}
-			*/
+			 * s = s + sol.getCounterChanges(i) + "," + ((Unsynch) sol).getTopCostNotBest(i)
+			 * + "," + ((Unsynch) sol).getCounterTop(i) + "," + ((Unsynch)
+			 * sol).getCounterRatio(i) + "," + sol.getAnytimeCost(i) + "," +
+			 * sol.getTopCost(i) + "," + memoryVersion ;
+			 * 
+			 * if (memoryVersion == 1) { s = s ; } if (memoryVersion == 2) { s = s +
+			 * memoryMaxConstant + "," + currentComparatorForMemory; }
+			 */
 
 			// }
 			solutions.add(s);
@@ -818,12 +760,20 @@ public class Main {
 		}
 		agentZero = new AgentZero(iterations, dcop.getNeighbors(), agents);
 
-		
 		orgenizeTrees();
 		restartAfterNeighborsKnown();
-		
-
+		fixLonleyNodes();
 		return dcop;
+	}
+
+	private static void fixLonleyNodes() {
+		for (AgentField a : agents) {
+			if (a.isAnytimeLeaf() && a.getAnytimeFather() == null) {
+				a.setAnytimeValueLonleyNode();
+				a.setCheatBestPermutation();
+			}
+		}
+		
 	}
 
 	private static void restartAfterNeighborsKnown() {
@@ -850,10 +800,8 @@ public class Main {
 			for (AgentField a : agents) {
 				a.setAnytimeFather(a.getDfsFather());
 				a.setAnytimeSons(a.getDfsSons());
-				
+
 			}
-			
-			
 
 		}
 
@@ -892,6 +840,8 @@ public class Main {
 
 	private static void restartOther() {
 		restartAgent();
+		fixLonleyNodes();
+
 		agentZero.emptyMessageBox();
 		// agentZero.emptyRMessageBox();
 		agentZero.emptyTimeStempBoxMessage();
@@ -906,7 +856,7 @@ public class Main {
 			agents[i].setAllBelowMap(0);
 			agents[i].setAllAboveMap(0);
 			agents[i].resetMsgUpAndDown();
-			//agents[i].setDecisionCounterNonMonotonic(0);
+			// agents[i].setDecisionCounterNonMonotonic(0);
 			agents[i].setDecisionCounter(0);
 			agents[i].setRCounter(0);
 
@@ -919,13 +869,12 @@ public class Main {
 			agents[i].restartNeighborCounter();
 			agents[i].restartAnytimeUpRecieved();
 			agents[i].restartPermutationsSets();
-			
-			
-			//agents[i].restartAnytimeToSend();
+
+			// agents[i].restartAnytimeToSend();
 			agents[i].restartAnytimeValue();
 			agents[i].resetFlagForMgm();
 			agents[i].restartLastPCreatedBy();
-			
+
 			agents[i].restartForSynchronicAlgos();
 			agents[i].setCheckCanGoFirst(true);
 			agents[i].setWorldChangeSynchFlag(true);

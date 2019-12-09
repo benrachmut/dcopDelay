@@ -56,6 +56,12 @@ public abstract class Solution {
 
 	public void addCostToList(int i) {		
 		int currentCost = dcop.calCost(true);
+		
+		/*
+		if (currentCost == 566) {
+			System.out.println();
+		}
+		*/
 		this.realCost.add(currentCost);
 		
 		//if (i>0) {
