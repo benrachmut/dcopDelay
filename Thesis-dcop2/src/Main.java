@@ -22,8 +22,8 @@ public class Main {
 	static int costMax = 100; // the max value of cost
 	// -- Experiment time
 	
-	//static int meanRepsStart = 0;
-	//static int meanRepsEnd = 10;
+	static int meanRepsStart = 0;
+	static int meanRepsEnd = 10;
 	
 	//static int meanRepsStart = 11;
 	//static int meanRepsEnd = 20;
