@@ -66,7 +66,7 @@ public abstract class Asynchrony extends Solution {
 		for (int i = 0; i < this.iteration; i++) {
 			iter = i;
 
-			if (i % 20 == 0) {
+			if (i % 50 == 0) {
 				System.out.println("---start iteration: " + i + "---");
 			}
 			

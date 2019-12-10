@@ -17,14 +17,26 @@ public class Main {
 
 	// ------- VARIABLES TO CHECK BEFORE STARTING A RUN
 	// -- variables of dcop problem
-	static int A = 15;// 50;//35; // number of agents
+	static int A = 40;// 50;//35; // number of agents
 	static int D = 10; // size of domain for each agent
 	static int costMax = 100; // the max value of cost
 	// -- Experiment time
-	static int meanRepsStart = 0;
-	static int meanRepsEnd = 100;// 100; // number of reps for every solve process not include
+	
+	//static int meanRepsStart = 0;
+	//static int meanRepsEnd = 10;
+	
+	//static int meanRepsStart = 11;
+	//static int meanRepsEnd = 20;
+	
+	//static int meanRepsStart = 21;
+	//static int meanRepsEnd = 30;
+	
+	static int meanRepsStart = 31;
+	static int meanRepsEnd = 40;
+	
+	
 	static int currMeanRun = 0;
-	static int iterations = 400;// 15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
+	static int iterations = 2000;// 15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
 
 	/*
@@ -55,7 +67,7 @@ public class Main {
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
 	static int[] memoryVersions = { 2 }; // 1=exp, 2= constant, 3= reasonable
-	static double[] constantsPower = {  1.69897, 2, 2.1761,2.47712,2.6989,2.8751,3 };// {1.8};//{0.8,1,1.4,1.8,2,2.4};//{0.8,1,1.4,1.8,2,2.4};//{1.8,2,2.2,2.8,3,3.2,3.5};//{2};//{2,2.2,2.5,2.8,3,3.2,3.5};//{2};//{2,2.3,2.5,2.7,3,3.3,3.5};//{2.75};//{}{0.8,1,2,3,4};//{2,4,6,8};//{0.8,1,2,3,4};//{1,2,3,4,5};
+	static double[] constantsPower = {2}; //{  1.69897, 2, 2.1761,2.47712,2.6989,2.8751,3 };// {1.8};//{0.8,1,1.4,1.8,2,2.4};//{0.8,1,1.4,1.8,2,2.4};//{1.8,2,2.2,2.8,3,3.2,3.5};//{2};//{2,2.2,2.5,2.8,3,3.2,3.5};//{2};//{2,2.3,2.5,2.7,3,3.3,3.5};//{2.75};//{}{0.8,1,2,3,4};//{2,4,6,8};//{0.8,1,2,3,4};//{1,2,3,4,5};
 
 	static int[] comparatorsForMemory = { 1 };
 	// -- synch
@@ -77,9 +89,9 @@ public class Main {
 	static int[] numOfNToNotHubs = { 3 };
 	static double[] p2sScaleFree = { 1 };
 	// -- communication protocol
-	static double[] p3s = { 1 };// {0,1};
+	static double[] p3s =  {0,1};
 	// static boolean[] dateKnowns = { true };
-	static int[] delayUBs = { 10 };// {5,10,25,50,75,100};//{2,5,10,25,50,75,100};
+	static int[] delayUBs =  {10,25,50};//{5,10,25,50,75,100};//{2,5,10,25,50,75,100};
 	static double[] p4s = { 0 };// { 0,0.05,0.1,0.15,0.2,0.25,0.3 };
 	public static boolean useCounterToChangeTrans = false;
 	public static boolean secondBest = false;
@@ -285,7 +297,7 @@ public class Main {
 				header = header + anytimeString;
 			}
 			if (memoryVersion == 2) {
-				header = header + anytimeString+huerstic;
+				header = header+huerstic;
 			}
 
 			// }
