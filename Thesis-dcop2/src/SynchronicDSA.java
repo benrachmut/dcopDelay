@@ -3,7 +3,7 @@ import java.util.List;
 public class SynchronicDSA extends AsynchronyDSA{
 	
 	public SynchronicDSA(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double stochastic) {
-		super(dcop, agents, aZ, meanRun, stochastic);
+		super(dcop, agents, aZ, meanRun, stochastic, false);
 		this.algo = "DSA_synchronic_"+stochastic;
 	}
 

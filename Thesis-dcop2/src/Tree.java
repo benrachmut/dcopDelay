@@ -175,11 +175,8 @@ public class Tree {
 
 	public void bfs() {
 		while (someOneIsNotColored()) {
-
 			AgentField firstNotVisited = findFirstNotVisited();
-			// firstInTree.add(firstNotVisited);
 			bfs(firstNotVisited);
-
 		}
 
 	}
@@ -188,15 +185,12 @@ public class Tree {
 
 		AgentField current = firstNotVisited;
 		List<AgentField> q = getSons(current);
-		// q.add(current);
 		for (AgentField a : q) {
 			current.addAnytimeSon(a);
 			a.setAnytimeFather(current);
 		}
 		this.visited.put(current, true);
-
 		Iterator<AgentField> it = q.iterator();
-
 		while (it.hasNext()) {
 			current = it.next();
 			List<AgentField> temp = getSons(current);
@@ -205,7 +199,6 @@ public class Tree {
 			it.remove();
 			q.addAll(toAdd);
 			it = q.iterator();
-
 		}
 	}
 

@@ -17,12 +17,12 @@ public class Main {
 
 	// ------- VARIABLES TO CHECK BEFORE STARTING A RUN
 	// -- variables of dcop problem
-	static int A = 40;// 50;//35; // number of agents
+	static int A = 50;// 50;//35; // number of agents
 	static int D = 10; // size of domain for each agent
 	static int costMax = 100; // the max value of cost
 	// -- Experiment time
 	
-	static int meanRepsStart = 0;
+	static int meanRepsStart = 9;
 	static int meanRepsEnd = 10;
 	
 	//static int meanRepsStart = 11;
@@ -31,12 +31,12 @@ public class Main {
 	//static int meanRepsStart = 21;
 	//static int meanRepsEnd = 30;
 	
-	static int meanRepsStart = 31;
-	static int meanRepsEnd = 40;
+	//static int meanRepsStart = 31;
+	//static int meanRepsEnd = 40;
 	
 	
 	static int currMeanRun = 0;
-	static int iterations = 2000;// 15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
+	static int iterations = 4000;// 15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
 
 	/*
@@ -63,7 +63,9 @@ public class Main {
 
 	// "AsynchronyDSA_SDP(k=10,date=0)");
 
-	static String algo = "AsynchronyDSA_SDP(k=20)";
+	static String algo = "AsynchronyDSA_SDP(k=40)";
+	static boolean sendOnce = false;
+	
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
 	static int[] memoryVersions = { 2 }; // 1=exp, 2= constant, 3= reasonable
@@ -91,7 +93,7 @@ public class Main {
 	// -- communication protocol
 	static double[] p3s =  {0,1};
 	// static boolean[] dateKnowns = { true };
-	static int[] delayUBs =  {10,25,50};//{5,10,25,50,75,100};//{2,5,10,25,50,75,100};
+	static int[] delayUBs =  {2,5,10,25};//{5,10,25,50,75,100};//{10,25,50};//{5,10,25,50,75,100};//{2,5,10,25,50,75,100};
 	static double[] p4s = { 0 };// { 0,0.05,0.1,0.15,0.2,0.25,0.3 };
 	public static boolean useCounterToChangeTrans = false;
 	public static boolean secondBest = false;
@@ -571,24 +573,24 @@ public class Main {
 		boolean AsynchronyDSA1 = algo.equals("AsynchronyDSA(1)");
 
 		if (AsynchronyDSA01) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.1);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.1, sendOnce);
 		}
 		if (AsynchronyDSA03) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.3);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.3, sendOnce);
 		}
 		if (AsynchronyDSA05) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.5);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.5, sendOnce);
 		}
 
 		if (AsynchronyDSA07) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.7, sendOnce);
 		}
 
 		if (AsynchronyDSA09) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.9);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.9, sendOnce);
 		}
 		if (AsynchronyDSA1) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1.0);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1.0, sendOnce);
 		}
 
 		boolean AsynchronyDSA07_0 = algo.equals("AsynchronyDSA(0.7,0)");
@@ -604,39 +606,39 @@ public class Main {
 		boolean AsynchronyDSA07_1 = algo.equals("AsynchronyDSA(0.7,1)");
 
 		if (AsynchronyDSA07_0) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0, 0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0, 0.7, sendOnce);
 		}
 
 		if (AsynchronyDSA07_01) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.1, 0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.1, 0.7, sendOnce);
 		}
 
 		if (AsynchronyDSA07_02) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.2, 0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.2, 0.7, sendOnce);
 		}
 		if (AsynchronyDSA07_03) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.3, 0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.3, 0.7, sendOnce);
 		}
 		if (AsynchronyDSA07_04) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.4, 0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.4, 0.7, sendOnce);
 		}
 		if (AsynchronyDSA07_05) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.5, 0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.5, 0.7, sendOnce);
 		}
 		if (AsynchronyDSA07_06) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.6, 0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.6, 0.7, sendOnce);
 		}
 		if (AsynchronyDSA07_07) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.7, 0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.7, 0.7, sendOnce);
 		}
 		if (AsynchronyDSA07_08) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.8, 0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.8, 0.7, sendOnce);
 		}
 		if (AsynchronyDSA07_09) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.9, 0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.9, 0.7, sendOnce);
 		}
 		if (AsynchronyDSA07_1) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1, 0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 1, 0.7, sendOnce);
 		}
 
 		boolean AsynchronyDSA = algo.equals("AsynchronyDSA");
@@ -660,7 +662,7 @@ public class Main {
 		}
 
 		if (AsynchronyDSA) {
-			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.7);
+			ans = new AsynchronyDSA(dcop, agents, agentZero, meanRun, 0.7, sendOnce);
 		}
 
 		if (SynchronicDSA) {
@@ -820,20 +822,9 @@ public class Main {
 		else if (anytimeBfs) {
 			Tree bfs = new Tree(agents);
 			bfs.bfs();
-		} else if (anytimeVector) {
-			for (int i = 0; i < agents.length; i++) {
-				List<AgentField> sons = new ArrayList<AgentField>();
-				if (i == 0) {
-					sons.add(agents[i + 1]);
-					agents[i].setAnytimeSons(sons);
-				} else if (i == agents.length - 1) {
-					agents[i].setAnytimeFather(agents[i - 1]);
-				} else {
-					sons.add(agents[i + 1]);
-					agents[i].setAnytimeSons(sons);
-					agents[i].setAnytimeFather(agents[i - 1]);
-
-				}
+			List<AgentField> leaves = findLeaves();
+			for (AgentField a : leaves) {
+				a.setLevelInTree(0);
 			}
 		}
 		/*
@@ -842,6 +833,17 @@ public class Main {
 		 * for (AgentField a : agents) { a.setAnytimeFather(a.getDfsFather());
 		 * a.setAnytimeSons(a.getDfsSons()); } }
 		 */
+	}
+
+	private static List<AgentField> findLeaves() {
+		List<AgentField> ans = new ArrayList<AgentField>();
+		
+		for (AgentField a : agents) {
+			if (a.getAnytimeSons().size()==0) {
+				ans.add(a);
+			}
+		}
+		return ans;
 	}
 
 	private static void restartBetweenAlgo(Solution sol, String protocol) {
@@ -893,6 +895,7 @@ public class Main {
 			agents[i].setKnownCounter(false);
 			agents[i].resetWaitingForCounterSynch();
 			agents[i].restartKsdpCounter();
+			agents[i].restartLevelInTree();
 		}
 
 	}

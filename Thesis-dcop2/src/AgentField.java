@@ -68,6 +68,9 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private int waitingForCounterSynch;
 	private int waitingForCounterRSynch;
 	private int kCounterSdp;
+	private int levelInTree; 
+	
+	
 	public AgentField(int domainSize, int id) {
 		super(id);
 		this.az = Main.agentZero;
@@ -114,8 +117,13 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		counterToChangeKnownDateDecreases = Integer.MAX_VALUE;
 		resetWaitingForCounterSynch();
 		restartKsdpCounter();
+		levelInTree = 0;
 	}
 
+	public void restartLevelInTree() {
+		levelInTree = 0;
+	}
+	
 	public void restartKsdpCounter() {
 		kCounterSdp = 0;
 	}
@@ -1070,7 +1078,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	}
 	*/
 
-	public void dsaAsynchronyDecide(double stochastic) {
+	public void dsaAsynchronyDecideSendAlways(double stochastic) {
 		if (Asynchrony.iter == 0) {
 			firstValDsa();
 		} else {
@@ -1949,6 +1957,42 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		m.put(this.id, 0);
 		this.bestPermuation = new Permutation(m, 0, this);
 		
+	}
+
+	public void dsaAsynchronyDecideSendOnce(double stochastic) {
+		if (Asynchrony.iter == 0) {
+			firstValDsa();
+		} else {
+			boolean didChange = false;
+			if (valueRecieveFlag) {
+				valueRecieveFlag = false;
+				didChange = checkToChangeDSA(stochastic);
+				this.decisonCounter++;
+				doAnytime();
+				if (didChange) {
+					az.createUnsynchMsgs(this, false);
+				}
+				
+				//
+			}
+			
+
+			// else {
+			// explorationIncrease();
+			// }
+
+		}
+		// this.az.afterDecideTakeActionUnsynchNonMonotonicByValue(this.didDecide, i);
+		
+	}
+
+	public void setLevelInTree(int i) {
+		if (this.levelInTree>i) {
+			this.levelInTree = i;
+			if (this.anytimeFather !=null) {
+				this.anytimeFather.setLevelInTree(i+1);
+			}
+		}
 	}
 
 }

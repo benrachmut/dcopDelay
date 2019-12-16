@@ -7,16 +7,18 @@ import java.util.TreeSet;
 
 public class AsynchronyDSA extends Asynchrony {
 	protected double stochastic;
+	protected boolean sendOnce;
 
-	public AsynchronyDSA(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double stochastic) {
+	public AsynchronyDSA(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double stochastic, boolean sendOnce) {
 		super(dcop, agents, aZ, meanRun);
 		this.stochastic = stochastic;
 		this.algo = "DSA_asynchrony_"+stochastic;
 	}
 	
-	public AsynchronyDSA(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double knownCounterRatio, double stochastic) {
+	public AsynchronyDSA(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double knownCounterRatio, double stochastic, boolean sendOnce) {
 		super(dcop, agents, aZ, meanRun, knownCounterRatio);
 		this.stochastic = stochastic;
+		this.sendOnce = sendOnce;
 		this.algo = "DSA_asynchrony_"+stochastic+"_"+knownCounterRatio;
 	}
 	public AsynchronyDSA(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double knownCounterRatio, double ratioOfNeighborsToChangeKnownDate, double stochastic) {
@@ -34,10 +36,14 @@ public class AsynchronyDSA extends Asynchrony {
 		
 	
 		for (AgentField a : agents) {
-				
-			
-			a.dsaAsynchronyDecide(stochastic);
+			if (sendOnce) {
+				a.dsaAsynchronyDecideSendOnce(stochastic);
+
+			}else {
+				a.dsaAsynchronyDecideSendAlways(stochastic);
+
 			}
+		}
 	}
 	
 	@Override
