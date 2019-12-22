@@ -903,10 +903,8 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		
 		
 		if (isAnytimeLeaf()) {
-			addToPermutationToSendUnsynchNonMonoByValue(currPermutation);
-		
+			addToPermutationToSendUnsynchNonMonoByValue(currPermutation);		
 		} else {
-	
 			tryToCombinePermutation(currPermutation);
 		}
 		addToPermutationPast(currPermutation);
@@ -1331,20 +1329,15 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	}
 
 	public void addToPermutationPast(Permutation input) {
-		if (Main.memoryVersion == 1 || Main.memoryVersion == 3) {
-
-			//int time = Asynchrony.iter;
-			//input.setTimeEnter(time);
+		if (Main.memoryVersion == 1) {
 			addToSet(input, permutationsPast);
 		}
 		if (Main.memoryVersion == 2) {
-			// addToSet(input, permutationsPast);
-
 			memoryVersionConstant(input);
-
 		}
-
-		// this.permutationsPast.add(input);
+		if(Main.memoryVersion == 3) {
+			
+		}
 
 	}
 
@@ -1353,25 +1346,13 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		if (!inputAlreadyInSet) {
 			if (this.permutationsPast.size() > Main.memoryMaxConstant) {
 				Permutation pToDelete = selectPToDelete(input);
-
-				// Permutation currentP = getPAccordingToCompIndex(input);
-				// boolean maxSimilarityFlag = getMaxSimilarityFlagAccordingToCompIndex();
-
-				// 1 = maxSimilarityToAgentView, 2 = fifo
-				// 3 = maxSimilarityToLastPFromSender, 4 = maxSimilarityToLastPFromSender
-
-				// Comparator<Permutation> c = new ComparatorPermutationSimilarty(currentP,
-				// maxSimilarityFlag);
-				// Permutation minP = Collections.min(this.permutationsPast, c);
 				this.permutationsPast.remove(pToDelete);
 			}
 
 			this.lastPCreatedBy.put(input.getCreator(), input);
 			this.pCreatedByLists.get(input.getCreator()).add(input);
 
-			int time = Asynchrony.iter;
-			input.setTimeEnter(time);
-			// addToSet(input, permutationsPast);
+			input.setTimeEnter( Asynchrony.iter);
 			permutationsPast.add(input);
 		}
 
@@ -1457,7 +1438,8 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		} else {
 		
 	
-			boolean wasSent = addToSet(input, permutationComplete);		
+			boolean wasSent = addToSet(input, permutationComplete);	
+			//boolean wasSent=false;
 			if (!wasSent) {
 				addToSet(input, permutationsToSend);
 			}
