@@ -17,15 +17,14 @@ public class Main {
 
 	// ------- VARIABLES TO CHECK BEFORE STARTING A RUN
 	// -- variables of dcop problem
-	static int A = 50;// 50;//35; // number of agents
+	static int A = 3;// 50;//35; // number of agents
 	static int D = 10; // size of domain for each agent
 	static int costMax = 100; // the max value of cost
 	// -- Experiment time
-	
-	static int meanRepsStart = 39;
-	static int meanRepsEnd = 40;
-	
-	
+
+	static int meanRepsStart = 48;
+	static int meanRepsEnd = 49;
+
 	static int currMeanRun = 0;
 	static int iterations = 4000;// 15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
@@ -56,24 +55,31 @@ public class Main {
 
 	static String algo = "AsynchronyDSA_SDP(k=40)";
 	static boolean sendOnce = false;
-	
+
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
-	static int[] memoryVersions = { 2 }; // 1=exp, 2= constant, 3= reasonable
-	static double[] constantsPower = {2}; //{  1.69897, 2, 2.1761,2.47712,2.6989,2.8751,3 };// {1.8};//{0.8,1,1.4,1.8,2,2.4};//{0.8,1,1.4,1.8,2,2.4};//{1.8,2,2.2,2.8,3,3.2,3.5};//{2};//{2,2.2,2.5,2.8,3,3.2,3.5};//{2};//{2,2.3,2.5,2.7,3,3.3,3.5};//{2.75};//{}{0.8,1,2,3,4};//{2,4,6,8};//{0.8,1,2,3,4};//{1,2,3,4,5};
+	static int[] memoryVersions = { 3 }; // 1=exp, 2= constant, 3= reasonable
+	static double[] constantsPower = { 2 }; // { 1.69897, 2, 2.1761,2.47712,2.6989,2.8751,3 };//
+											// {1.8};//{0.8,1,1.4,1.8,2,2.4};//{0.8,1,1.4,1.8,2,2.4};//{1.8,2,2.2,2.8,3,3.2,3.5};//{2};//{2,2.2,2.5,2.8,3,3.2,3.5};//{2};//{2,2.3,2.5,2.7,3,3.3,3.5};//{2.75};//{}{0.8,1,2,3,4};//{2,4,6,8};//{0.8,1,2,3,4};//{1,2,3,4,5};
 
 	static int[] comparatorsForMemory = { 1 };
 	// -- synch
 	// static boolean synch = false;
 	static boolean anytime = true;
-	static boolean anytimeDfs = true;
-	static boolean anytimeBfs = false;
-	static boolean anytimeVector = false;
+	static boolean orgenizeDfs = false;
+	static boolean orgenizeBfs = true;
+
+	/*
+	 * static boolean enableBfs = true; static boolean enableDfs = false;
+	 * 
+	 */
+
+	// static boolean anytimeVector = false;
 
 	static String fileName;
 
 	// -- uniformly random dcop
-	static double[] p1sUniform = { 0.2 }; // {0.2 }; // 0.1,0.7
+	static double[] p1sUniform = { 1 }; // {0.2 }; // 0.1,0.7
 	static double[] p2sUniform = { 1 };
 	// -- color dcop
 	static final double[] p1sColor = { 0.05 }; // 0.1,0.7
@@ -82,9 +88,9 @@ public class Main {
 	static int[] numOfNToNotHubs = { 3 };
 	static double[] p2sScaleFree = { 1 };
 	// -- communication protocol
-	static double[] p3s =  {0,1};
+	static double[] p3s = { 1 };// {0,1};
 	// static boolean[] dateKnowns = { true };
-	static int[] delayUBs =  {2,5,10,25};//{5,10,25,50,75,100};//{10,25,50};//{5,10,25,50,75,100};//{2,5,10,25,50,75,100};
+	static int[] delayUBs = {3};//{2,5,10,25};// {2,5,10,25};//{5,10,25,50,75,100};//{10,25,50};//{5,10,25,50,75,100};//{2,5,10,25,50,75,100};
 	static double[] p4s = { 0 };// { 0,0.05,0.1,0.15,0.2,0.25,0.3 };
 	public static boolean useCounterToChangeTrans = false;
 	public static boolean secondBest = false;
@@ -139,7 +145,7 @@ public class Main {
 
 		for (int i : dcopVersions) {
 			dcopVersion = i;
-			if (memoryVersions[0] != 1) {
+			if (memoryVersions[0] == 2) {
 				for (int j : memoryVersions) {
 					memoryVersion = j;
 					for (int k : comparatorsForMemory) {
@@ -148,8 +154,12 @@ public class Main {
 					}
 				}
 			} else {
-				memoryVersion = 1;
-
+				if (memoryVersions[0] == 1) {
+					memoryVersion = 1;
+				}
+				if (memoryVersions[0] == 3) {
+					memoryVersion = 3;
+				}
 				runDifferentDcop();
 			}
 			printDcops();
@@ -290,7 +300,7 @@ public class Main {
 				header = header + anytimeString;
 			}
 			if (memoryVersion == 2) {
-				header = header+huerstic;
+				header = header + huerstic;
 			}
 
 			// }
@@ -373,10 +383,10 @@ public class Main {
 				diffCommunicationGivenP3(dcop, meanRun, p3);
 			}
 		} // p3
-		//if (currMeanRun % 10 == 0) {
-			printDcops();
+			// if (currMeanRun % 10 == 0) {
+		printDcops();
 
-		//}
+		// }
 
 	}
 
@@ -430,7 +440,7 @@ public class Main {
 
 			} // p4
 		} // ub
-		// } // date known
+			// } // date known
 
 	}
 
@@ -729,7 +739,7 @@ public class Main {
 	private static void addToSolutionString(Solution sol, String protocol) {
 		for (int i = 0; i < iterations; i++) {
 			String s = dcop.toString() + "," + protocol + "," + sol.toString() + "," + i + "," + sol.getRealCost(i)
-					+ "," + sol.getBirdeyeAnytime(i) + "," + ((Asynchrony) sol).getKnownRatio() ;
+					+ "," + sol.getBirdeyeAnytime(i) + "," + ((Asynchrony) sol).getKnownRatio();
 			if (anytime) {
 				String anytimeString = "," + sol.getCounterChanges(i) + "," + ((Asynchrony) sol).getTopCostNotBest(i)
 						+ "," + ((Asynchrony) sol).getCounterTop(i) + "," + ((Asynchrony) sol).getCounterRatio(i) + ","
@@ -778,7 +788,7 @@ public class Main {
 				a.setCheatBestPermutation();
 			}
 		}
-		
+
 	}
 
 	private static void restartAfterNeighborsKnown() {
@@ -787,17 +797,17 @@ public class Main {
 			a.restartPCreatedByLists();
 			a.setAz(agentZero);
 			a.restartForSynchronicAlgos();
+			// a.setNeighborAndCounterRecieve();
 		}
 	}
 
 	private static void orgenizeTrees() {
 
 		if (algo.equals("Monotonic") || algo.equals("dsa7") || algo.equals("mgm")) {
-			anytimeDfs = false;
-			anytimeBfs = false;
-			anytimeVector = false;
+			orgenizeDfs = false;
+			orgenizeBfs = false;
 		}
-		if (algo.equals("Monotonic") || anytimeDfs) {
+		if (algo.equals("Monotonic") || orgenizeDfs) {
 			Tree psaduoTree = new Tree(agents);
 			psaduoTree.dfs();
 			psaduoTree.setIsAboveBelow();
@@ -810,7 +820,7 @@ public class Main {
 
 		}
 
-		else if (anytimeBfs) {
+		else if (orgenizeBfs) {
 			Tree bfs = new Tree(agents);
 			bfs.bfs();
 			List<AgentField> leaves = findLeaves();
@@ -828,9 +838,9 @@ public class Main {
 
 	private static List<AgentField> findLeaves() {
 		List<AgentField> ans = new ArrayList<AgentField>();
-		
+
 		for (AgentField a : agents) {
-			if (a.getAnytimeSons().size()==0) {
+			if (a.getAnytimeSons().size() == 0) {
 				ans.add(a);
 			}
 		}
@@ -881,12 +891,14 @@ public class Main {
 			agents[i].restartLastPCreatedBy();
 
 			agents[i].restartForSynchronicAlgos();
-			agents[i].setCheckCanGoFirst(true);
+			// agents[i].setCheckCanGoFirst(true);
 			agents[i].setWorldChangeSynchFlag(true);
 			agents[i].setKnownCounter(false);
 			agents[i].resetWaitingForCounterSynch();
 			agents[i].restartKsdpCounter();
 			agents[i].restartLevelInTree();
+			agents[i].initInfPermutations();
+			// agents[i].setNeighborAndCounterRecieve();
 		}
 
 	}

@@ -15,13 +15,13 @@ import java.util.TreeSet;
 
 public class AgentField extends Agent implements Comparable<AgentField> {
 
-	private int[] domain;
-	private int firstValue;
-	private int rCounter;
-	private Map<Integer, Set<ConstraintNeighbor>> constraint;
-	private Map<Integer, MessageRecieve> neighbor; // id and value
-	private Map<Integer, MessageRecieve> neighborR;
-	private PotentialCost minPC;
+	private int[] domain; //what are the values i can select
+	private int firstValue; // first value selected by agent
+	private int rCounter; // counters if r value changes
+	private Map<Integer, Set<ConstraintNeighbor>> constraint; // map of constraints, id integer, set of values ans costs
+	private Map<Integer, MessageRecieve> neighbor; // id and message
+	private Map<Integer, MessageRecieve> neighborR;// id and message
+	private PotentialCost minPC; 
 	private int r;
 	// ---tree stuff
 	private AgentField dfsFather;
@@ -53,7 +53,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private Random rqDsaSDPPersonal;
 
 	private AgentZero az;
-	private boolean checkGoFirst;
+	//private boolean checkGoFirst;
 	private boolean worldChangeSynchFlag;
 
 	// --- synchronic stuff
@@ -68,9 +68,12 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private int waitingForCounterSynch;
 	private int waitingForCounterRSynch;
 	private int kCounterSdp;
-	private int levelInTree; 
+	private int levelInTree;
 	
 	
+	private List<Permutation>infPermutations;
+	//private Map<Integer, Integer> neighborAndCounterRecieve;
+
 	public AgentField(int domainSize, int id) {
 		super(id);
 		this.az = Main.agentZero;
@@ -96,9 +99,8 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		initSonsAnytimeMessages();
 		this.permutationsPast = new HashSet<Permutation>();
 		this.permutationsToSend = new HashSet<Permutation>();
-		this.permutationComplete= new HashSet<Permutation>();
-		
-		
+		this.permutationComplete = new HashSet<Permutation>();
+
 		this.counterAndValue = new HashMap<Integer, Integer>();
 		this.counterAndValue.put(decisonCounter, value);
 		this.iHaveAnytimeNews = false;
@@ -110,7 +112,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		rDsaPersonal = new Random();
 		rqDsaSDPPersonal = new Random();
 		rCounter = 0;
-		checkGoFirst = true;
+		//checkGoFirst = true;
 		worldChangeSynchFlag = false;
 		personalKnownCounter = false;
 		counterToChangeKnownDate = Integer.MAX_VALUE;
@@ -118,28 +120,44 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		resetWaitingForCounterSynch();
 		restartKsdpCounter();
 		levelInTree = 0;
+		initInfPermutations();
+		
 	}
 
+	public void initInfPermutations() {
+		// TODO Auto-generated method stub
+		this.infPermutations = new ArrayList<Permutation>();
+	}
+
+	/*
+	public void setNeighborAndCounterRecieve() {
+		for (Integer i : neighbor.keySet()) {
+			this.neighborAndCounterRecieve.put(i,0);
+		}
+		this.neighborAndCounterRecieve.put(this.id, 0);
+	}
+	*/
 	public void restartLevelInTree() {
 		levelInTree = 0;
 	}
-	
+
 	public void restartKsdpCounter() {
 		kCounterSdp = 0;
 	}
 
 	public void resetWaitingForCounterSynch() {
 		this.waitingForCounterSynch = 0;
-		this.waitingForCounterRSynch=0;
+		this.waitingForCounterRSynch = 0;
 	}
 
 	public void setWorldChangeSynchFlag(boolean b) {
 		worldChangeSynchFlag = b;
 	}
-
+/*
 	public void setCheckCanGoFirst(boolean b) {
 		checkGoFirst = b;
 	}
+	*/
 
 	public void restartForSynchronicAlgos() {
 
@@ -602,20 +620,25 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		return false;
 	}
 
-	public void reciveMsgValueFlag(int senderId, int senderValue, int counterOfOther) {
+	public boolean reciveMsgValueFlag(int senderId, int senderValue, int counterOfOther) {
 		if (this.personalKnownCounter) {
 			int currentDate = this.neighbor.get(senderId).getCounter();
 			if (counterOfOther > currentDate) {
 				this.neighbor.put(senderId, new MessageRecieve(senderValue, counterOfOther));
 				valueRecieveFlag = true;
-
+				return true;
 			}
+			return false;
 		} else {
 			this.neighbor.put(senderId, new MessageRecieve(senderValue, counterOfOther));
 			valueRecieveFlag = true;
+			return false;
 		}
 
 	}
+	
+	
+
 
 	public void reciveMsgValueMap(int senderId, int senderValue, int counterOfOther) {
 
@@ -702,11 +725,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 		return new Permutation(m, selfCost);
 	}
-
-	/*
-	 * public void leafAddAnytimeUp() { Permutation p = createCurrentPermutation();
-	 * // this.permutationsPast.add(p); this.permutationsToSend.add(p); }
-	 */
 
 	private void handlePToSend(Permutation pToSend) {
 		if (this.isAnytimeTop()) {
@@ -900,10 +918,9 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	 */
 
 	public void updateRecieverUponPermutationCreated(Permutation currPermutation, AgentField reciever) {
-		
-		
+
 		if (isAnytimeLeaf()) {
-			addToPermutationToSendUnsynchNonMonoByValue(currPermutation);		
+			addToPermutationToSendUnsynchNonMonoByValue(currPermutation);
 		} else {
 			tryToCombinePermutation(currPermutation);
 		}
@@ -956,7 +973,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		if (!valueOfNeighborRecieveBoolean) {
 			return false;
 		}
-		
+
 		waitingForCounterRSynch += 1;
 		return true;
 
@@ -999,33 +1016,64 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			boolean didChange = false;
 			if (valueRecieveFlag) {
 				valueRecieveFlag = false;
-				
+
 				kCounterSdp++;
 				boolean secondBestFlag = false;
-				
-				
+
 				double ratio = calcRatio();
 				if (kCounterSdp == k) {
-					kCounterSdp=0;
-					double q = calcQSdp(pC,pD,ratio);					
+					kCounterSdp = 0;
+					double q = calcQSdp(pC, pD, ratio);
 					double rnd = rDsaPersonal.nextDouble();
-					if (rnd<q) {
+					if (rnd < q) {
 						this.value = secondBest();
 						secondBestFlag = true;
+						didChange = true;
 					}
-				}	
-				if (!secondBestFlag) {
-					double stochastic = pA+Math.min(pB, ratio);
-					checkToChangeDSA(stochastic);			
 				}
+				if (!secondBestFlag) {
+					double stochastic = pA + Math.min(pB, ratio);
+					didChange = checkToChangeDSA(stochastic);
+				}
+				if (didChange) {
+					didChange = false;
+				}
+				this.decisonCounter++;				
 				doAnytime();
-				this.decisonCounter++;		
+				if (Main.memoryVersion == 3) {
+					changeCountDownOfPermutations();
+				}
 				az.createUnsynchMsgs(this, false);
-			}	
+			}
 		}
 	}
+/*
+	private void doAnytimeAccordingToMemoryV() {
+		
+		
+	}
+*/
+	private void doAnytimeEnableBfs() {
 
-	
+		
+		Permutation myPermutation = createCurrentPermutationByValue();
+		
+		if (myPermutation != null) {
+			if (this.isAnytimeLeaf()) {
+				this.addToPermutationToSendUnsynchNonMonoByValue(myPermutation);
+			} else {
+				//boolean needToStartCountDownPerP = needToStartCountDownPerP(myPermutation);
+				//myPermutation.setCountDown(this.levelInTree,Main.currentUb);
+				this.tryToCombinePermutation(myPermutation);
+				changeCountDownOfPermutations();
+
+			}
+		}
+
+		
+	}
+
+
 
 	private double calcRatio() {
 		List<PotentialCost> pCostsList = findPotentialCost();
@@ -1034,47 +1082,40 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		PotentialCost minPotentialCost = Collections.min(pCostsList);
 		double newCost = minPotentialCost.getCost();
 
-		return Math.abs(currentCost-newCost)/currentCost;
-		
+		return Math.abs(currentCost - newCost) / currentCost;
+
 	}
 
 	private int secondBest() {
 		List<PotentialCost> pCostsList = findPotentialCost();
 		PotentialCost minPotentialCost = Collections.min(pCostsList);
-		pCostsList.remove(minPotentialCost);		
+		pCostsList.remove(minPotentialCost);
 		PotentialCost minSecondPotentialCost = Collections.min(pCostsList);
 
 		return minSecondPotentialCost.getValue();
 	}
 
 	private double calcQSdp(double pC, double pD, double cond) {
-		
-		
-		if (cond>1) {
+
+		if (cond > 1) {
 			return 0;
-		}else {
-			return Math.max(pC, pD-cond);
+		} else {
+			return Math.max(pC, pD - cond);
 		}
 	}
-/*
-	private boolean checkToChangeDSAsdp(double p) {
-
-		List<PotentialCost> pCosts = findPotentialCost();
-		int currentPersonalCost = findCurrentCost(pCosts);
-
-		PotentialCost minPotentialCost = Collections.min(pCosts);
-		int minCost = minPotentialCost.getCost();
-
-		boolean shouldChange = false;
-		if (minCost <= currentPersonalCost) {
-			shouldChange = true;
-		}
-		if (this.value == -1) {
-			shouldChange = true;
-		}
-		return maybeChange(shouldChange, minPotentialCost, p);
-	}
-	*/
+	/*
+	 * private boolean checkToChangeDSAsdp(double p) {
+	 * 
+	 * List<PotentialCost> pCosts = findPotentialCost(); int currentPersonalCost =
+	 * findCurrentCost(pCosts);
+	 * 
+	 * PotentialCost minPotentialCost = Collections.min(pCosts); int minCost =
+	 * minPotentialCost.getCost();
+	 * 
+	 * boolean shouldChange = false; if (minCost <= currentPersonalCost) {
+	 * shouldChange = true; } if (this.value == -1) { shouldChange = true; } return
+	 * maybeChange(shouldChange, minPotentialCost, p); }
+	 */
 
 	public void dsaAsynchronyDecideSendAlways(double stochastic) {
 		if (Asynchrony.iter == 0) {
@@ -1182,7 +1223,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private boolean maybeChange(boolean shouldChange, PotentialCost minPotentialCost, double stochastic) {
 		if (shouldChange) {
 
-
 			double rnd = rDsaPersonal.nextDouble();
 			if (rnd < stochastic) {
 
@@ -1235,17 +1275,36 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	// --------ANY TIME-----
 
+	
+	private void doAnytimeNoCountDown() {
+
+		Permutation myPermutation = createCurrentPermutationByValue();
+		if (myPermutation != null) {
+			if (this.isAnytimeLeaf()) {
+				this.addToPermutationToSendUnsynchNonMonoByValue(myPermutation);
+			} else {
+				this.tryToCombinePermutation(myPermutation);
+			}
+		}
+
+	}
+	
+	
 	private void doAnytime() {
 
-		if (Main.anytime) {
-			Permutation myPermutation = createCurrentPermutationByValue();
-			if (myPermutation!=null) {
-				if (this.isAnytimeLeaf()) {
-					this.addToPermutationToSendUnsynchNonMonoByValue(myPermutation);
-				} else {
-					this.tryToCombinePermutation(myPermutation);
-				}
-			}	
+		Permutation myPermutation = createCurrentPermutationByValue();
+		/*
+		if (getId()==2) {
+			System.out.println();
+		}
+		*/
+		
+		if (myPermutation != null) {
+			if (this.isAnytimeLeaf()) {
+				this.addToPermutationToSendUnsynchNonMonoByValue(myPermutation);
+			} else {
+				this.tryToCombinePermutation(myPermutation);
+			}
 		}
 
 	}
@@ -1257,8 +1316,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 		iterateOverPastPermuataion(currentP, listToAddToPast, completePermutation);
 
-		
-		
 		for (Permutation p : listToAddToPast) {
 			addToPermutationPast(p);
 			ans.add(p);
@@ -1279,7 +1336,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		this.msgDown = mad;
 		Permutation pFromMad = mad.getMessageInformation();
 		recieveBetterPermutation(pFromMad);
-		
 
 	}
 
@@ -1289,22 +1345,21 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		for (Entry<Integer, MessageRecieve> e : this.neighbor.entrySet()) {
 			int nId = e.getKey();
 			int nValue = e.getValue().getValue();
-			if (nValue==-1) {
+			if (nValue == -1) {
 				return null;
 			}
 			m.put(nId, nValue);
 		}
 		m.put(this.id, this.value);
 		int cost = calSelfCost(m);
-		
+
 		if (this.bestPermuation != null) {
 			int costBestPermutation = this.bestPermuation.getCost();
-			if (cost>costBestPermutation) {
+			if (cost > costBestPermutation) {
 				return null;
 			}
 		}
-		
-		
+
 		return new Permutation(m, cost, this);
 	}
 
@@ -1313,7 +1368,6 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 		for (Permutation pastP : this.permutationsPast) {
 
-			
 			Permutation toAdd = msgP.canAdd(this, pastP);
 
 			if (toAdd != null) {
@@ -1329,15 +1383,19 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	}
 
 	public void addToPermutationPast(Permutation input) {
-		if (Main.memoryVersion == 1) {
-			addToSet(input, permutationsPast);
+		boolean flagNotEnter =false;
+		if (Main.memoryVersion == 1 || Main.memoryVersion ==3) {
+			flagNotEnter = addToSet(input, permutationsPast);
 		}
 		if (Main.memoryVersion == 2) {
 			memoryVersionConstant(input);
 		}
-		if(Main.memoryVersion == 3) {
+		
+		if (Main.memoryVersion ==3 && !flagNotEnter &&input.getCountDown()==Integer.MAX_VALUE) {
+			this.infPermutations.add(input);
 			
 		}
+		
 
 	}
 
@@ -1352,7 +1410,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			this.lastPCreatedBy.put(input.getCreator(), input);
 			this.pCreatedByLists.get(input.getCreator()).add(input);
 
-			input.setTimeEnter( Asynchrony.iter);
+			input.setTimeEnter(Asynchrony.iter);
 			permutationsPast.add(input);
 		}
 
@@ -1436,28 +1494,24 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			}
 
 		} else {
-		
-	
-			boolean wasSent = addToSet(input, permutationComplete);	
-			//boolean wasSent=false;
+
+			boolean wasSent = addToSet(input, permutationComplete);
+			// boolean wasSent=false;
 			if (!wasSent) {
 				addToSet(input, permutationsToSend);
 			}
-			
 		}
 	}
-/*
-	public boolean addToPermutationToSend(Permutation input) {
-		return addToSet(input, permutationsToSend);
-
-	}
-	*/
+	/*
+	 * public boolean addToPermutationToSend(Permutation input) { return
+	 * addToSet(input, permutationsToSend);
+	 * 
+	 * }
+	 */
 
 	private void recieveBetterPermutation(Permutation input) {
 		bestPermuation = input;
-		
-		
-		
+
 		printTopCompletePermutation(input);
 		this.anytimeValue = input.getM().get(this.id);
 
@@ -1480,10 +1534,8 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	private boolean addToSet(Permutation input, HashSet<Permutation> setToAddTo) {
 		boolean flag = false;
-		
-		
+	
 		for (Permutation pFromList : setToAddTo) {
-		
 			if (pFromList.equals(input)) {
 				flag = true;
 			}
@@ -1603,6 +1655,11 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 			MessageAnyTimeUp mau = (MessageAnyTimeUp) msg;
 			Permutation msgP = mau.getMessageInformation();
+			
+			if (Main.memoryVersion == 3) {
+				msgP.setCountDown(Integer.MAX_VALUE);
+			}
+			
 			tryToCombinePermutation(msgP);
 
 		} else {
@@ -1884,13 +1941,13 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		this.permutationsToSend = new HashSet<Permutation>();
 
 	}
-	
-	/*
-	public void restartAnytimeToSend() {
-		this.permutationsToSend = new HashSet<Permutation>();
 
-	}
-	*/
+	/*
+	 * public void restartAnytimeToSend() { this.permutationsToSend = new
+	 * HashSet<Permutation>();
+	 * 
+	 * }
+	 */
 
 	public Set<Permutation> getPastPermutations() {
 		// TODO Auto-generated method stub
@@ -1931,14 +1988,14 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	public void setAnytimeValueLonleyNode() {
 		this.anytimeValue = 0;
-		
+
 	}
 
 	public void setCheatBestPermutation() {
-		Map<Integer, Integer> m = new HashMap<Integer,Integer>();
+		Map<Integer, Integer> m = new HashMap<Integer, Integer>();
 		m.put(this.id, 0);
 		this.bestPermuation = new Permutation(m, 0, this);
-		
+
 	}
 
 	public void dsaAsynchronyDecideSendOnce(double stochastic) {
@@ -1954,10 +2011,9 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 				if (didChange) {
 					az.createUnsynchMsgs(this, false);
 				}
-				
+
 				//
 			}
-			
 
 			// else {
 			// explorationIncrease();
@@ -1965,16 +2021,90 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 		}
 		// this.az.afterDecideTakeActionUnsynchNonMonotonicByValue(this.didDecide, i);
-		
+
 	}
 
 	public void setLevelInTree(int i) {
-		if (this.levelInTree>i) {
+		if (this.levelInTree > i) {
 			this.levelInTree = i;
-			if (this.anytimeFather !=null) {
-				this.anytimeFather.setLevelInTree(i+1);
+			if (this.anytimeFather != null) {
+				this.anytimeFather.setLevelInTree(i + 1);
 			}
 		}
 	}
 
+	
+	public int getLevelInTree() {
+		return this.levelInTree;
+	}
+
+	public void changeCountDownOfPermutations() {
+		List<Permutation>needToStartCountDown = needToStartCountDown();
+		for (Permutation p : needToStartCountDown) {
+			p.setCountDown(this.levelInTree, Main.currentUb);
+		}
+		this.infPermutations.removeAll(needToStartCountDown);
+	}
+
+	private List<Permutation> needToStartCountDown() {
+		List<Permutation> ans = new ArrayList<Permutation>();
+		for (Permutation p : this.infPermutations) {
+			if (needToStartCountDownPerP(p)) {
+				ans.add(p);
+			}
+		}
+		return ans;
+	}
+
+	private boolean needToStartCountDownPerP(Permutation p) {		
+		for (Integer idOfContext : neighbor.keySet()) {				
+			int valueOfContext = this.neighbor.get(idOfContext).getValue();
+			if ( valueOfContext != -1) {	
+				if (p.getM().containsKey(idOfContext)) {
+					int valueOfP = p.getM().get(idOfContext);
+					if (valueOfP == valueOfContext) {
+						return false;
+					}
+				}
+				
+			}
+			else {
+				return false;
+			}
+		}
+		
+		if (this.value == p.getM().get(this.id)) {
+			return false;
+		}
+		return true;
+	}
+	
+
+	/*
+	private Map<Integer, Integer> getCurrentCounters() {
+		Map<Integer, Integer>ans = new HashMap<Integer, Integer>();
+
+		for (Entry<Integer, MessageRecieve> e : neighbor.entrySet()) {
+			ans.put(e.getKey(), e.getValue().getCounter());
+			
+		}
+		ans.put(this.id, this.decisonCounter);
+		return ans;
+	}
+	*/
+
+	private List<Permutation> getInfPermutations() {
+		List<Permutation> ans = new ArrayList<Permutation>();
+		for (Permutation p : permutationsPast) {
+			if (p.getCountDown()==Integer.MAX_VALUE) {
+				ans.add(p);
+			}
+		}
+		return ans;
+	}
+
+	public Map<Integer, MessageRecieve> getNeighbors() {
+		return this.neighbor;
+		
+	}
 }

@@ -20,6 +20,10 @@ public class Permutation implements Comparable<Permutation>{
 	private int date;
 	
 	private int timeEnter;
+	//private int counter;
+	private int countDown;
+
+
 
 	Permutation(Map<Integer, Integer> m, int cost) {
 		this.m = new HashMap<Integer, Integer>();
@@ -33,10 +37,11 @@ public class Permutation implements Comparable<Permutation>{
 		this.creator = new AgentField(10, -1);
 		this.included = new HashMap<Integer, Boolean>();
 		this.date =Asynchrony.iter;
+		this.countDown = Integer.MAX_VALUE;
 
 	}
 
-	Permutation(Map<Integer, Integer> m, int cost, AgentField a) {
+	Permutation(Map<Integer, Integer> m, int cost,AgentField a) {
 		this(m, cost);
 		included = new HashMap<Integer, Boolean>();
 		List<Integer> sonsId = getSonsId(a);
@@ -45,23 +50,21 @@ public class Permutation implements Comparable<Permutation>{
 		}
 		included.put(a.getId(), true);
 		this.creator = a;
+		/*
+		if (creator.getId()==2) {
+			System.out.println();
+		}
+		*/
+		//this.counter =a.getDecisonCounter();
 	}
 
-	public Permutation(Map<Integer, Integer> m, int cost, Map<Integer, Boolean> included, List<Permutation> comWith,
+	public Permutation(Map<Integer, Integer> m, int cost,int counter, Map<Integer, Boolean> included, List<Permutation> comWith,
 			AgentField creator) {
 
 		this(m, cost);
 		this.iterationCreated = Asynchrony.iter;
 		this.creator = creator;
 		this.combinedWith = comWith;
-		/*
-		if (this.myIndex ==1365) {
-			for (Permutation p : comWith) {
-				System.out.println(p);
-			}
-			System.out.println();
-		}
-		*/
 		this.included = included;
 	}
 
@@ -171,7 +174,6 @@ public class Permutation implements Comparable<Permutation>{
 		return "pIndex:" + this.myIndex + "| map:" + this.m + "| creator:" + this.creator + "| cost:" + this.cost
 				+ "| include:" + this.included;
 
-		// +"| combined with:"+this.combinedWith;
 	}
 
 	public boolean containsId(int sonId) {
@@ -190,7 +192,7 @@ public class Permutation implements Comparable<Permutation>{
 
 		
 
-		return new Permutation(m, cost, toAddIncluded, combineWith, creator);
+		return new Permutation(m, cost, -1,toAddIncluded, combineWith, creator);
 	}
 
 	private static List<Permutation> createCombineWith(Permutation p1, Permutation p2) {
@@ -267,10 +269,22 @@ public class Permutation implements Comparable<Permutation>{
 				&& this.differentComposedPermutations(msgP)) {
 
 			Permutation combineP = combinePermutations(this, msgP, creator);
-
+			int minCountdown = Math.min(this.getCountDown(), msgP.getCountDown());
+			
+			combineP.setCountDown(minCountdown);
 			return combineP;
 		}
 		return null;
+	}
+
+	public void setCountDown(int minCountdown) {
+		this.countDown = minCountdown;
+		
+	}
+
+	int getCountDown() {
+		
+		return this.countDown;
 	}
 
 	private boolean differentComposedPermutations(Permutation msgP) {
@@ -483,6 +497,13 @@ public class Permutation implements Comparable<Permutation>{
 	public int getTimeEnter() {
 		return timeEnter;
 	}
+
+	public void setCountDown(int h_i, int ub) {
+		this.countDown = ub*(h_i+1);
+		
+	}
 	
+
+
 
 }

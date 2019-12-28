@@ -40,24 +40,19 @@ public class AsynchronyDSA_SDP extends Asynchrony {
 	public AsynchronyDSA_SDP(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double dateKnownRatio,int k) {
 		this(dcop, agents, aZ, meanRun,dateKnownRatio,0.6,0.1,0.4,0.8,k);
 	}
-	
-	
 
 	
-
-
-	@Override
-	public void agentsSendMsgs(List<Message> msgToSend) {
-		agentZero.sendAsynchronyDsa(msgToSend);
-		
-	}
-
 
 	@Override
 	public void agentDecide(int i) {	
 		for (AgentField a : agents) {
 				a.dsaSdpAsynchronyDecide( pA, pB, pC, pD,k);
 			}	
+	}
+	
+	@Override
+	public void agentsSendMsgs(List<Message> msgToSend) {
+		agentZero.sendAsynchronyDsa(msgToSend);
 	}
 
 }

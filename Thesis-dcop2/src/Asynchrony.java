@@ -46,22 +46,22 @@ public abstract class Asynchrony extends Solution {
 		this.knownRatio = knownRatio;
 
 	}
-	
-	public Asynchrony(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double knownRatio, double ratioOfNeighborsToChangeKnownDate) {
+
+	public Asynchrony(Dcop dcop, AgentField[] agents, AgentZero aZ, int meanRun, double knownRatio,
+			double ratioOfNeighborsToChangeKnownDate) {
 		this(dcop, agents, aZ, meanRun);
-		this.ratioOfNeighborsToChangeKnownDate = ratioOfNeighborsToChangeKnownDate ;
+		this.ratioOfNeighborsToChangeKnownDate = ratioOfNeighborsToChangeKnownDate;
 	}
 
 	@Override
 	public void solve() {
-	
+
 		setKnownCounter();
-		
+
 		if (ratioOfNeighborsToChangeKnownDate < Double.MAX_VALUE) {
 			setFlagsOfNeighborsNumberOfRoundIterations();
 		}
 
-		
 		findHeadOfTree();
 		for (int i = 0; i < this.iteration; i++) {
 			iter = i;
@@ -69,9 +69,7 @@ public abstract class Asynchrony extends Solution {
 			if (i % 50 == 0) {
 				System.out.println("---start iteration: " + i + "---");
 			}
-			
-			
-			
+
 			agentDecide(i); // abstract
 			List<Message> msgToSend = agentZero.handleDelay();
 			agentsSendMsgs(msgToSend); // abstract
@@ -79,7 +77,60 @@ public abstract class Asynchrony extends Solution {
 				createAnytimeUp(i); // abstract
 				createAnytimeDown(i);
 			}
+
+			printContext(i, agents[2]);
+			printNonInf(i, agents[2]);
+			printAllPast(i, agents[2]);
+
+			System.out.println("-------------------");
+
 			addCostToTables(i);
+		}
+	}
+
+	private void printAllPast(int i, AgentField head) {
+		System.out.println("Past Permutations:");
+		if (Asynchrony.iter == i) {
+			for (Permutation p : head.getPastPermutations()) {
+			
+					System.out.print("[");
+					for (Entry<Integer, Integer> e : p.getM().entrySet()) {
+						System.out.print(e.getValue() + ",");
+					}
+					System.out.print("] ");
+				
+			}
+			System.out.println();
+		}
+		
+	}
+
+	private void printContext(int i, AgentField head) {
+		System.out.println("context:");	
+		System.out.print("[");
+		for (Entry<Integer, MessageRecieve> e : head.getNeighbors().entrySet()) {
+			System.out.print(e.getValue().getValue() + ",");
+		}
+		System.out.print(head.getValue());
+		System.out.print("] ");
+		System.out.println();
+	}
+
+	
+
+	private void printNonInf(int i, AgentField head) {
+		System.out.println("Non inf:");
+		if (Asynchrony.iter == i) {
+			for (Permutation p : head.getPastPermutations()) {
+				if (p.getCountDown() < Integer.MAX_VALUE) {
+					System.out.print("[");
+					for (Entry<Integer, Integer> e : p.getM().entrySet()) {
+						System.out.print(e.getValue() + ",");
+					}
+					System.out.print("] ");
+				}
+			}
+			System.out.println();
 		}
 	}
 
@@ -87,7 +138,7 @@ public abstract class Asynchrony extends Solution {
 		for (AgentField a : agents) {
 			a.setCounterToChangeKnownDate(this.ratioOfNeighborsToChangeKnownDate);
 		}
-		
+
 	}
 
 	private void setKnownCounter() {
@@ -110,7 +161,7 @@ public abstract class Asynchrony extends Solution {
 			}
 
 		}
-		
+
 	}
 
 	protected void addTopCountersChanges(int i) {
@@ -230,8 +281,7 @@ public abstract class Asynchrony extends Solution {
 				ans = ans + cost;
 			}
 		}
-		
-		
+
 		this.topAnytimeCost.add(ans);
 
 	}
@@ -251,8 +301,6 @@ public abstract class Asynchrony extends Solution {
 
 	}
 
-	
-
 	public abstract void agentsSendMsgs(List<Message> msgToSend);
 
 	public void createAnytimeUp(int i) {
@@ -262,7 +310,7 @@ public abstract class Asynchrony extends Solution {
 	public void createAnytimeDown(int date) {
 		agentZero.createAnyTimeDown(date);
 	}
-	
+
 	protected boolean atlistOneAgentMinusOne(boolean real) {
 
 		for (AgentField a : agents) {
@@ -336,7 +384,7 @@ public abstract class Asynchrony extends Solution {
 		return this.knownRatio;
 	}
 
-	protected  double getKnownRatioCounter() {
+	protected double getKnownRatioCounter() {
 		return ratioOfNeighborsToChangeKnownDate;
 	}
 
