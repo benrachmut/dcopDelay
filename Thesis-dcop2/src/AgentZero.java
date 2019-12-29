@@ -630,6 +630,13 @@ public class AgentZero {
 	 */
 	// }
 
+	public void decreaseCountDown() {
+		for (AgentField a : agents) {
+			a.decreaseCountDown();
+		}
+		
+	}
+
 	/*
 	 * private void updateCounterOfReciever(AgentField reciever, int senderId,
 	 * MessageNormal msg) { if (Main.trySendSelfCounter) {

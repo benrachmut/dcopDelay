@@ -66,7 +66,7 @@ public abstract class Asynchrony extends Solution {
 		for (int i = 0; i < this.iteration; i++) {
 			iter = i;
 
-			if (i % 50 == 0) {
+			if (i % 1000 == 0) {
 				System.out.println("---start iteration: " + i + "---");
 			}
 
@@ -77,14 +77,19 @@ public abstract class Asynchrony extends Solution {
 				createAnytimeUp(i); // abstract
 				createAnytimeDown(i);
 			}
-
-			printContext(i, agents[2]);
-			printNonInf(i, agents[2]);
-			printAllPast(i, agents[2]);
+/*
+			printContext(i, fathers.first());
+			printNonInf(i, fathers.first());
+			printAllPast(i, fathers.first());
 
 			System.out.println("-------------------");
-
+*/
 			addCostToTables(i);
+			
+			if (Main.memoryVersion == 3) {
+				agentZero.decreaseCountDown();
+			}
+			
 		}
 	}
 
@@ -101,8 +106,9 @@ public abstract class Asynchrony extends Solution {
 				
 			}
 			System.out.println();
+			System.out.println("Past Permutations size: "+head.getPastPermutations().size());
 		}
-		
+		 
 	}
 
 	private void printContext(int i, AgentField head) {
@@ -120,6 +126,7 @@ public abstract class Asynchrony extends Solution {
 
 	private void printNonInf(int i, AgentField head) {
 		System.out.println("Non inf:");
+		int counter = 0;
 		if (Asynchrony.iter == i) {
 			for (Permutation p : head.getPastPermutations()) {
 				if (p.getCountDown() < Integer.MAX_VALUE) {
@@ -127,10 +134,12 @@ public abstract class Asynchrony extends Solution {
 					for (Entry<Integer, Integer> e : p.getM().entrySet()) {
 						System.out.print(e.getValue() + ",");
 					}
+					counter++;
 					System.out.print("] ");
 				}
 			}
 			System.out.println();
+			System.out.println("Non inf size: "+counter);
 		}
 	}
 

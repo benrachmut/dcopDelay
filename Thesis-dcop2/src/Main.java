@@ -17,13 +17,13 @@ public class Main {
 
 	// ------- VARIABLES TO CHECK BEFORE STARTING A RUN
 	// -- variables of dcop problem
-	static int A = 3;// 50;//35; // number of agents
+	static int A = 50;// 50;//35; // number of agents
 	static int D = 10; // size of domain for each agent
 	static int costMax = 100; // the max value of cost
 	// -- Experiment time
 
-	static int meanRepsStart = 48;
-	static int meanRepsEnd = 49;
+	static int meanRepsStart = 0;
+	static int meanRepsEnd = 100;
 
 	static int currMeanRun = 0;
 	static int iterations = 4000;// 15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
@@ -53,21 +53,27 @@ public class Main {
 
 	// "AsynchronyDSA_SDP(k=10,date=0)");
 
-	static String algo = "AsynchronyDSA_SDP(k=40)";
+	
+//"AsynchronyDSA_SDP(k=40,r=05)"
+	//"AsynchronyDSA_SDP(k=40,r=15)";
+	//"AsynchronyDSA_SDP(k=40,r=15)";
+	//"AsynchronyDSA_SDP(k=40,r=3)";
+	///"AsynchronyDSA_SDP(k=40,r=5"
+	static String algo = "AsynchronyDSA_SDP(k=40,r=5)";
 	static boolean sendOnce = false;
 
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
-	static int[] memoryVersions = { 3 }; // 1=exp, 2= constant, 3= reasonable
+	static int[] memoryVersions = { 1 }; // 1=exp, 2= constant, 3= reasonable
 	static double[] constantsPower = { 2 }; // { 1.69897, 2, 2.1761,2.47712,2.6989,2.8751,3 };//
 											// {1.8};//{0.8,1,1.4,1.8,2,2.4};//{0.8,1,1.4,1.8,2,2.4};//{1.8,2,2.2,2.8,3,3.2,3.5};//{2};//{2,2.2,2.5,2.8,3,3.2,3.5};//{2};//{2,2.3,2.5,2.7,3,3.3,3.5};//{2.75};//{}{0.8,1,2,3,4};//{2,4,6,8};//{0.8,1,2,3,4};//{1,2,3,4,5};
 
 	static int[] comparatorsForMemory = { 1 };
 	// -- synch
 	// static boolean synch = false;
-	static boolean anytime = true;
+	static boolean anytime = false;
 	static boolean orgenizeDfs = false;
-	static boolean orgenizeBfs = true;
+	static boolean orgenizeBfs = false;
 
 	/*
 	 * static boolean enableBfs = true; static boolean enableDfs = false;
@@ -79,7 +85,7 @@ public class Main {
 	static String fileName;
 
 	// -- uniformly random dcop
-	static double[] p1sUniform = { 1 }; // {0.2 }; // 0.1,0.7
+	static double[] p1sUniform = { 0.2 }; // {0.2 }; // 0.1,0.7
 	static double[] p2sUniform = { 1 };
 	// -- color dcop
 	static final double[] p1sColor = { 0.05 }; // 0.1,0.7
@@ -88,9 +94,9 @@ public class Main {
 	static int[] numOfNToNotHubs = { 3 };
 	static double[] p2sScaleFree = { 1 };
 	// -- communication protocol
-	static double[] p3s = { 1 };// {0,1};
+	static double[] p3s = { 0,1 };// {0,1};
 	// static boolean[] dateKnowns = { true };
-	static int[] delayUBs = {3};//{2,5,10,25};// {2,5,10,25};//{5,10,25,50,75,100};//{10,25,50};//{5,10,25,50,75,100};//{2,5,10,25,50,75,100};
+	static int[] delayUBs = {5,10,25,50};//{2,5,10,25};// {2,5,10,25};//{5,10,25,50,75,100};//{10,25,50};//{5,10,25,50,75,100};//{2,5,10,25,50,75,100};
 	static double[] p4s = { 0 };// { 0,0.05,0.1,0.15,0.2,0.25,0.3 };
 	public static boolean useCounterToChangeTrans = false;
 	public static boolean secondBest = false;
@@ -463,103 +469,59 @@ public class Main {
 
 		boolean AsynchronyDSA_SDP_10 = algo.equals("AsynchronyDSA_SDP(k=10)");
 		boolean AsynchronyDSA_SDP_20 = algo.equals("AsynchronyDSA_SDP(k=20)");
-		boolean AsynchronyDSA_SDP_30 = algo.equals("AsynchronyDSA_SDP(k=30)");
 		boolean AsynchronyDSA_SDP_40 = algo.equals("AsynchronyDSA_SDP(k=40)");
-		boolean AsynchronyDSA_SDP_50 = algo.equals("AsynchronyDSA_SDP(k=50)");
 		boolean AsynchronyDSA_SDP_60 = algo.equals("AsynchronyDSA_SDP(k=60)");
-		boolean AsynchronyDSA_SDP_70 = algo.equals("AsynchronyDSA_SDP(k=70)");
 		boolean AsynchronyDSA_SDP_80 = algo.equals("AsynchronyDSA_SDP(k=80)");
-		boolean AsynchronyDSA_SDP_160 = algo.equals("AsynchronyDSA_SDP(k=160)");
-		boolean AsynchronyDSA_SDP_160_0 = algo.equals("AsynchronyDSA_SDP(k=160,date=0)");
-		boolean AsynchronyDSA_SDP_120 = algo.equals("AsynchronyDSA_SDP(k=120)");
-		boolean AsynchronyDSA_SDP_120_0 = algo.equals("AsynchronyDSA_SDP(k=120,date=0)");
-		if (AsynchronyDSA_SDP_120) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 120);
-
-		}
-		if (AsynchronyDSA_SDP_120_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 120);
-
-		}
-
-		if (AsynchronyDSA_SDP_160) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 160);
-
-		}
-		if (AsynchronyDSA_SDP_160_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 160);
-
-		}
-
+		
+		
+		
+		
+		
 		if (AsynchronyDSA_SDP_10) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 10);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 10,1);
 		}
+		
 		if (AsynchronyDSA_SDP_20) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 20);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 20,1);
 		}
-		if (AsynchronyDSA_SDP_30) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 30);
-		}
+		
 		if (AsynchronyDSA_SDP_40) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 40);
-		}
-		if (AsynchronyDSA_SDP_50) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 50);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 40,1);
 		}
 		if (AsynchronyDSA_SDP_60) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 60);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 60,1);
 		}
-		if (AsynchronyDSA_SDP_70) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 70);
-		}
+		
 		if (AsynchronyDSA_SDP_80) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 80);
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 80,1);
 		}
+		
 
-		boolean AsynchronyDSA_SDP_10_0 = algo.equals("AsynchronyDSA_SDP(k=10,date=0)");
-		boolean AsynchronyDSA_SDP_20_0 = algo.equals("AsynchronyDSA_SDP(k=20,date=0)");
-		boolean AsynchronyDSA_SDP_30_0 = algo.equals("AsynchronyDSA_SDP(k=30,date=0)");
-		boolean AsynchronyDSA_SDP_40_0 = algo.equals("AsynchronyDSA_SDP(k=40,date=0)");
-		boolean AsynchronyDSA_SDP_50_0 = algo.equals("AsynchronyDSA_SDP(k=50,date=0)");
-		boolean AsynchronyDSA_SDP_60_0 = algo.equals("AsynchronyDSA_SDP(k=60,date=0)");
-		boolean AsynchronyDSA_SDP_70_0 = algo.equals("AsynchronyDSA_SDP(k=70,date=0)");
-		boolean AsynchronyDSA_SDP_80_0 = algo.equals("AsynchronyDSA_SDP(k=80,date=0)");
-		boolean AsynchronyDSA_SDP_100_0 = algo.equals("AsynchronyDSA_SDP(k=100,date=0)");
-		boolean AsynchronyDSA_SDP_100 = algo.equals("AsynchronyDSA_SDP(k=100)");
+		boolean AsynchronyDSA_SDP_40_05 = algo.equals("AsynchronyDSA_SDP(k=40,r=05)");
+		boolean AsynchronyDSA_SDP_40_15 = algo.equals("AsynchronyDSA_SDP(k=40,r=15)");
+		boolean AsynchronyDSA_SDP_40_2 = algo.equals("AsynchronyDSA_SDP(k=40,r=2)");
+		boolean AsynchronyDSA_SDP_40_3 = algo.equals("AsynchronyDSA_SDP(k=40,r=3)");
+		boolean AsynchronyDSA_SDP_40_5 = algo.equals("AsynchronyDSA_SDP(k=40,r=5)");
 
-		if (AsynchronyDSA_SDP_100) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 100);
-
+		
+		if (AsynchronyDSA_SDP_40_05) {
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 40,0.5);
 		}
-		if (AsynchronyDSA_SDP_100_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 100);
-
+		
+		if (AsynchronyDSA_SDP_40_15) {
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 40,1.5);
 		}
-		if (AsynchronyDSA_SDP_10_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 10);
+		if (AsynchronyDSA_SDP_40_2) {
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 40,2);
 		}
-		if (AsynchronyDSA_SDP_20_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 20);
+		if (AsynchronyDSA_SDP_40_3) {
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 40,2);
 		}
-		if (AsynchronyDSA_SDP_30_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 30);
+		if (AsynchronyDSA_SDP_40_5) {
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 40,2);
 		}
-		if (AsynchronyDSA_SDP_40_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 40);
-		}
-		if (AsynchronyDSA_SDP_50_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 50);
-		}
-		if (AsynchronyDSA_SDP_60_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 60);
-		}
-		if (AsynchronyDSA_SDP_70_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 70);
-		}
-		if (AsynchronyDSA_SDP_80_0) {
-			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 0.0, 80);
-		}
-
+		
+		
 		// AsynchronyDSA(0.1);AsynchronyDSA(0.3);AsynchronyDSA(0.5);AsynchronyDSA(0.7);AsynchronyDSA(0.9);AsynchronyDSA(1);
 		boolean AsynchronyMGMNoPhase = algo.equals("AsynchronyMGMNoPhase");
 

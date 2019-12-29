@@ -499,6 +499,8 @@ public class Permutation implements Comparable<Permutation>{
 	}
 
 	public void setCountDown(int h_i, int ub) {
+		
+		
 		this.countDown = ub*(h_i+1);
 		
 	}
