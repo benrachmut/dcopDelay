@@ -22,11 +22,11 @@ public class Main {
 	static int costMax = 100; // the max value of cost
 	// -- Experiment time
 
-	static int meanRepsStart = 0;
-	static int meanRepsEnd = 100;
+	static int meanRepsStart = 1;
+	static int meanRepsEnd = 2;
 
 	static int currMeanRun = 0;
-	static int iterations = 4000;// 15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
+	static int iterations = 3000;// 15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
 
 	/*
@@ -56,23 +56,23 @@ public class Main {
 	
 //"AsynchronyDSA_SDP(k=40,r=05)"
 	//"AsynchronyDSA_SDP(k=40,r=15)";
-	//"AsynchronyDSA_SDP(k=40,r=15)";
+	//"AsynchronyDSA_SDP(k=40,r=2)";
 	//"AsynchronyDSA_SDP(k=40,r=3)";
 	///"AsynchronyDSA_SDP(k=40,r=5"
-	static String algo = "AsynchronyDSA_SDP(k=40,r=5)";
+	static String algo = "AsynchronyDSA_SDP(k=40)";
 	static boolean sendOnce = false;
 
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
 	// -- memory
-	static int[] memoryVersions = { 1 }; // 1=exp, 2= constant, 3= reasonable
+	static int[] memoryVersions = { 2 }; // 1=exp, 2= constant, 3= reasonable
 	static double[] constantsPower = { 2 }; // { 1.69897, 2, 2.1761,2.47712,2.6989,2.8751,3 };//
 											// {1.8};//{0.8,1,1.4,1.8,2,2.4};//{0.8,1,1.4,1.8,2,2.4};//{1.8,2,2.2,2.8,3,3.2,3.5};//{2};//{2,2.2,2.5,2.8,3,3.2,3.5};//{2};//{2,2.3,2.5,2.7,3,3.3,3.5};//{2.75};//{}{0.8,1,2,3,4};//{2,4,6,8};//{0.8,1,2,3,4};//{1,2,3,4,5};
 
 	static int[] comparatorsForMemory = { 1 };
 	// -- synch
 	// static boolean synch = false;
-	static boolean anytime = false;
-	static boolean orgenizeDfs = false;
+	static boolean anytime = true;
+	static boolean orgenizeDfs = true;
 	static boolean orgenizeBfs = false;
 
 	/*
@@ -96,7 +96,7 @@ public class Main {
 	// -- communication protocol
 	static double[] p3s = { 0,1 };// {0,1};
 	// static boolean[] dateKnowns = { true };
-	static int[] delayUBs = {5,10,25,50};//{2,5,10,25};// {2,5,10,25};//{5,10,25,50,75,100};//{10,25,50};//{5,10,25,50,75,100};//{2,5,10,25,50,75,100};
+	static int[] delayUBs = {5,10,15,25};//{2,5,10,25};// {2,5,10,25};//{5,10,25,50,75,100};//{10,25,50};//{5,10,25,50,75,100};//{2,5,10,25,50,75,100};
 	static double[] p4s = { 0 };// { 0,0.05,0.1,0.15,0.2,0.25,0.3 };
 	public static boolean useCounterToChangeTrans = false;
 	public static boolean secondBest = false;
@@ -502,7 +502,18 @@ public class Main {
 		boolean AsynchronyDSA_SDP_40_2 = algo.equals("AsynchronyDSA_SDP(k=40,r=2)");
 		boolean AsynchronyDSA_SDP_40_3 = algo.equals("AsynchronyDSA_SDP(k=40,r=3)");
 		boolean AsynchronyDSA_SDP_40_5 = algo.equals("AsynchronyDSA_SDP(k=40,r=5)");
+		boolean AsynchronyDSA_SDP_40_02 = algo.equals("AsynchronyDSA_SDP(k=40,r=02)");
+		boolean AsynchronyDSA_SDP_40_01 = algo.equals("AsynchronyDSA_SDP(k=40,r=01)");
 
+		if (AsynchronyDSA_SDP_40_02) {
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 40,0.2);
+		}
+		
+		if (AsynchronyDSA_SDP_40_01) {
+			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 40,0.1);
+		}
+		
+		
 		
 		if (AsynchronyDSA_SDP_40_05) {
 			ans = new AsynchronyDSA_SDP(dcop, agents, agentZero, meanRun, 40,0.5);

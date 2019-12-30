@@ -1066,10 +1066,10 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private double calcRatio() {
 		List<PotentialCost> pCostsList = findPotentialCost();
 		PotentialCost minPotentialCost = Collections.min(pCostsList);
-		int current_cost = minPotentialCost.getCost();
+		double current_cost = minPotentialCost.getCost();
 		pCostsList.remove(minPotentialCost);
 		PotentialCost minSecondPotentialCost = Collections.min(pCostsList);
-		int new_cost = minSecondPotentialCost.getCost();
+		double new_cost = minSecondPotentialCost.getCost();
 
 		/*
 		List<PotentialCost> pCostsList = findPotentialCost();
@@ -1077,8 +1077,9 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 		PotentialCost minPotentialCost = Collections.min(pCostsList);
 		double newCost = minPotentialCost.getCost();
-*/
-		return Math.abs(current_cost - new_cost) / current_cost;
+*/		
+		double ans = Math.abs(current_cost - new_cost) / current_cost;
+		return ans;
 
 	}
 
