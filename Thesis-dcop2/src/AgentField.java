@@ -630,6 +630,27 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		}
 
 	}
+	
+	
+	public boolean reciveMsg_cm(List<MessageValue>input) {
+		
+		/*
+		if (this.personalKnownCounter) {
+			int currentDate = this.neighbor.get(senderId).getCounter();
+			if (counterOfOther > currentDate) {
+				this.neighbor.put(senderId, new MessageRecieve(senderValue, counterOfOther));
+				valueRecieveFlag = true;
+				return true;
+			}
+			return false;
+		} else {
+			this.neighbor.put(senderId, new MessageRecieve(senderValue, counterOfOther));
+			valueRecieveFlag = true;
+			return false;
+		}
+		*/
+
+	}
 
 	public void reciveMsgValueMap(int senderId, int senderValue, int counterOfOther) {
 
