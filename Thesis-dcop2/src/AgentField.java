@@ -50,6 +50,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	private Map<AgentField, List<Permutation>> pCreatedByLists;
 
 	private Random rDsaPersonal;
+	private Random rDsa_cm;
 	private Random rqDsaSDPPersonal;
 
 	private AgentZero az;
@@ -109,6 +110,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		restartAnytimeUpRecieved();
 
 		rDsaPersonal = new Random();
+		rDsa_cm = new Random();
 		rqDsaSDPPersonal = new Random();
 		rCounter = 0;
 		// checkGoFirst = true;
@@ -630,26 +632,128 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		}
 
 	}
-	
-	
-	public boolean reciveMsg_cm(List<MessageValue>input) {
+
+	public void reciveMsg_cm(List<MessageValue> input) {
+		List<List<MessageValue>> allCombinations;
+		List<MessageValue> l = new ArrayList<MessageValue>();
 		
+		if (Asynchrony.iter == 0) {
+			allCombinations = new ArrayList<List<MessageValue>>();
+			allCombinations.add(input);
+			l = input;
+		}else {
+			allCombinations = getAllCombinations(input);
+			int randComb = Main.getRandomInt(rDsa_cm, 0, allCombinations.size()-1);
+			l = allCombinations.get(randComb);
+			}
+		
+
+		// Map<MessageRecieve, PotentialCost> allCombinationsPC = new
+		// HashMap<MessageRecieve, PotentialCost>();
+
 		/*
-		if (this.personalKnownCounter) {
-			int currentDate = this.neighbor.get(senderId).getCounter();
-			if (counterOfOther > currentDate) {
-				this.neighbor.put(senderId, new MessageRecieve(senderValue, counterOfOther));
-				valueRecieveFlag = true;
+		int minCostOfMap = Integer.MAX_VALUE;
+		Map<Integer, MessageRecieve> bestComb = new HashMap<Integer, MessageRecieve>();
+		for (List<MessageValue> l : allCombinations) {
+			Map<Integer, MessageRecieve> neighborTemp = createNeighborTemp(l);
+
+			//if (!neighborsHaveMinusOne(neighborTemp)) {
+				int costOfMap = potentialCostOfMap(neighborTemp);
+				if (costOfMap < minCostOfMap) {
+					minCostOfMap = costOfMap;
+					bestComb = neighborTemp;
+				}
+			}
+
+		//}
+		 */
+
+		
+		Map<Integer, MessageRecieve> neighborTemp = createNeighborTemp(l);
+
+		this.neighbor = neighborTemp;
+
+	}
+/*
+	private boolean neighborsHaveMinusOne(Map<Integer, MessageRecieve> neighborTemp) {
+		for (Entry<Integer, MessageRecieve> e : neighborTemp.entrySet()) {
+			if (e.getValue().getValue() == -1) {
 				return true;
 			}
-			return false;
-		} else {
-			this.neighbor.put(senderId, new MessageRecieve(senderValue, counterOfOther));
-			valueRecieveFlag = true;
-			return false;
 		}
-		*/
+		return false;
+	}
+	*/
 
+	private int potentialCostOfMap(Map<Integer, MessageRecieve> neighborTemp) {
+		List<PotentialCost> pCosts = findPotentialCost(neighborTemp);
+		PotentialCost minPotentialCost = Collections.min(pCosts);
+		return minPotentialCost.getCost();
+	}
+
+	private Map<Integer, MessageRecieve> createNeighborTemp(List<MessageValue> l) {
+		Map<Integer, MessageRecieve> ans = getMissingNeighbors(l);
+
+		for (MessageValue m : l) {
+			MessageRecieve mR = new MessageRecieve(m.getMessageInformation(), 0);
+			ans.put(m.getSender().getId(), mR);
+		}
+
+		return ans;
+	}
+
+	private Map<Integer, MessageRecieve> getMissingNeighbors(List<MessageValue> l) {
+		List<Integer> recieversInL = new ArrayList<Integer>();
+		Map<Integer, MessageRecieve> ans = new HashMap<Integer, MessageRecieve>();
+
+		// List<MessageRecieve>ans = new ArrayList<MessageRecieve>();
+		for (MessageValue m : l) {
+			recieversInL.add(m.getReciever().getId());
+		}
+		
+		if (l.isEmpty()) {
+			for (Integer i : neighbor.keySet()) {
+				ans.put(i, neighbor.get(i));
+			}
+		}
+		
+		Collection<Integer> idNeighbors = neighbor.keySet();
+		for (Integer i : idNeighbors) {
+			if (!recieversInL.contains(i)) {
+				ans.put(i, neighbor.get(i));
+			}
+		}
+		
+		return ans;
+	}
+
+	private static <T> List<List<T>> getAllCombinations(List<T> input) {
+
+		List<List<T>> ans = new ArrayList<List<T>>();
+
+		int binReps = (int) Math.pow(2, input.size());
+		for (int i = 0; i < binReps; i++) {
+			ans.add(new ArrayList<T>());
+		}
+
+		for (int i = input.size() - 1; i >= 0; i--) {
+			boolean flag = false;
+			int counterConst = (int) Math.pow(2, i);
+
+			for (int j = 0; j < binReps; j++) {
+				counterConst -= 1;
+				List<T> t = ans.get(j);
+				if (flag) {
+					t.add(input.get(i));
+				}
+				if (counterConst == 0) {
+					counterConst = (int) Math.pow(2, i);
+					flag = !flag;
+				}
+			}
+
+		}
+		return ans;
 	}
 
 	public void reciveMsgValueMap(int senderId, int senderValue, int counterOfOther) {
@@ -1093,12 +1197,12 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		double new_cost = minSecondPotentialCost.getCost();
 
 		/*
-		List<PotentialCost> pCostsList = findPotentialCost();
-		double currentCost = findCurrentCost(pCostsList);
-
-		PotentialCost minPotentialCost = Collections.min(pCostsList);
-		double newCost = minPotentialCost.getCost();
-*/		
+		 * List<PotentialCost> pCostsList = findPotentialCost(); double currentCost =
+		 * findCurrentCost(pCostsList);
+		 * 
+		 * PotentialCost minPotentialCost = Collections.min(pCostsList); double newCost
+		 * = minPotentialCost.getCost();
+		 */
 		double ans = Math.abs(current_cost - new_cost) / current_cost;
 		return ans;
 
@@ -1218,6 +1322,41 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 
 	}
 
+	private List<PotentialCost> findPotentialCost(Map<Integer, MessageRecieve> input) {
+		List<PotentialCost> pCosts = new ArrayList<PotentialCost>();
+		for (int i = 0; i < domain.length; i++) {
+			Set<ConstraintNeighbor> neighborsAtDomain = this.constraint.get(i);
+			int costPerValue = calCostPerValue(neighborsAtDomain, input);
+			PotentialCost pC = new PotentialCost(domain[i], costPerValue);
+			pCosts.add(pC);
+		}
+		return pCosts;
+	}
+
+	private int calCostPerValue(Set<ConstraintNeighbor> neighborsAtDomain, Map<Integer, MessageRecieve> input) {
+		int ans = 0;
+
+		if (neighborsAtDomain == null) {
+			return 0;
+		}
+		for (ConstraintNeighbor cN : neighborsAtDomain) {
+			Agent a = cN.getAgent();
+			int aId = a.getId();
+
+			int aCheckedValue = a.getValue();
+			/*
+			 * if (input.get(aId) == null) { System.out.println(); }
+			 */
+			int aNeighborKnownValue = input.get(aId).getValue();
+
+			if (aCheckedValue == aNeighborKnownValue) {
+				int costFromNeighbor = cN.getCost();
+				ans += costFromNeighbor;
+			}
+		}
+		return ans;
+	}
+
 	private List<PotentialCost> findPotentialCost() {
 		List<PotentialCost> pCosts = new ArrayList<PotentialCost>();
 		for (int i = 0; i < domain.length; i++) {
@@ -1283,11 +1422,13 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	public void setDsaSeed(int meanRun) {
 		int newSeed = meanRun + this.id;
 		rDsaPersonal.setSeed(meanRun * 88 + this.id * 555);
+		rDsa_cm.setSeed(meanRun * 99 + this.id * 222);
 		rqDsaSDPPersonal.setSeed(meanRun * 77 + this.id * 333);
 	}
 
 	public void resetDsaSeed(int meanRun) {
 		this.rDsaPersonal = new Random(meanRun * 88 + this.id * 555);
+		this.rDsa_cm = new Random(meanRun * 99 + this.id * 222);
 		this.rqDsaSDPPersonal.setSeed(meanRun * 77 + this.id * 333);
 	}
 
@@ -1875,16 +2016,24 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			return false;
 		}
 		int maxRVal = maxRInMap.getValue().getValue();
-		if (this.r > maxRVal) {
-			this.value = this.minPC.getValue();
-			return true;
+		if (maxRVal==-1) {
+			maxRVal = Integer.MAX_VALUE;
 		}
-		int maxRId = maxRInMap.getKey();
-		if (this.r == maxRVal && this.id < maxRId) {
-			this.value = this.minPC.getValue();
-			return true;
+		
+		//if (Asynchrony.iter>1) {
+			if (this.r > maxRVal) {
+				this.value = this.minPC.getValue();
+				return true;
+			}
+			int maxRId = maxRInMap.getKey();
+			if (this.r == maxRVal && this.id < maxRId) {
+				this.value = this.minPC.getValue();
+				return true;
 
-		}
+			}
+		//}
+		
+		
 		return false;
 	}
 
@@ -2122,10 +2271,10 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		Collection<Permutation> toDelete = new ArrayList<Permutation>();
 		for (Permutation p : permutationsPast) {
 			int pCountDown = p.getCountDown();
-			if ( pCountDown < Integer.MAX_VALUE) {
-				if (pCountDown == 0 ) {
+			if (pCountDown < Integer.MAX_VALUE) {
+				if (pCountDown == 0) {
 					toDelete.add(p);
-				}else {
+				} else {
 					int updatedCountDown = pCountDown - 1;
 					p.setCountDown(updatedCountDown);
 				}
@@ -2133,4 +2282,5 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 		}
 		permutationsPast.removeAll(toDelete);
 	}
+
 }

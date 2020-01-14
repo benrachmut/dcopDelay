@@ -643,50 +643,19 @@ public class AgentZero {
 		//Collections.reverse(msgToSend);
 
 		Map<AgentField, List<MessageValue>> mOfValueMsgs = new HashMap<AgentField, List<MessageValue>>();
-		Collection<Message> toRemove = new ArrayList<Message>();
+		Collection<Message> toRemove = new ArrayList<Message>();	
+		createMOfValueMsgs (msgToSend,mOfValueMsgs,toRemove);	
 		
-		createMOfValueMsgs (msgToSend,mOfValueMsgs,toRemove);
 		
 		for (Entry<AgentField, List<MessageValue>> e : mOfValueMsgs.entrySet()) {
 			AgentField reciever = e.getKey();
 			List<MessageValue> msgsOfRecieve = e.getValue();
-			reciever.reciveMsg_cm(msgsOfRecieve);
-			
-			
+			reciever.reciveMsg_cm(msgsOfRecieve);	
+			reciever.setValueRecieveFlag(true);
 		}
-		
-		int senderId = msg.getSender().getId();
-		AgentField reciever = msg.getReciever();
-		if (msg instanceof MessageValue) {
-			MessageValue mv = (MessageValue) msg;
-			int senderValue = mv.getMessageInformation();
-			int counter = mv.getDecisionCounter();
-
-			boolean didChange = reciever.reciveMsgValueFlag(senderId, senderValue, counter);
-
-			if (Main.anytime) {
-				if (didChange) {
-					Permutation p = reciever.createCurrentPermutationByValue();
-					if (p != null) {
-						reciever.updateRecieverUponPermutationCreated(p, reciever);
-					}
-					if (Main.memoryVersion == 3) {
-						reciever.changeCountDownOfPermutations();
-					}
-				}
-			}
-		} // normal message
-		
-		
-		
-		
-
 		for (Message msg : msgToSend) {
 			sendASingleMsgDsaAsynchrony(msg);
 		}
-		
-
-		
 	}
 	private void createMOfValueMsgs(List<Message> msgToSend, Map<AgentField, List<MessageValue>> mOfValueMsgs, Collection<Message> toRemove) {
 		for (Message msg : msgToSend) {
