@@ -180,6 +180,7 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 	}
 
 	public void monotonicDecide() {
+		System.out.println("before changing monotonic algo");
 		if (Asynchrony.iter == 0) {
 			if (getDfsFather() == null) {
 				firstValDsa();
