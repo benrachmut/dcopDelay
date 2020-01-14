@@ -15,6 +15,7 @@ public class AsynchronyMonotonic extends Asynchrony {
 	@Override
 	public void agentDecide(int i) {
 		for (AgentField a : agents) {
+			//if(a.id==10)
 			a.monotonicDecide();
 		}
 

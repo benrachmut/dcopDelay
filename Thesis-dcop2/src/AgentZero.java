@@ -650,7 +650,7 @@ public class AgentZero {
 		for (Entry<AgentField, List<MessageValue>> e : mOfValueMsgs.entrySet()) {
 			AgentField reciever = e.getKey();
 			List<MessageValue> msgsOfRecieve = e.getValue();
-			reciever.reciveMsg_cm(msgsOfRecieve);	
+			//reciever.reciveMsg_cm(msgsOfRecieve);	
 			reciever.setValueRecieveFlag(true);
 		}
 		for (Message msg : msgToSend) {

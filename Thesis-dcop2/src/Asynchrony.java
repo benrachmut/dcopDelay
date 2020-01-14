@@ -66,12 +66,26 @@ public abstract class Asynchrony extends Solution {
 		for (int i = 0; i < this.iteration; i++) {
 			iter = i;
 
-			if (i % 100 == 0) {
+			if (i % 1000 == 0) {
 				System.out.println("---start iteration: " + i + "---");
 			}
+			
+			
 
 			agentDecide(i); // abstract
 			List<Message> msgToSend = agentZero.handleDelay();
+
+			
+			for (Message m : msgToSend) {
+				int recieve =m.getReciever().id;
+				int send = m.getSender().id;
+				/*
+				if (recieve==10 &&send ==41 && Main.currentUb==75) {
+					System.out.println();
+				}
+				*/
+			}
+			
 			agentsSendMsgs(msgToSend); // abstract
 			if (Main.anytime) {
 				createAnytimeUp(i); // abstract

@@ -26,7 +26,7 @@ public class Main {
 	static int meanRepsEnd = 100;
 
 	static int currMeanRun = 0;
-	static int iterations = 1000;// 15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
+	static int iterations =20000;// 15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
 	// versions
 
 	/*
@@ -63,7 +63,7 @@ public class Main {
 	// AsynchronyDSA
 	// Monotonic
 	//AsynchronyDSA_CM
-	static String algo = "AsynchronyMGMNoPhase";
+	static String algo = "Monotonic";
 	static boolean sendOnce = false;
 
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
@@ -89,7 +89,7 @@ public class Main {
 	static String fileName;
 
 	// -- uniformly random dcop
-	static double[] p1sUniform = { 0.6 }; // {0.2 }; // 0.1,0.7
+	static double[] p1sUniform = { 0.2 }; // {0.2 }; // 0.1,0.7
 	static double[] p2sUniform = { 1 };
 	// -- color dcop
 	static final double[] p1sColor = { 0.05 }; 
@@ -790,6 +790,7 @@ public class Main {
 			a.restartPCreatedByLists();
 			a.setAz(agentZero);
 			a.restartForSynchronicAlgos();
+			// a.initMessageForLaterMonotonic();
 			// a.setNeighborAndCounterRecieve();
 		}
 	}
@@ -891,7 +892,8 @@ public class Main {
 			agents[i].restartKsdpCounter();
 			agents[i].restartLevelInTree();
 			agents[i].initInfPermutations();
-			// agents[i].setNeighborAndCounterRecieve();
+			agents[i].initSaveMsgForLater();
+			//agents[i].initMessageForLaterMonotonic();
 		}
 
 	}
