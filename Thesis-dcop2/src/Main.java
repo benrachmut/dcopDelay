@@ -22,11 +22,13 @@ public class Main {
 	static int costMax = 100; // the max value of cost
 	// -- Experiment time
 
-	static int meanRepsStart = 75;
+	static int meanRepsStart = 0;
 	static int meanRepsEnd = 100;
 
 	static int currMeanRun = 0;
-	static int iterations =20000;// 15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
+	static int iterations =3000;// 15000;//10000;// 1000;//10000;//10000;//5000;//10000, 2000;
+	
+	
 	// versions
 
 	/*
@@ -63,19 +65,19 @@ public class Main {
 	// AsynchronyDSA
 	// Monotonic
 	//AsynchronyDSA_CM
-	static String algo = "Monotonic";
-	static boolean sendOnce = false;
+	static String algo = "AsynchronyDSA_SDP(k=40)";
+	static boolean sendOnce = false; // something i tried 
 
 	static int[] dcopVersions = { 1 }; // 1= Uniformly random DCOPs, 2= Graph coloring problems, 3= Scale-free
-	// -- memory
-	static int[] memoryVersions = { 1 }; // 1=exp, 2= constant, 3= reasonable
-	static double[] constantsPower = {1,1.3979400086,1.6989700043,1.87506126339, 2, 2.301029995 };//{2}; // { 1.69897, 2, 2.1761,2.47712};//{2};//{ 1.69897,1.875061, 2, 2.1761,2.47712,2.6989 };//{2}; // { 1.69897, 2, 2.1761,2.47712,2.6989,2.8751,3 };//
+	// -- relevent for anytime
+	static int[] memoryVersions = {2}; // 1=exp, 2= constant, 3= reasonable
+	static double[] constantsPower = {2.47712125};//{2}; // { 1.69897, 2, 2.1761,2.47712};//{2};//{ 1.69897,1.875061, 2, 2.1761,2.47712,2.6989 };//{2}; // { 1.69897, 2, 2.1761,2.47712,2.6989,2.8751,3 };//
 											// {1.8};//{0.8,1,1.4,1.8,2,2.4};//{0.8,1,1.4,1.8,2,2.4};//{1.8,2,2.2,2.8,3,3.2,3.5};//{2};//{2,2.2,2.5,2.8,3,3.2,3.5};//{2};//{2,2.3,2.5,2.7,3,3.3,3.5};//{2.75};//{}{0.8,1,2,3,4};//{2,4,6,8};//{0.8,1,2,3,4};//{1,2,3,4,5};
 
-	static int[] comparatorsForMemory = { 3 };
+	static int[] comparatorsForMemory = { 1 };
 	// -- synch
 	// static boolean synch = false;
-	static boolean anytime = false;
+	static boolean anytime = true;
 	static boolean orgenizeDfs = false;
 	static boolean orgenizeBfs = false;
 
@@ -89,7 +91,7 @@ public class Main {
 	static String fileName;
 
 	// -- uniformly random dcop
-	static double[] p1sUniform = { 0.2 }; // {0.2 }; // 0.1,0.7
+	static double[] p1sUniform = { 0.6 }; // {0.2 }; // 0.1,0.7
 	static double[] p2sUniform = { 1 };
 	// -- color dcop
 	static final double[] p1sColor = { 0.05 }; 
@@ -97,10 +99,12 @@ public class Main {
 	static int[] hubs; // 5, 10
 	static int[] numOfNToNotHubs = { 3 };
 	static double[] p2sScaleFree = { 1 };
+	
+	
 	// -- communication protocol
-	static double[] p3s = {0,1};//{0,1};//{ 0,1 };// {0,1};
+	static double[] p3s = {1};//{0,1};
 	// static boolean[] dateKnowns = { true };
-	static int[] delayUBs = {5,10,25,50,75,100};//{5,10,25,50,75,100};//;//{5,10,15,25};//{5,10,25,50,75,100};//{5,10,25,50,75,100};//{5,10,25,50,75,100};//{5,10,25};//{5,10,25,50,75,100};//{2,5,10,25};// {2,5,10,25};//{5,10,25,50,75,100};//{10,25,50};//{5,10,25,50,75,100};//{2,5,10,25,50,75,100};
+	static int[] delayUBs = {200};//{5,10,25};//{5,10,25,50,75,100};//{5,10,25,50,75,100};//;//{5,10,15,25};//{5,10,25,50,75,100};//{5,10,25,50,75,100};//{5,10,25,50,75,100};//{5,10,25};//{5,10,25,50,75,100};//{2,5,10,25};// {2,5,10,25};//{5,10,25,50,75,100};//{10,25,50};//{5,10,25,50,75,100};//{2,5,10,25,50,75,100};
 	static double[] p4s = { 0 };// { 0,0.05,0.1,0.15,0.2,0.25,0.3 };
 	public static boolean useCounterToChangeTrans = false;
 	public static boolean secondBest = false;
@@ -162,6 +166,7 @@ public class Main {
 		
 		for (int i : dcopVersions) {
 			dcopVersion = i;
+			
 			if (memoryVersions[0] == 2) {
 				for (int j : memoryVersions) {
 					memoryVersion = j;

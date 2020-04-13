@@ -197,19 +197,12 @@ public class AgentField extends Agent implements Comparable<AgentField> {
 			firstValDsa();
 
 		} else {
-			if (monotonicCanChange()) {
-				
-				
+			if (monotonicCanChange()) {	
 				setCounterAndValueHistory(); // try without this line
-				monotonicAbleToDecide();
-				
-				
-				
-				//saveMsgForLater = new HashMap<Integer,MessageRecieve>();
-				
+				monotonicAbleToDecide();	
+				//saveMsgForLater = new HashMap<Integer,MessageRecieve>();		
 			}
 			handleSaveMessageForLater();
-
 		}
 
 		setCounterAndValueHistory();
